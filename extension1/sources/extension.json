@@ -1,0 +1,13 @@
+{
+    "migrationVersion": "MjYwNw==",
+    "features": {
+        "extensionEnabled": true
+    },
+    "extensionFrameworkVersion": "2.0.0",
+    "id": "site_hcm_extension",
+    "source.version": "2607",
+    "name": "HCM Extension",
+    "description": "",
+    "version": "0.1",
+    "frameworkVersion": "1.0.0"
+}
