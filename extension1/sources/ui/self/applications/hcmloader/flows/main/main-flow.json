@@ -1,0 +1,8 @@
+{
+  "id": "main",
+  "description": "Flow main",
+  "defaultPage": "bulklocationloader",
+  "services": {},
+  "types": {},
+  "variables": {}
+}
