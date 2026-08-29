@@ -11,39 +11,15 @@
     }
   },
   "metadata": {},
-  "types": {},
-  "eventListeners": {
-    "addRowChainAction": {
-      "chains": [
-        {
-          "chain": "addRow",
-          "parameters": {
-            "event": "{{$event}}"
-          }
-        }
-      ]
-    },
-    "generateHdlPreviewAction": {
-      "chains": [
-        {
-          "chain": "generateHdlPreview",
-          "parameters": {
-            "event": "{{$event}}"
-          }
-        }
-      ]
-    },
-    "importFileAction": {
-      "chains": [
-        {
-          "chain": "importFile",
-          "parameters": {
-            "event": "{{$event}}"
-          }
-        }
-      ]
+  "types": {
+    "action": {
+      "id": "string",
+      "label": "string",
+      "display": "string",
+      "icon": "string"
     }
   },
+  "eventListeners": {},
   "imports": {
     "components": {
       "oj-c-button": {
@@ -51,6 +27,9 @@
       },
       "oj-c-file-picker": {
         "path": "oj-c/file-picker"
+      },
+      "oj-sp-general-overview-page": {
+        "path": "oj-sp/general-overview-page/loader"
       },
       "oj-table": {
         "path": "ojs/ojtable"
