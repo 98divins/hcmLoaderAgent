@@ -47,6 +47,16 @@
           }
         }
       ]
+    },
+    "submitLocationsAction": {
+      "chains": [
+        {
+          "chain": "submitLocations",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
     }
   },
   "imports": {

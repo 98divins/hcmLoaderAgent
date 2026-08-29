@@ -4,6 +4,8 @@
     <oj-c-file-picker on-oj-select="[[$listeners.filePickerSelect]]"></oj-c-file-picker>
     <oj-c-button label="Générer aperçu HDL" id="generateHdlPreviewButton"
       on-oj-action="[[$listeners.generateHdlPreviewAction]]"></oj-c-button>
+    <oj-c-button label="Envoyer vers HCM" id="submitLocationsButton"
+      on-oj-action="[[$listeners.submitLocationsAction]]"></oj-c-button>
   </div>
   <div slot="info">
     <oj-table scroll-policy="loadAll" style="width: 100%; height: 400px;"
