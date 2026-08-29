@@ -9,15 +9,32 @@ define([
 ) => {
   'use strict';
 
+  // Date de fin d'effet "sans fin" standard Oracle (utilisee dans tout Fusion pour un enregistrement ouvert).
+  const OPEN_ENDED_DATE = '4712-12-31';
+  // Jeu de donnees de reference par defaut - a confirmer/ajuster selon la config du tenant.
+  const DEFAULT_SET_CODE = 'COMMON';
+  // Code d'usage d'adresse - a confirmer via la LOV commonLookupsLOV (LOCATION_ADDRESS_USAGE_TYPE) si invalide.
+  const DEFAULT_ADDRESS_USAGE_TYPE = 'MAIN';
+
   function toRestPayload(row) {
     return {
       LocationCode: row.locationCode || '',
       LocationName: row.name || '',
-      AddressLine1: row.addressLine1 || '',
-      TownOrCity: row.townOrCity || '',
-      Region1: row.region1 || '',
-      PostalCode: row.postalCode || '',
-      Country: row.country || ''
+      EffectiveStartDate: row.effectiveStartDate || '',
+      EffectiveEndDate: OPEN_ENDED_DATE,
+      SetCode: DEFAULT_SET_CODE,
+      addresses: [
+        {
+          EffectiveStartDate: row.effectiveStartDate || '',
+          EffectiveEndDate: OPEN_ENDED_DATE,
+          Country: row.country || '',
+          AddressUsageType: DEFAULT_ADDRESS_USAGE_TYPE,
+          AddressLine1: row.addressLine1 || '',
+          TownOrCity: row.townOrCity || '',
+          Region1: row.region1 || '',
+          PostalCode: row.postalCode || ''
+        }
+      ]
     };
   }
 
