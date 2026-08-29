@@ -198,21 +198,13 @@ define([
   const UPLOAD_FILE_ENDPOINT = 'site_hcm_extension:hcmRestLoader/doall_uploadFile_dataLoadDataSets';
   const CREATE_FILE_DATA_SET_ENDPOINT = 'site_hcm_extension:hcmRestLoader/doall_createFileDataSet_dataLoadDataSets';
 
-  function extractResultValue(response) {
+  function extractResultField(response, fieldName) {
     const body = response && response.body;
-    if (!body) {
-      return null;
+    const result = body && (body.result !== undefined ? body.result : body);
+    if (result && typeof result === 'object' && result[fieldName] !== undefined) {
+      return result[fieldName];
     }
-    const result = body.result !== undefined ? body.result : body;
-    if (typeof result === 'string') {
-      return result;
-    }
-    if (result && typeof result === 'object') {
-      // Le resultat peut etre un objet cle/valeur (ex: { ContentId: '...' }) selon l'action.
-      const values = Object.values(result);
-      return values.length > 0 ? values[0] : JSON.stringify(result);
-    }
-    return JSON.stringify(result);
+    return null;
   }
 
   class submitHdlImport extends ActionChain {
@@ -256,10 +248,10 @@ define([
         });
         // eslint-disable-next-line no-console
         console.log('submitHdlImport: uploadFile response body =', JSON.stringify(uploadResponse && uploadResponse.body));
-        const contentId = extractResultValue(uploadResponse);
+        const contentId = extractResultField(uploadResponse, 'ContentId');
 
         if (!contentId) {
-          window.alert(`uploadFile: pas de contentId trouve. Body brut:\n${JSON.stringify(uploadResponse && uploadResponse.body)}`);
+          window.alert(`uploadFile: pas de ContentId trouve. Body brut:\n${JSON.stringify(uploadResponse && uploadResponse.body)}`);
           return;
         }
 
@@ -275,8 +267,9 @@ define([
         });
         // eslint-disable-next-line no-console
         console.log('submitHdlImport: createFileDataSet response body =', JSON.stringify(submitResponse && submitResponse.body));
+        const requestId = extractResultField(submitResponse, 'RequestId');
 
-        window.alert(`Import HDL soumis.\ncontentId (extrait): ${contentId}\ndataSetName: ${dataSetName}\n\nBody upload:\n${JSON.stringify(uploadResponse && uploadResponse.body)}\n\nBody submit:\n${JSON.stringify(submitResponse && submitResponse.body)}`);
+        window.alert(`Import HDL soumis avec succes.\nContentId: ${contentId}\ndataSetName: ${dataSetName}\nRequestId: ${requestId}\n\nLe traitement HDL est asynchrone (peut prendre plusieurs minutes) - verifier le statut via dataLoadDataSets (findByRequestId=${requestId}).`);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log('submitHdlImport: error =', error);
