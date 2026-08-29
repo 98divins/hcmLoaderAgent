@@ -3,7 +3,8 @@
   "description": "",
   "variables": {
     "locationRows": {
-      "type": "application:locationRowsType"
+      "type": "application:locationRowsType",
+      "defaultValue": "[]"
     }
   },
   "metadata": {},
