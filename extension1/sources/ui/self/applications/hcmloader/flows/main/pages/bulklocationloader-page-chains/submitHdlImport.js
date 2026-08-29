@@ -149,7 +149,7 @@ define([
   const HDL_COLUMNS = [
     'LocationCode',
     'EffectiveStartDate',
-    'Name',
+    'LocationName',
     'AddressLine1',
     'TownOrCity',
     'Region1',
