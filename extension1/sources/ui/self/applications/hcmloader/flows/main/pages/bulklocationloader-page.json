@@ -54,6 +54,9 @@
       },
       "oj-table": {
         "path": "ojs/ojtable"
+      },
+      "oj-sp-general-overview-page": {
+        "path": "oj-sp/general-overview-page/loader"
       }
     }
   }
