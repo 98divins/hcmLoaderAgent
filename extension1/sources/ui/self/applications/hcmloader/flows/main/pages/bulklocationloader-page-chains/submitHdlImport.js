@@ -195,8 +195,8 @@ define([
 
   // Endpoints VB pour les actions collection de dataLoadDataSets - a completer
   // avec les references exactes affichees dans le selecteur "Call REST" du Designer.
-  const UPLOAD_FILE_ENDPOINT = 'TODO_REPLACE_WITH_UPLOADFILE_ENDPOINT_REFERENCE';
-  const CREATE_FILE_DATA_SET_ENDPOINT = 'TODO_REPLACE_WITH_CREATEFILEDATASET_ENDPOINT_REFERENCE';
+  const UPLOAD_FILE_ENDPOINT = 'site_hcm_extension:hcmRestLoader/doall_uploadFile_dataLoadDataSets';
+  const CREATE_FILE_DATA_SET_ENDPOINT = 'site_hcm_extension:hcmRestLoader/doall_createFileDataSet_dataLoadDataSets';
 
   function extractResultValue(response) {
     const body = response && response.body;
