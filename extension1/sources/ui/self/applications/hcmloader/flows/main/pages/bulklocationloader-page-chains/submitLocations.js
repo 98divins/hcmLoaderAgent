@@ -13,6 +13,11 @@ define([
   // A ajuster selon la reponse reelle de l'API (URL et/ou noms d'attributs).
   const LOCATIONS_RESOURCE_URL = '/hcmRestApi/resources/latest/locations';
 
+  function getXsrfToken() {
+    const match = document.cookie.match(/(?:^|;\s*)(XSRF-TOKEN[^=]*)=([^;]+)/);
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
   function toRestPayload(row) {
     return {
       LocationCode: row.locationCode || '',
@@ -27,14 +32,22 @@ define([
   }
 
   async function createLocation(row) {
+    const xsrfToken = getXsrfToken();
+    // eslint-disable-next-line no-console
+    console.log('submitLocations: xsrfToken found =', xsrfToken);
+    const headers = {
+      'Content-Type': 'application/vnd.oracle.adf.resourceitem+json',
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    };
+    if (xsrfToken) {
+      headers['X-XSRF-TOKEN'] = xsrfToken;
+    }
+
     const response = await fetch(LOCATIONS_RESOURCE_URL, {
       method: 'POST',
       credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/vnd.oracle.adf.resourceitem+json',
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
+      headers,
       body: JSON.stringify(toRestPayload(row))
     });
 
