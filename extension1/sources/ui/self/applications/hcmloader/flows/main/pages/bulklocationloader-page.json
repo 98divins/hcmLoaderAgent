@@ -1,9 +1,28 @@
 {
-  "title": "bulkLocationLoader",
+  "title": "",
   "description": "",
-  "variables": {},
+  "variables": {
+    "locationRows": {
+      "type": "application:locationRowsType"
+    }
+  },
   "metadata": {},
   "types": {},
   "eventListeners": {},
-  "imports": {}
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-file-picker": {
+        "path": "oj-c/file-picker"
+      },
+      "oj-sp-canvas-page": {
+        "path": "oj-sp/canvas-page/loader"
+      },
+      "oj-table": {
+        "path": "ojs/ojtable"
+      }
+    }
+  }
 }
