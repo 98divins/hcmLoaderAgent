@@ -2,10 +2,12 @@ define([
   'vb/action/actionChain',
   'vb/action/actions',
   'vb/action/actionUtils',
+  'ojs/ojarraydataprovider',
 ], (
   ActionChain,
   Actions,
-  ActionUtils
+  ActionUtils,
+  ArrayDataProvider
 ) => {
   'use strict';
 
@@ -122,6 +124,7 @@ define([
 
       const text = await readFileAsText(fileList[0]);
       $variables.locationRows = parseCsv(text);
+      $variables.locationRowsDP = new ArrayDataProvider($variables.locationRows, { keyAttributes: '@index' });
     }
   }
 

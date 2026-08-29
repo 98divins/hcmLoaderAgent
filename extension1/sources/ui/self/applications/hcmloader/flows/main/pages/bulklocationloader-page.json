@@ -5,6 +5,9 @@
     "locationRows": {
       "type": "application:locationRowsType",
       "defaultValue": []
+    },
+    "locationRowsDP": {
+      "type": "object"
     }
   },
   "metadata": {},

@@ -2,10 +2,12 @@ define([
   'vb/action/actionChain',
   'vb/action/actions',
   'vb/action/actionUtils',
+  'ojs/ojarraydataprovider',
 ], (
   ActionChain,
   Actions,
-  ActionUtils
+  ActionUtils,
+  ArrayDataProvider
 ) => {
   'use strict';
 
@@ -31,6 +33,7 @@ define([
       };
 
       $variables.locationRows = [...($variables.locationRows || []), newRow];
+      $variables.locationRowsDP = new ArrayDataProvider($variables.locationRows, { keyAttributes: '@index' });
     }
   }
 
