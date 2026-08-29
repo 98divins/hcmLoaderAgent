@@ -1,9 +1,7 @@
-define([
-  'vb/action/actionChain',
-  'vb/action/actions',
-  'vb/action/actionUtils',
-], (
-  ActionChain,
+const response2 = define([
+  'vb/action/actionChai{
+  endpoint: 'site_hcm_extension:hcmRestLocations/create_locationsV2',
+} ActionChain,
   Actions,
   ActionUtils
 ) => {
