@@ -32,7 +32,8 @@ define([
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/vnd.oracle.adf.resourceitem+json',
-        Accept: 'application/json'
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
       },
       body: JSON.stringify(toRestPayload(row))
     });
@@ -44,6 +45,9 @@ define([
     } catch (e) {
       // Reponse non-JSON (ex: page d'erreur HTML) : on garde le texte brut.
     }
+
+    // eslint-disable-next-line no-console
+    console.log('submitLocations: response headers for', row.locationCode, [...response.headers.entries()]);
 
     return {
       row,
