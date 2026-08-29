@@ -61,8 +61,7 @@ define([
       });
 
       const hdlContent = lines.join('\n');
-      // POC: affichage brut en alert. A remplacer par une vraie zone de texte sur la page.
-      window.alert(hdlContent || 'Aucune ligne a exporter.');
+      $variables.statusMessage = hdlContent || 'Aucune ligne a exporter.';
     }
   }
 

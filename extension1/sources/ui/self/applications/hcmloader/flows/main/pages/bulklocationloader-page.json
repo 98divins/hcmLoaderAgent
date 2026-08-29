@@ -5,6 +5,14 @@
     "locationRows": {
       "type": "application:locationRowsType",
       "defaultValue": []
+    },
+    "statusMessage": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isBusy": {
+      "type": "boolean",
+      "defaultValue": false
     }
   },
   "metadata": {},

@@ -63,9 +63,12 @@ define([
       const rows = $variables.locationRows || [];
 
       if (rows.length === 0) {
-        window.alert('Aucune ligne a envoyer.');
+        $variables.statusMessage = 'Aucune ligne a envoyer.';
         return;
       }
+
+      $variables.isBusy = true;
+      $variables.statusMessage = 'Envoi en cours (REST direct)...';
 
       const results = [];
       for (const row of rows) {
@@ -86,7 +89,8 @@ define([
 
       // eslint-disable-next-line no-console
       console.log('submitLocations results:', results);
-      window.alert(summaryLines.join('\n'));
+      $variables.isBusy = false;
+      $variables.statusMessage = summaryLines.join('\n');
     }
   }
 

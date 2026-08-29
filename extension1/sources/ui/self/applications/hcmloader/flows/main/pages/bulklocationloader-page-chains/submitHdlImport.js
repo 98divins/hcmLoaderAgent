@@ -227,9 +227,12 @@ define([
       const rows = $variables.locationRows || [];
 
       if (rows.length === 0) {
-        window.alert('Aucune ligne a envoyer.');
+        $variables.statusMessage = 'Aucune ligne a envoyer.';
         return;
       }
+
+      $variables.isBusy = true;
+      $variables.statusMessage = 'Generation du fichier HDL...';
 
       const hdlContent = buildHdlContent(rows);
       const zipBytes = buildZip('Location.dat', hdlContent);
@@ -241,11 +244,13 @@ define([
       console.log('submitHdlImport: zip size =', zipBytes.length, 'base64 length =', base64Zip.length);
 
       if (UPLOAD_FILE_ENDPOINT.indexOf('TODO') === 0 || CREATE_FILE_DATA_SET_ENDPOINT.indexOf('TODO') === 0) {
-        window.alert('Endpoints dataLoadDataSets pas encore configures - voir console pour le ZIP genere en base64.');
+        $variables.isBusy = false;
+        $variables.statusMessage = 'Endpoints dataLoadDataSets pas encore configures.';
         return;
       }
 
       try {
+        $variables.statusMessage = 'Envoi du fichier vers le serveur de contenu Oracle...';
         // Etape 1 : upload du fichier sur le serveur de contenu Oracle.
         const uploadResponse = await Actions.callRest(context, {
           endpoint: UPLOAD_FILE_ENDPOINT,
@@ -259,11 +264,13 @@ define([
         const contentId = extractResultField(uploadResponse, 'ContentId');
 
         if (!contentId) {
-          window.alert(`uploadFile: pas de ContentId trouve. Body brut:\n${JSON.stringify(uploadResponse && uploadResponse.body)}`);
+          $variables.isBusy = false;
+          $variables.statusMessage = `uploadFile: pas de ContentId trouve. Body brut:\n${JSON.stringify(uploadResponse && uploadResponse.body)}`;
           return;
         }
 
         // Etape 2 : soumission du data set pour import + chargement.
+        $variables.statusMessage = 'Soumission du chargement HCM Data Loader...';
         const dataSetName = `BulkLocationLoad-${new Date().toISOString().replace(/[:.]/g, '')}`;
         const submitResponse = await Actions.callRest(context, {
           endpoint: CREATE_FILE_DATA_SET_ENDPOINT,
@@ -277,12 +284,14 @@ define([
         console.log('submitHdlImport: createFileDataSet response body =', JSON.stringify(submitResponse && submitResponse.body));
         const requestId = extractResultField(submitResponse, 'RequestId');
 
-        window.alert(`Import HDL soumis avec succes.\nContentId: ${contentId}\ndataSetName: ${dataSetName}\nRequestId: ${requestId}\n\nLe traitement HDL est asynchrone (peut prendre plusieurs minutes) - verifier le statut via dataLoadDataSets (findByRequestId=${requestId}).`);
+        $variables.isBusy = false;
+        $variables.statusMessage = `Import HDL soumis avec succes.\nContentId: ${contentId}\ndataSetName: ${dataSetName}\nRequestId: ${requestId}\n\nLe traitement HDL est asynchrone (peut prendre plusieurs minutes) - verifier le statut via dataLoadDataSets (findByRequestId=${requestId}).`;
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log('submitHdlImport: error =', error);
         const body = (error && error.body) || (error && error.message) || error;
-        window.alert(`Echec de la soumission HDL: ${typeof body === 'string' ? body : JSON.stringify(body)}`);
+        $variables.isBusy = false;
+        $variables.statusMessage = `Echec de la soumission HDL: ${typeof body === 'string' ? body : JSON.stringify(body)}`;
       }
     }
   }
