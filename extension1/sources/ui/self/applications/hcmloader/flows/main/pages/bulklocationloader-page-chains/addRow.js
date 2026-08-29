@@ -18,6 +18,19 @@ define([
      */
     async run(context, { event }) {
       const { $page, $flow, $application, $base, $extension, $constants, $variables } = context;
+
+      const newRow = {
+        locationCode: '',
+        name: '',
+        effectiveStartDate: '',
+        addressLine1: '',
+        townOrCity: '',
+        region1: '',
+        postalCode: '',
+        country: ''
+      };
+
+      $variables.locationRows = [...($variables.locationRows || []), newRow];
     }
   }
 

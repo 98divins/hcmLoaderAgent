@@ -18,6 +18,16 @@
           }
         }
       ]
+    },
+    "generateHdlPreviewAction": {
+      "chains": [
+        {
+          "chain": "generateHdlPreview",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
     }
   },
   "imports": {
