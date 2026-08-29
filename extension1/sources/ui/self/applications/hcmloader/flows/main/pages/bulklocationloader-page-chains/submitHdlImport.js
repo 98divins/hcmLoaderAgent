@@ -255,11 +255,11 @@ define([
           }
         });
         // eslint-disable-next-line no-console
-        console.log('submitHdlImport: uploadFile response =', uploadResponse);
+        console.log('submitHdlImport: uploadFile response body =', JSON.stringify(uploadResponse && uploadResponse.body));
         const contentId = extractResultValue(uploadResponse);
 
         if (!contentId) {
-          window.alert('uploadFile a reussi mais aucun contentId n\'a ete trouve dans la reponse - voir console.');
+          window.alert(`uploadFile: pas de contentId trouve. Body brut:\n${JSON.stringify(uploadResponse && uploadResponse.body)}`);
           return;
         }
 
@@ -274,10 +274,9 @@ define([
           }
         });
         // eslint-disable-next-line no-console
-        console.log('submitHdlImport: createFileDataSet response =', submitResponse);
-        const requestId = extractResultValue(submitResponse);
+        console.log('submitHdlImport: createFileDataSet response body =', JSON.stringify(submitResponse && submitResponse.body));
 
-        window.alert(`Import HDL soumis avec succes.\ncontentId: ${contentId}\ndataSetName: ${dataSetName}\nrequestId: ${requestId}\n\nLe traitement HDL est asynchrone (peut prendre plusieurs minutes) - verifier le statut dans dataLoadDataSets.`);
+        window.alert(`Import HDL soumis.\ncontentId (extrait): ${contentId}\ndataSetName: ${dataSetName}\n\nBody upload:\n${JSON.stringify(uploadResponse && uploadResponse.body)}\n\nBody submit:\n${JSON.stringify(submitResponse && submitResponse.body)}`);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log('submitHdlImport: error =', error);
