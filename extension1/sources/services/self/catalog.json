@@ -1,0 +1,35 @@
+{
+    "backends": {},
+    "services": {
+        "hcmRestLocations": {
+            "openapi": "3.0.0",
+            "info": {
+                "x-vb": {
+                    "serviceType": "adf-rest"
+                }
+            },
+            "servers": [
+                {
+                    "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
+                    "variables": {
+                        "REST-Framework-Version": {
+                            "default": "9"
+                        }
+                    }
+                }
+            ],
+            "paths": {
+                "/describe.openapi": {
+                    "get": {
+                        "x-vb": {
+                            "queryParameters": {
+                                "metadataMode": "minimal",
+                                "resources": "locations"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
