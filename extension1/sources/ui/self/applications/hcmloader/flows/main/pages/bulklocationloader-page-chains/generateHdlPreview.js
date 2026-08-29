@@ -11,8 +11,11 @@ define([
 
   // Ordre des colonnes du fichier HDL pour l'objet metier "Location".
   // Noms d'attributs a valider avec la doc Oracle HDL avant un usage reel.
+  const DEFAULT_SET_CODE = 'COMMON';
+
   const HDL_COLUMNS = [
     'LocationCode',
+    'SetCode',
     'EffectiveStartDate',
     'LocationName',
     'AddressLine1',
@@ -24,6 +27,7 @@ define([
 
   const ROW_FIELD_ORDER = [
     'locationCode',
+    '__setCode__',
     'effectiveStartDate',
     'name',
     'addressLine1',
@@ -47,7 +51,12 @@ define([
       const lines = [];
       lines.push(['METADATA', 'Location', ...HDL_COLUMNS].join('|'));
       rows.forEach((row) => {
-        const values = ROW_FIELD_ORDER.map((field) => row[field] || '');
+        const values = ROW_FIELD_ORDER.map((field) => {
+          if (field === '__setCode__') {
+            return DEFAULT_SET_CODE;
+          }
+          return row[field] || '';
+        });
         lines.push(['MERGE', 'Location', ...values].join('|'));
       });
 

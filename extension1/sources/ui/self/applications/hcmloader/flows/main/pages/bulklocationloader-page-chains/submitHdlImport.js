@@ -146,8 +146,12 @@ define([
   // de colonnes selon la configuration du tenant).
   // ---------------------------------------------------------------------
 
+  // Jeu de donnees de reference par defaut - a confirmer/ajuster selon la config du tenant.
+  const DEFAULT_SET_CODE = 'COMMON';
+
   const HDL_COLUMNS = [
     'LocationCode',
+    'SetCode',
     'EffectiveStartDate',
     'LocationName',
     'AddressLine1',
@@ -159,6 +163,7 @@ define([
 
   const ROW_FIELD_ORDER = [
     'locationCode',
+    '__setCode__',
     'effectiveStartDate',
     'name',
     'addressLine1',
@@ -178,6 +183,9 @@ define([
     lines.push(['METADATA', 'Location', ...HDL_COLUMNS].join('|'));
     rows.forEach((row) => {
       const values = ROW_FIELD_ORDER.map((field) => {
+        if (field === '__setCode__') {
+          return DEFAULT_SET_CODE;
+        }
         if (field === 'effectiveStartDate') {
           return toHdlDateFormat(row[field]);
         }
