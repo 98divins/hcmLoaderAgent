@@ -47,18 +47,7 @@
           }
         }
       ]
-    },
-    "importFileAction": {
-      "chains": [
-        {
-          "chain": "importFile",
-          "parameters": {
-            "event": "{{$event}}"
-          }
-        }
-      ]
     }
-
   },
   "imports": {
     "components": {
