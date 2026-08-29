@@ -8,7 +8,18 @@
   },
   "metadata": {},
   "types": {},
-  "eventListeners": {},
+  "eventListeners": {
+    "addRowChainAction": {
+      "chains": [
+        {
+          "chain": "addRow",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
+    }
+  },
   "imports": {
     "components": {
       "oj-c-button": {

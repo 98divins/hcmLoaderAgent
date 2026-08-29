@@ -1,4 +1,4 @@
-<oj-c-button label="Ajouter une ligne" id="addRowChain"></oj-c-button>
+<oj-c-button label="Ajouter une ligne" id="addRowChain" on-oj-action="[[$listeners.addRowChainAction]]"></oj-c-button>
 <oj-c-file-picker slot="trigger"></oj-c-file-picker>
 <oj-c-button label="Générer aperçu HDL"></oj-c-button>
 <oj-table scroll-policy="loadMoreOnScroll" data="[[ $variables.locationRows ]]"
