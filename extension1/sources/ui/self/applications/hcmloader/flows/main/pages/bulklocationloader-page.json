@@ -57,6 +57,16 @@
           }
         }
       ]
+    },
+    "submitHdlImportAction": {
+      "chains": [
+        {
+          "chain": "submitHdlImport",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
     }
   },
   "imports": {
