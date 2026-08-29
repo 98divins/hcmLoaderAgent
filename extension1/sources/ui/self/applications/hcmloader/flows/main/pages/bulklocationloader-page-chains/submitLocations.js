@@ -1,7 +1,9 @@
-const response2 = define([
-  'vb/action/actionChai{
-  endpoint: 'site_hcm_extension:hcmRestLocations/create_locationsV2',
-} ActionChain,
+define([
+  'vb/action/actionChain',
+  'vb/action/actions',
+  'vb/action/actionUtils',
+], (
+  ActionChain,
   Actions,
   ActionUtils
 ) => {
@@ -36,6 +38,18 @@ const response2 = define([
     };
   }
 
+  async function createLocation(context, row) {
+    try {
+      const response = await Actions.callRest(context, {
+        endpoint: 'site_hcm_extension:hcmRestLocations/create_locationsV2',
+        body: toRestPayload(row)
+      });
+      return { row, ok: true, body: response && response.body };
+    } catch (error) {
+      return { row, ok: false, body: (error && error.body) || (error && error.message) || error };
+    }
+  }
+
   class submitLocations extends ActionChain {
 
     /**
@@ -52,31 +66,26 @@ const response2 = define([
         return;
       }
 
-      // Hypothese de format "bulk" Oracle (parts[]) - a ajuster selon la reponse reelle du serveur.
-      const parts = rows.map((row, index) => ({
-        id: String(index + 1),
-        path: '/locationsV2',
-        operation: 'create',
-        payload: toRestPayload(row)
-      }));
-
-      let response;
-      try {
-        response = await Actions.callRest(context, {
-          endpoint: 'site_hcm_extension:hcmRestLocations/batch',
-          body: { parts }
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log('submitLocations: callRest error', error);
-        window.alert(`Echec de l'appel REST : ${error && error.message ? error.message : JSON.stringify(error)}`);
-        return;
+      const results = [];
+      for (const row of rows) {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await createLocation(context, row);
+        results.push(result);
       }
 
+      const summaryLines = results.map((result, index) => {
+        const code = result.row.locationCode || `(ligne ${index + 1})`;
+        if (result.ok) {
+          return `OK - ${code}`;
+        }
+        const errorDetail = (result.body && (result.body.detail || result.body.title || result.body.message))
+          || (typeof result.body === 'string' ? result.body.slice(0, 300) : JSON.stringify(result.body));
+        return `ECHEC - ${code} - ${errorDetail}`;
+      });
+
       // eslint-disable-next-line no-console
-      console.log('submitLocations: response', response);
-      const bodyPreview = JSON.stringify((response && response.body) || response).slice(0, 800);
-      window.alert(`Reponse recue, voir la console pour le detail.\n${bodyPreview}`);
+      console.log('submitLocations results:', results);
+      window.alert(summaryLines.join('\n'));
     }
   }
 
