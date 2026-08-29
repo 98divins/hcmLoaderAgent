@@ -85,6 +85,9 @@
       "oj-c-file-picker": {
         "path": "oj-c/file-picker"
       },
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
       "oj-table": {
         "path": "ojs/ojtable"
       },

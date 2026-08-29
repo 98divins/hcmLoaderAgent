@@ -33,6 +33,31 @@
     <oj-table scroll-policy="loadAll" style="width: 100%; height: 400px;"
       data="[[ $page.functions.getLocationRowsDP($variables.locationRows) ]]"
       columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'
-      edit-mode="rowEdit"></oj-table>
+      edit-mode="rowEdit">
+      <template slot="colLocationCode-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colName-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colEffectiveStartDate-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}" placeholder="aaaa-mm-jj"></oj-c-input-text>
+      </template>
+      <template slot="colAddressLine1-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colTownOrCity-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colRegion1-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colPostalCode-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colCountry-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+    </oj-table>
   </div>
 </oj-sp-general-overview-page>
