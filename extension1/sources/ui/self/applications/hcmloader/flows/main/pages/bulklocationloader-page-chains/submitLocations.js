@@ -20,6 +20,8 @@ define([
     return {
       LocationCode: row.locationCode || '',
       LocationName: row.name || '',
+      EffectiveStartDate: row.effectiveStartDate || '',
+      EffectiveEndDate: OPEN_ENDED_DATE,
       SetCode: DEFAULT_SET_CODE,
       addresses: [
         {
@@ -38,10 +40,9 @@ define([
 
   async function createLocation(context, row) {
     try {
-      const effectiveOf = `RangeStartDate=${row.effectiveStartDate};RangeEndDate=${row.effectiveStartDate}`;
       const response = await Actions.callRest(context, {
         endpoint: 'site_hcm_extension:hcmRestLocations/create_locationsV2',
-        headers: { 'Effective-Of': effectiveOf },
+        headers: { 'Upsert-Mode': 'true' },
         body: toRestPayload(row)
       });
       return { row, ok: true, body: response && response.body };
