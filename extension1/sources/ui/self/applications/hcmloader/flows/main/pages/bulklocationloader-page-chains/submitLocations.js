@@ -13,7 +13,6 @@ define([
     return {
       LocationCode: row.locationCode || '',
       LocationName: row.name || '',
-      EffectiveStartDate: row.effectiveStartDate || '',
       AddressLine1: row.addressLine1 || '',
       TownOrCity: row.townOrCity || '',
       Region1: row.region1 || '',
