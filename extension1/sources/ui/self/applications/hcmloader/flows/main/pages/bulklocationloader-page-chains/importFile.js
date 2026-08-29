@@ -113,10 +113,16 @@ define([
       const { $variables } = context;
 
       const detail = (event && event.detail) || {};
+      // eslint-disable-next-line no-console
+      console.log('importFile: event.detail =', detail);
       const files = detail.value || detail.files || [];
       const fileList = Array.isArray(files) ? files : Array.from(files || []);
+      // eslint-disable-next-line no-console
+      console.log('importFile: resolved fileList =', fileList);
 
       if (fileList.length === 0) {
+        // eslint-disable-next-line no-console
+        console.log('importFile: no files resolved, aborting');
         return;
       }
 
