@@ -1,5 +1,7 @@
-define([
-  'vb/action/actionChain',
+const response2 = define([
+  'vb/action/actionChai{
+  endpoint: 'site_hcm_extension:hcmRestLocations/batch',
+}
   'vb/action/actions',
   'vb/action/actionUtils',
 ], (
@@ -79,6 +81,9 @@ define([
      */
     async run(context, { event }) {
       const { $variables } = context;
+      await Actions.callRest(context, {
+      });
+
       const rows = $variables.locationRows || [];
 
       if (rows.length === 0) {
@@ -94,13 +99,13 @@ define([
       }
 
       const summaryLines = results.map((result, index) => {
-        const code = result.row.locationCode || `(ligne ${index + 1})`;
+        const code = result.row.locationCode || (ligne ${index + 1});
         if (result.ok) {
-          return `OK - ${code}`;
+          return OK - ${code};
         }
         const errorDetail = (result.body && (result.body.detail || result.body.title || result.body.message))
           || (typeof result.body === 'string' ? result.body.slice(0, 300) : JSON.stringify(result.body));
-        return `ECHEC - ${code} - HTTP ${result.status} - ${errorDetail}`;
+        return ECHEC - ${code} - HTTP ${result.status} - ${errorDetail};
       });
 
       // eslint-disable-next-line no-console

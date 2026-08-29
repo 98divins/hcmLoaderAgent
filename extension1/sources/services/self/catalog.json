@@ -24,7 +24,7 @@
                         "x-vb": {
                             "queryParameters": {
                                 "metadataMode": "minimal",
-                                "resources": "locations"
+                                "resources": "locationsV2"
                             }
                         }
                     }
