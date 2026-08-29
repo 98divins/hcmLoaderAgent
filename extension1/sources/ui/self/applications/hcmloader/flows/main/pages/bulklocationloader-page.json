@@ -17,9 +17,6 @@
       "oj-c-file-picker": {
         "path": "oj-c/file-picker"
       },
-      "oj-sp-canvas-page": {
-        "path": "oj-sp/canvas-page/loader"
-      },
       "oj-table": {
         "path": "ojs/ojtable"
       }

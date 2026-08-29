@@ -1,7 +1,5 @@
-<oj-sp-canvas-page page-title="bulklocationloader">
-  <oj-c-button label="Ajouter une ligne" id="addRowChain"></oj-c-button>
-  <oj-c-file-picker></oj-c-file-picker>
-  <oj-c-button label="Générer aperçu HDL"></oj-c-button>
-  <oj-table scroll-policy="loadMoreOnScroll" data="[[ $variables.locationRows ]]"
-    columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'></oj-table>
-</oj-sp-canvas-page>
+<oj-c-button label="Ajouter une ligne" id="addRowChain"></oj-c-button>
+<oj-c-file-picker slot="trigger"></oj-c-file-picker>
+<oj-c-button label="Générer aperçu HDL"></oj-c-button>
+<oj-table scroll-policy="loadMoreOnScroll" data="[[ $variables.locationRows ]]"
+  columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'></oj-table>
