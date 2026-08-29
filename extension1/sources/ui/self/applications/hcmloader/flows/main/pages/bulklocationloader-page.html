@@ -1,5 +1,7 @@
-<oj-c-button label="Ajouter une ligne" id="addRowChain" on-oj-action="[[$listeners.addRowChainAction]]"></oj-c-button>
-<oj-c-file-picker slot="trigger" on-selected-files-changed="[[$listeners.importFileAction]]"></oj-c-file-picker>
-<oj-c-button label="Générer aperçu HDL" id="generateHdlPreviewButton" on-oj-action="[[$listeners.generateHdlPreviewAction]]"></oj-c-button>
-<oj-table scroll-policy="loadAll" style="width: 100%;" data="[[ $variables.locationRows ]]"
-  columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'></oj-table>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; width: 100%; height: 100%; box-sizing: border-box;">
+  <oj-c-button label="Ajouter une ligne" id="addRowChain" on-oj-action="[[$listeners.addRowChainAction]]"></oj-c-button>
+  <oj-c-file-picker slot="trigger" on-selected-files-changed="[[$listeners.importFileAction]]"></oj-c-file-picker>
+  <oj-c-button label="Générer aperçu HDL" id="generateHdlPreviewButton" on-oj-action="[[$listeners.generateHdlPreviewAction]]"></oj-c-button>
+  <oj-table scroll-policy="loadAll" style="width: 100%; height: 400px;" data="[[ $variables.locationRows ]]"
+    columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'></oj-table>
+</div>
