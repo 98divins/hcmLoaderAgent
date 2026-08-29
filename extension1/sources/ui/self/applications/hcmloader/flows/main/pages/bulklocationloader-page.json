@@ -27,6 +27,17 @@
         }
       ]
     },
+    "filePickerSelect": {
+      "chains": [
+        {
+          "chain": "FilePickerSelectChain",
+          "parameters": {
+            "event": "{{$event}}",
+            "files": "[[ Array.prototype.slice.call($event.detail.files) ]]"
+          }
+        }
+      ]
+    },
     "generateHdlPreviewAction": {
       "chains": [
         {
@@ -47,6 +58,7 @@
         }
       ]
     }
+
   },
   "imports": {
     "components": {

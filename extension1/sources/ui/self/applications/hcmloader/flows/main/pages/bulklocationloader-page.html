@@ -1,7 +1,8 @@
 <oj-sp-general-overview-page id="oj_gop1" display-options.responsive-padding="on" page-title="HCM Loader">
   <div slot="main">
     <oj-c-button label="Ajouter une ligne" id="addRowChain" on-oj-action="[[$listeners.addRowChainAction]]"></oj-c-button>
-    <oj-c-file-picker on-selected-files-changed="[[$listeners.importFileAction]]"></oj-c-file-picker>
+    <oj-c-file-picker on-selected-files-changed="[[$listeners.importFileAction]]"
+      on-oj-select="[[$listeners.filePickerSelect]]"></oj-c-file-picker>
     <oj-c-button label="Générer aperçu HDL" id="generateHdlPreviewButton"
       on-oj-action="[[$listeners.generateHdlPreviewAction]]"></oj-c-button>
   </div>
