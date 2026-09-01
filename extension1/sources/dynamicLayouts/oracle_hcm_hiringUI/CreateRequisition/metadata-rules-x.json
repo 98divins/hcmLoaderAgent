@@ -1,0 +1,64 @@
+{
+    "addMetadataRules": [
+        {
+            "id": "test",
+            "label": "Test",
+            "description": "",
+            "status": "active",
+            "overlay": {
+                "fields": {
+                    "Details.requisitionDFF.RequisitionId": {
+                        "value": {
+                            "value": "[[ $modules.test.getDetailsRequisitionDFFRequisitionId({ $componentContext, $fields, $modules, $user }) ]]"
+                        },
+                        "referencedFields": {
+                            "generated": [
+                                "RecruitingJobRequisition.HcmParams.JobRequisitionCreationSource"
+                            ]
+                        }
+                    },
+                    "Details.JobShiftCode": {
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.JobTypeCode": {
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.MaximumSalary": {
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.FullTimeOrPartTime": {
+                        "value": {
+                            "value": "[[ $modules.test.getDetailsFullTimeOrPartTime({ $componentContext, $fields, $modules, $user }) ]]"
+                        },
+                        "referencedFields": {
+                            "generated": [
+                                "Details.FullTimeOrPartTime",
+                                "RecruitingJobRequisition.HcmParams.JobRequisitionCreationSource"
+                            ]
+                        }
+                    }
+                }
+            },
+            "condition": {
+                "expression": true
+            }
+        }
+      ],
+    "addCollectionMetadataRules": {
+        "metadataRules": []
+    },
+    "imports": {
+        "modules": {
+            "test": {
+                "path": "./metadataRules/site_hcm_extension_test"
+            }
+        }
+      },
+    "metadataRulesVersion": "2607.8.0"
+}

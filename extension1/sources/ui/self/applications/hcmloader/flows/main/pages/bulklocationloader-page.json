@@ -1,0 +1,99 @@
+{
+  "title": "HCM Loader",
+  "description": "",
+  "variables": {
+    "locationRows": {
+      "type": "application:locationRowsType",
+      "defaultValue": []
+    },
+    "statusMessage": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isBusy": {
+      "type": "boolean",
+      "defaultValue": false
+    }
+  },
+  "metadata": {},
+  "types": {
+    "action": {
+      "id": "string",
+      "label": "string",
+      "display": "string",
+      "icon": "string"
+    }
+  },
+  "eventListeners": {
+    "addRowChainAction": {
+      "chains": [
+        {
+          "chain": "addRow",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
+    },
+    "filePickerSelect": {
+      "chains": [
+        {
+          "chain": "FilePickerSelectChain",
+          "parameters": {
+            "event": "{{$event}}",
+            "files": "[[ Array.prototype.slice.call($event.detail.files) ]]"
+          }
+        }
+      ]
+    },
+    "generateHdlPreviewAction": {
+      "chains": [
+        {
+          "chain": "generateHdlPreview",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
+    },
+    "submitLocationsAction": {
+      "chains": [
+        {
+          "chain": "submitLocations",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
+    },
+    "submitHdlImportAction": {
+      "chains": [
+        {
+          "chain": "submitHdlImport",
+          "parameters": {
+            "event": "{{$event}}"
+          }
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-file-picker": {
+        "path": "oj-c/file-picker"
+      },
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
+      "oj-table": {
+        "path": "ojs/ojtable"
+      },
+      "oj-sp-general-overview-page": {
+        "path": "oj-sp/general-overview-page/loader"
+      }
+    }
+  }
+}

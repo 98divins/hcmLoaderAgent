@@ -1,0 +1,63 @@
+<oj-sp-general-overview-page id="oj_gop1" display-options.responsive-padding="on" page-title="HCM Loader">
+  <div slot="main">
+    <div style="margin-bottom: 16px;">
+      <h4 style="margin-bottom: 8px;">Édition</h4>
+      <oj-c-button label="Ajouter une ligne" id="addRowChain" on-oj-action="[[$listeners.addRowChainAction]]"></oj-c-button>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <h4 style="margin-bottom: 8px;">Import fichier</h4>
+      <oj-c-file-picker on-oj-select="[[$listeners.filePickerSelect]]"></oj-c-file-picker>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <h4 style="margin-bottom: 8px;">Aperçu et envoi</h4>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <oj-c-button label="Aperçu HDL" id="generateHdlPreviewButton"
+          on-oj-action="[[$listeners.generateHdlPreviewAction]]"></oj-c-button>
+        <oj-c-button label="Envoyer (REST direct)" id="submitLocationsButton"
+          on-oj-action="[[$listeners.submitLocationsAction]]"></oj-c-button>
+        <oj-c-button label="Envoyer (fichier HDL)" id="submitHdlImportButton"
+          on-oj-action="[[$listeners.submitHdlImportAction]]"></oj-c-button>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="margin-bottom: 8px;">Résultat</h4>
+      <div style="white-space: pre-wrap; font-family: monospace; font-size: 12px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 12px; min-height: 60px; max-height: 300px; overflow-y: auto;">
+        <oj-bind-text value="[[ $variables.statusMessage || 'Aucun resultat pour le moment.' ]]"></oj-bind-text>
+      </div>
+    </div>
+  </div>
+  <div slot="info">
+    <oj-table scroll-policy="loadAll" style="width: 100%; height: 400px;"
+      data="[[ $page.functions.getLocationRowsDP($variables.locationRows) ]]"
+      columns='[  { "headerText": "Code site", "field": "locationCode", "id": "colLocationCode" },  { "headerText": "Nom", "field": "name", "id": "colName" },  { "headerText": "Date d&apos;effet", "field": "effectiveStartDate", "id": "colEffectiveStartDate" },  { "headerText": "Adresse", "field": "addressLine1", "id": "colAddressLine1" },  { "headerText": "Ville", "field": "townOrCity", "id": "colTownOrCity" },  { "headerText": "Région", "field": "region1", "id": "colRegion1" },  { "headerText": "Code postal", "field": "postalCode", "id": "colPostalCode" },  { "headerText": "Pays", "field": "country", "id": "colCountry" }]'
+      edit-mode="rowEdit">
+      <template slot="colLocationCode-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colName-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colEffectiveStartDate-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}" placeholder="aaaa-mm-jj"></oj-c-input-text>
+      </template>
+      <template slot="colAddressLine1-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colTownOrCity-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colRegion1-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colPostalCode-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+      <template slot="colCountry-edit" data-oj-as="cell">
+        <oj-c-input-text value="{{cell.data}}"></oj-c-input-text>
+      </template>
+    </oj-table>
+  </div>
+</oj-sp-general-overview-page>

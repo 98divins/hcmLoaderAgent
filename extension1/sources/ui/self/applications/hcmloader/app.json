@@ -1,0 +1,31 @@
+{
+  "id": "hcmloader",
+  "urlId": "x-hcmLoader",
+  "description": "An App UI",
+  "defaultFlow": "main",
+  "events": {},
+  "types": {
+    "locationRowsType": [
+      {
+        "locationCode": "string",
+        "name": "string",
+        "effectiveStartDate": "string",
+        "addressLine1": "string",
+        "townOrCity": "string",
+        "region1": "string",
+        "postalCode": "string",
+        "country": "string"
+      }
+    ]
+  },
+  "variables": {
+    "locationRows": {
+      "type": "locationRowsType"
+    }
+  },
+  "eventListeners": {},
+  "unifiedAppSettings": {
+    "displayName": "hcmloader"
+  },
+  "security": {}
+}
