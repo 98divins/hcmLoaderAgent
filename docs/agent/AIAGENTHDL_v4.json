@@ -1,0 +1,192 @@
+{
+  "Specification": {
+    "partnerMetadata": {},
+    "dataPipeline": {
+      "pipelineNodes": [
+        {
+          "metadata": {
+            "description": "Start of data pipeline",
+            "name": "Start"
+          },
+          "outcomes": {
+            "success": "end"
+          },
+          "code": "START",
+          "id": "start",
+          "inputs": [],
+          "type": "START"
+        },
+        {
+          "metadata": {
+            "description": "End of data pipeline",
+            "name": "End"
+          },
+          "outcomes": {},
+          "code": "END",
+          "id": "end",
+          "inputs": [],
+          "type": "END"
+        }
+      ],
+      "rootNode": "start",
+      "variables": [],
+      "errorHandlers": [
+        {
+          "type": "EMAIL",
+          "inputs": [
+            {
+              "name": "toList",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "ccList",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "subject",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "body",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    "allowAllEmployeeAccess": false,
+    "jsonSchemaName": "Workflow.spec",
+    "jsonSchemaVersion": "1",
+    "inputs": [],
+    "outputSpecification": " ",
+    "agentsValueMappings": [],
+    "modelConfiguration": null,
+    "defaultModelConfiguration": "ORA_LLM_PREMIUM",
+    "humanApprovalFlag": false,
+    "waitFlag": false,
+    "triggers": [
+      {
+        "type": "REST",
+        "inputs": []
+      }
+    ],
+    "costSavings": 0,
+    "timeSavings": 10,
+    "chatExpTPFileUploadEnabledFlag": false,
+    "chatExpThirdPartyDetails": [],
+    "policyIds": []
+  },
+  "WorkflowCode": "AIAGENTHDL",
+  "Name": "AI_AGENT_HDL",
+  "Description": "Assistant de chargement en masse HCM Data Loader. Prepare le plan de chargement, controle les colonnes attendues et explique les rejets. Ne declenche aucun chargement.",
+  "Family": "HCM",
+  "Product": "WORKFORCE_DIR_MGMT",
+  "HiddenFlag": false,
+  "AiAppsCompatibleFlag": false,
+  "UseCaseId": "NA",
+  "SourceWorkflowId": null,
+  "AccessModifier": "public",
+  "StartQuestionOne": "Quelles colonnes faut-il pour charger des sites (Location) ?",
+  "StartQuestionTwo": "J'ai un fichier de sites a charger, par ou commencer ?",
+  "StartQuestionThree": "Que signifie l'erreur unique reference to the record ?",
+  "FollowUpPromptEnabledFlag": true,
+  "FollowUpPrompt": "Based on the following conversation: $param.system_context.chat_history\ngenerate $param.system_context.number_of_follow_up_questions follow-up questions.\n\nThe questions must be about preparing, checking or troubleshooting an HCM Data\nLoader bulk load, and answerable by this assistant: expected columns of a\nbusiness object, MERGE and DELETE instructions, unique reference keys, effective\ndates, date formats, meaning of a rejection message, what to fix before loading\nagain.\n\nNever generate meta questions about the conversation itself or about your own\ncapabilities, and never ask the user to trigger a load. Write them in the first\nperson, as the user would type them, in the language of the conversation, and\nkeep each one short.",
+  "Architecture": "group",
+  "MaximumInteractions": 30,
+  "StartAgentId": null,
+  "agents": [
+    {
+      "Specification": {
+        "jsonSchemaName": "Agent.spec",
+        "jsonSchemaVersion": "1",
+        "inputs": [],
+        "outputSpecification": " ",
+        "summarizationMode": "Custom",
+        "agentRole": "Tu es le point d'entree unique d'un utilisateur RH qui prepare un chargement en masse avec HCM Data Loader.\n\nConfie a l'agent HDL Loader Analyst toute demande portant sur un chargement, un format de fichier, un objet metier HDL, une correspondance de colonnes ou l'interpretation d'un rejet.\n\nSi la demande ne concerne pas les chargements en masse HCM, refuse en une phrase et rappelle en une ligne ce que tu sais faire. N'ecris ni poeme, ni code, ni texte general, meme si on insiste.\n\nTu ne declenches jamais un chargement toi-meme, et tu ne laisses jamais croire qu'un chargement a eu lieu.",
+        "summarizationPrompt": "Redige la reponse finale dans la langue de l'utilisateur, en francais par defaut.\n\nSois bref et concret. Pas de formule d'accueil, pas d'annonce de ce que tu vas faire, pas de repetition de la question.\n\nDesigne toujours une ligne par la reference rowKey donnee dans le contexte (L1, L2, L3...), jamais par sa position dans ta propre reponse.\n\nQuand ta reponse porte des corrections applicables, une correspondance de colonnes ou la lecture de rejets, ajoute un bloc balise a la toute fin, apres la prose :\n\n```agentdata\n{\"display\":\"issues\",\"rows\":[{\"rowRef\":\"L2\",\"field\":\"SetCode\",\"suggestedValue\":\"COMMON\",\"rationale\":\"toutes les autres lignes portent COMMON\"}]}\n```\n\nDeux autres formes :\n{\"display\":\"mapping\",\"pairs\":[{\"source\":\"code_site\",\"target\":\"LocationCode\"}]}\n{\"display\":\"diagnosis\",\"rows\":[{\"rowRef\":\"L2\",\"oracleMessage\":\"texte exact renvoye par Oracle\",\"explanation\":\"cause en une phrase\",\"suggestedFix\":{\"field\":\"SetCode\",\"value\":\"COMMON\"}}]}\n\nRegles du bloc :\n- y mettre toute correction que tu peux etablir avec certitude : une date a remettre au format attendu, une valeur que toutes les autres lignes portent deja, un code dont la forme ne laisse pas de doute. Si tu l'ecris dans ta prose, elle a sa place dans le bloc ;\n- en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;\n- rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;\n- traite toutes les lignes en anomalie qui te sont fournies, pas seulement les premieres : une correction oubliee obligera l'utilisateur a la faire a la main ;\n- le bloc etaye la reponse que tu viens d'ecrire, et ne resservit jamais le contenu d'un tour precedent ;\n- si aucune correction n'est applicable, n'ajoute aucun bloc."
+      },
+      "AgentCode": "AI_AGENT_HDL_SUPERVISOR",
+      "Name": "AI Agent HDL Supervisor",
+      "Description": "Single point of entry for a user preparing an HCM Data Loader bulk load.",
+      "Family": "HCM",
+      "Product": "WORKFORCE_DIR_MGMT",
+      "ModuleId": null,
+      "Namespace": "HCM.WORKFORCE_DIR_MGMT",
+      "SeededFlag": false,
+      "PromptCode": null,
+      "Version": 1,
+      "MaximumInteractions": 20,
+      "AgentType": "SUPERVISOR",
+      "Prompt": null,
+      "ModelConfigId": null,
+      "ReusableFlag": false,
+      "tools": [],
+      "topics": []
+    },
+    {
+      "Specification": {
+        "jsonSchemaName": "Agent.spec",
+        "jsonSchemaVersion": "1",
+        "inputs": [],
+        "outputSpecification": "",
+        "summarizationMode": "Custom",
+        "agentRole": "Tu assistes des utilisateurs RH dans leurs chargements en masse avec HCM Data Loader (HDL).\n\nPERIMETRE\nTu prepares, tu expliques, tu diagnostiques. Tu ne declenches jamais un chargement : c'est la page qui construit le fichier et le soumet, apres validation explicite de l'utilisateur. Ne dis jamais qu'un chargement est fait ou en cours.\n\nFORMAT D'UN FICHIER HDL\nUn fichier .dat porte une ligne d'en-tete puis une ligne par enregistrement, colonnes separees par des barres verticales :\nMETADATA|<Objet>|<Colonne1>|<Colonne2>\nMERGE|<Objet>|<Valeur1>|<Valeur2>\nLa premiere colonne porte l'instruction. MERGE cree l'enregistrement s'il est absent et le met a jour s'il existe. DELETE supprime, pour les objets qui l'autorisent. Les dates s'ecrivent aaaa/mm/jj. Le fichier .dat voyage dans une archive .zip.\n\nOBJET LOCATION, le seul dont les metadonnees sont verifiees a ce jour\nColonnes : LocationCode, SetCode, EffectiveStartDate, LocationName, AddressLine1, TownOrCity, Region1, PostalCode, Country.\nDeux points etablis par des erreurs reelles du moteur HDL :\n- l'attribut du nom est LocationName, jamais Name ;\n- la reference unique d'un site est la combinaison LocationCode ET SetCode. Sans SetCode, chaque ligne est rejetee.\nEffectiveEndDate vaut 4712/12/31 pour un enregistrement ouvert.\n\nMESSAGES DE REJET DEJA RENCONTRES\n- The <X> attribute is unknown for V2 version of the <Objet> business object : la colonne <X> n'existe pas dans cette version de l'objet. Corriger le nom de colonne.\n- The line for component <Objet> with instruction MERGE doesn't include values that define a unique reference to the record : la cle d'identification est incomplete. Ajouter la ou les colonnes manquantes de la reference unique.\n\nREGLE ABSOLUE\nTu ne nommes jamais un attribut, un objet metier ou un code qui ne figure ni ci-dessus ni dans les donnees qui te sont fournies dans la conversation. Quand tu ne sais pas, tu le dis et tu poses la question. Un nom d'attribut invente ne se voit pas tout de suite : le chargement echoue plusieurs minutes plus tard avec un message obscur, et l'utilisateur perd son temps a chercher ailleurs.\n\nPour tout objet autre que Location, annonce que tu n'as pas encore ses metadonnees et demande la liste des colonnes attendues plutot que de la deduire.\n\nAvant de proposer un plan, verifie que tu connais pour chaque ligne l'instruction a utiliser et les colonnes qui composent la reference unique. S'il en manque une, demande-la.",
+        "summarizationPrompt": "Redige la reponse finale dans la langue de l'utilisateur, en francais par defaut.\n\nSois bref et concret. Pas de formule d'accueil, pas d'annonce de ce que tu vas faire, pas de repetition de la question.\n\nDesigne toujours une ligne par la reference rowKey donnee dans le contexte (L1, L2, L3...), jamais par sa position dans ta propre reponse.\n\nQuand ta reponse porte des corrections applicables, une correspondance de colonnes ou la lecture de rejets, ajoute un bloc balise a la toute fin, apres la prose :\n\n```agentdata\n{\"display\":\"issues\",\"rows\":[{\"rowRef\":\"L2\",\"field\":\"SetCode\",\"suggestedValue\":\"COMMON\",\"rationale\":\"toutes les autres lignes portent COMMON\"}]}\n```\n\nDeux autres formes :\n{\"display\":\"mapping\",\"pairs\":[{\"source\":\"code_site\",\"target\":\"LocationCode\"}]}\n{\"display\":\"diagnosis\",\"rows\":[{\"rowRef\":\"L2\",\"oracleMessage\":\"texte exact renvoye par Oracle\",\"explanation\":\"cause en une phrase\",\"suggestedFix\":{\"field\":\"SetCode\",\"value\":\"COMMON\"}}]}\n\nRegles du bloc :\n- y mettre toute correction que tu peux etablir avec certitude : une date a remettre au format attendu, une valeur que toutes les autres lignes portent deja, un code dont la forme ne laisse pas de doute. Si tu l'ecris dans ta prose, elle a sa place dans le bloc ;\n- en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;\n- rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;\n- traite toutes les lignes en anomalie qui te sont fournies, pas seulement les premieres : une correction oubliee obligera l'utilisateur a la faire a la main ;\n- le bloc etaye la reponse que tu viens d'ecrire, et ne resservit jamais le contenu d'un tour precedent ;\n- si aucune correction n'est applicable, n'ajoute aucun bloc."
+      },
+      "AgentCode": "HDL_LOADER_ANALYST_AGENTHDL",
+      "Name": "HDL Loader Analyst AgentHDL",
+      "Description": "Prepares and checks HCM Data Loader files: expected columns of a business object, instructions, unique reference keys, effective dates, and the meaning of rejection messages.",
+      "Family": "HCM",
+      "Product": "GLOBAL_HUMAN_RESOURCES",
+      "ModuleId": null,
+      "Namespace": "HCM.GLOBAL_HUMAN_RESOURCES",
+      "SeededFlag": false,
+      "PromptCode": null,
+      "Version": 1,
+      "MaximumInteractions": 20,
+      "AgentType": "WORKER",
+      "Prompt": null,
+      "ModelConfigId": null,
+      "ReusableFlag": false,
+      "tools": [
+        {
+          "ToolCode": "ORA_USER_SESSION_TOOL",
+          "Type": "USER_SESSION",
+          "Name": "GetUserSession",
+          "Description": "Tool that fetches the PersonNumber of the logged in user.",
+          "Family": "COMMON",
+          "Product": "OTHER",
+          "SeededFlag": true,
+          "HiddenFlag": false,
+          "ModuleId": "074F58CB6E686D21E0634CA56C64F55F",
+          "Namespace": "COMMON.OTHER",
+          "Version": 1,
+          "UserInputRequiredFlag": false,
+          "Specification": null,
+          "UserInputMsg": null
+        }
+      ],
+      "topics": []
+    }
+  ],
+  "agentMappings": [
+    {
+      "EdgeOrder": 0,
+      "AgentCode": "AI_AGENT_HDL_SUPERVISOR",
+      "AgentTargetCode": "AI_AGENT_HDL_SUPERVISOR"
+    },
+    {
+      "EdgeOrder": 0,
+      "AgentCode": "AI_AGENT_HDL_SUPERVISOR",
+      "AgentTargetCode": "HDL_LOADER_ANALYST_AGENTHDL"
+    }
+  ],
+  "partnerMetadata": {
+    "Description": "",
+    "Name": ""
+  }
+}

@@ -6,9 +6,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
   const POLL_MS = 1200;
   const MAX_POLLS = 50;
-  // L'agent raisonne sur un echantillon : envoyer 100 lignes couterait cher
-  // sans rien apprendre de plus qu'une dizaine.
-  const SAMPLE_SIZE = 8;
+  // Taille de dossier couverte pour l'instant. C'est aussi la limite de
+  // chargement : au-dela, la preparation reste possible mais le chargement
+  // devra etre decoupe.
+  const ROW_LIMIT = 50;
+  // Quelques lignes saines suffisent a montrer a quoi ressemble une ligne
+  // normale, et c'est ce qui permet de deduire une valeur commune.
+  const CLEAN_SAMPLE = 5;
 
   function unwrap(response) {
     return (response && response.body !== undefined) ? response.body : response;
@@ -30,21 +34,30 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
    * dossier. C'est ce qui lui evite d'inventer un nom de colonne, et ce qui
    * rend ses propositions applicables telles quelles.
    */
+  function isFaulty(row) {
+    return row.statusLabel && row.statusLabel !== 'ok' && row.statusLabel !== 'a controler';
+  }
+
+  /** rowKey accompagne chaque ligne : c'est la seule reference commune entre
+   *  ce que l'agent designe et ce que la page sait retrouver. */
+  function withValues(row, columns) {
+    const copy = { rowKey: row.rowKey };
+    columns.forEach((name) => { copy[name] = row[name]; });
+    return copy;
+  }
+
   function buildContext($variables) {
     const columns = $variables.columns || [];
     const rows = $variables.rows || [];
-    // rowKey voyage avec chaque ligne : c'est par lui que l'agent designe une
-    // ligne, et c'est lui que la page retrouve pour appliquer une correction.
-    // Sans cette reference, l'agent numerote a sa facon et rien n'est applicable.
-    const sample = rows.slice(0, SAMPLE_SIZE).map((row) => {
-      const copy = { rowKey: row.rowKey };
-      columns.forEach((name) => { copy[name] = row[name]; });
-      return copy;
-    });
-    const faulty = rows
-      .filter((row) => row.statusLabel && row.statusLabel !== 'ok' && row.statusLabel !== 'a controler')
-      .slice(0, SAMPLE_SIZE)
-      .map((row) => ({ rowRef: row.rowKey, probleme: row.statusLabel }));
+
+    // Toutes les lignes en anomalie partent, valeurs comprises, dans la limite
+    // du dossier : n'en envoyer qu'une poignee revenait a n'autoriser des
+    // corrections que sur les premieres, ce qui ne tient pas des que le fichier
+    // depasse quelques lignes.
+    const faulty = rows.filter(isFaulty).slice(0, ROW_LIMIT)
+      .map((row) => Object.assign(withValues(row, columns), { probleme: row.statusLabel }));
+    const clean = rows.filter((row) => !isFaulty(row)).slice(0, CLEAN_SAMPLE)
+      .map((row) => withValues(row, columns));
 
     const lines = [
       'CONTEXTE DU DOSSIER (donnees reelles, ne rien inventer au-dela)',
@@ -53,12 +66,17 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       `Colonnes du fichier : ${columns.length ? columns.join(', ') : 'aucune'}`,
       `Lignes : ${rows.length}, dont ${$variables.countIssues || 0} en anomalie`
     ];
-    if (sample.length) {
-      lines.push(`Lignes (${sample.length} premieres, chacune identifiee par rowKey) : `
-        + JSON.stringify(sample));
+    if (faulty.length) {
+      lines.push(`Lignes en anomalie (toutes, avec leurs valeurs et le probleme releve) : `
+        + JSON.stringify(faulty));
+    }
+    if (clean.length) {
+      lines.push(`Lignes saines, pour reference (${clean.length} exemples) : `
+        + JSON.stringify(clean));
     }
     if (faulty.length) {
-      lines.push(`Anomalies detectees par les controles : ${JSON.stringify(faulty)}`);
+      lines.push('Propose une correction pour chaque ligne en anomalie dont tu peux '
+        + 'etablir la valeur avec certitude, pas seulement pour la premiere.');
     }
     return lines.join('\n');
   }
@@ -73,13 +91,23 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   }
 
   /** Resume lisible d'une proposition, pour que l'utilisateur sache ce qu'il applique. */
+  const MAX_SHOWN = 15;
+
+  /** Au-dela d'une quinzaine de lignes, la liste devient illisible : on la
+   *  tronque a l'affichage, mais Appliquer porte bien sur la totalite. */
+  function truncate(entries) {
+    if (entries.length <= MAX_SHOWN) { return entries.join('\n'); }
+    const rest = entries.length - MAX_SHOWN;
+    return `${entries.slice(0, MAX_SHOWN).join('\n')}\n... et ${rest} autre`
+      + `${rest > 1 ? 's' : ''} correction${rest > 1 ? 's' : ''}`;
+  }
+
   function describeProposal(data) {
     if (!data || !data.display) { return ''; }
     if (data.display === 'issues' && Array.isArray(data.rows)) {
-      return data.rows
+      return truncate(data.rows
         .map((r) => `${r.rowRef} · ${r.field} = "${r.suggestedValue}"`
-          + (r.rationale ? `\n    ${r.rationale}` : ''))
-        .join('\n');
+          + (r.rationale ? `\n    ${r.rationale}` : '')));
     }
     if (data.display === 'mapping' && Array.isArray(data.pairs)) {
       return data.pairs.map((p) => `${p.source} -> ${p.target}`).join('\n');

@@ -70,6 +70,7 @@ Regles du bloc :
 - y mettre toute correction que tu peux etablir avec certitude : une date a remettre au format attendu, une valeur que toutes les autres lignes portent deja, un code dont la forme ne laisse pas de doute. Si tu l'ecris dans ta prose, elle a sa place dans le bloc ;
 - en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;
 - rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;
+- traite toutes les lignes en anomalie qui te sont fournies, pas seulement les premieres : une correction oubliee obligera l'utilisateur a la faire a la main ;
 - le bloc etaye la reponse que tu viens d'ecrire, et ne resservit jamais le contenu d'un tour precedent ;
 - si aucune correction n'est applicable, n'ajoute aucun bloc."""
 

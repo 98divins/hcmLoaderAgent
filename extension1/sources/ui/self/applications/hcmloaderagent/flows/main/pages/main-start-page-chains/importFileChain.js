@@ -49,6 +49,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     });
   }
 
+  // Taille couverte pour l'instant. Au-dela, la preparation reste possible mais
+  // le chargement devra etre decoupe : on le dit plutot que de tronquer en
+  // silence, un fichier ampute sans le dire serait charge incomplet.
+  const ROW_LIMIT = 50;
+
   class importFileChain extends ActionChain {
 
     /**
@@ -114,6 +119,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.countTotal = rows.length;
       $variables.countIssues = 0;
       $variables.summaryText = `${rows.length} ligne${plural} importee${plural}`;
+      $variables.errorText = rows.length > ROW_LIMIT
+        ? `${rows.length} lignes importees. Le chargement est limite a ${ROW_LIMIT} lignes `
+          + 'pour le moment : preparez votre dossier, mais decoupez le fichier avant '
+          + 'de charger.'
+        : '';
       $variables.step = 'data';
     }
   }
