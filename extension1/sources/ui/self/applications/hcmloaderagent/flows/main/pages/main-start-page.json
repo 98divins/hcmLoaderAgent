@@ -1,9 +1,87 @@
 {
-  "title": "",
-  "description": "",
-  "variables": {},
+  "title": "Agent de chargement HCM",
+  "description": "Assistant conversationnel pour les chargements en masse HCM Data Loader",
+  "types": {
+    "turnType": {
+      "question": "string",
+      "answer": "string",
+      "meta": "string",
+      "rawData": "string"
+    }
+  },
+  "variables": {
+    "question": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "pendingQuestion": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isThinking": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "aborted": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "errorText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "conversationId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "turns": {
+      "type": "turnType[]",
+      "defaultValue": []
+    },
+    "agentSteps": {
+      "type": "string[]",
+      "defaultValue": []
+    },
+    "currentStep": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
   "metadata": {},
-  "types": {},
-  "eventListeners": {},
-  "imports": {}
+  "eventListeners": {
+    "onAsk": {
+      "chains": [
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onReset": {
+      "chains": [
+        {
+          "chain": "resetActionChain"
+        }
+      ]
+    },
+    "onStop": {
+      "chains": [
+        {
+          "chain": "stopActionChain"
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      }
+    }
+  }
 }

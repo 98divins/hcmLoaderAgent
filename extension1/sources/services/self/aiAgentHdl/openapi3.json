@@ -1,0 +1,75 @@
+{
+    "components": {
+        "schemas": {
+            "PostApiFusion-aiOrchestratorAgentV2AIAGENTHDLInvokeAsyncRequest": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "conversational": {
+                        "type": "boolean"
+                    },
+                    "streamOutput": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "Ai Agent Hdl",
+        "version": "1.0.0"
+    },
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/fusion-ai/orchestrator/agent/v2/AIAGENTHDL/invokeAsync": {
+            "post": {
+                "operationId": "postApiFusionAiOrchestratorAgentV2AIAGENTHDLInvokeAsync",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PostApiFusion-aiOrchestratorAgentV2AIAGENTHDLInvokeAsyncRequest"
+                            },
+                            "examples": {
+                                "vb": {
+                                    "externalValue": "./examples/postApiFusionAiOrchestratorAgentV2AIAGENTHDLInvokeAsync/request_application_json_vb.json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {},
+                "x-vb": {
+                    "actionHint": "custom"
+                }
+            }
+        },
+        "/api/fusion-ai/orchestrator/agent/v1/AIAGENTHDL/status/{jobId}": {
+            "get": {
+                "operationId": "getAgentStatus",
+                "parameters": [
+                    {
+                        "name": "jobId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {},
+                "x-vb": {
+                    "actionHint": "getOne"
+                }
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "vb-catalog://backends/fusionAi"
+        }
+    ]
+}

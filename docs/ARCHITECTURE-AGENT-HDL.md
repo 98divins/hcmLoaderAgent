@@ -5,8 +5,9 @@ chargement HCM Data Loader : comprendre la demande, identifier l'objet métier e
 ses champs, nettoyer et rapprocher le fichier avec les données existantes,
 prévisualiser, charger, puis expliquer les rejets.
 
-Extension `site_hcm_extension`, branche `hdlAgentBranch` (dérivée de `devBranch`,
-qui porte le loader Location déjà validé et les Service Connections HCM).
+Extension `site_hcm_extension`, branche `hcmLoaderAgent`. Elle hérite du loader
+Location déjà validé et des Service Connections HCM (`hcmRestLocations`,
+`hcmRestLoader`).
 
 ---
 
@@ -252,28 +253,37 @@ pas un échec.
 | Phase | Contenu | Dépend de |
 |---|---|---|
 | **0** | Portage du moteur HDL validé en module réutilisable, découplé de la page loader | rien — faisable tout de suite |
-| **1** | Page « Agent HDL » : fil de conversation + `invokeAsync`/poll | Service Connection `aiAgentHdl` + backend `fusionAi` (Designer) |
+| **1** | Page « Agent HDL » : fil de conversation + `invokeAsync`/poll | Agent Team `AIAGENTHDL` publiée dans AI Agent Studio |
 | **2** | Objet **Location** de bout en bout : mapping, rapprochement, prévisualisation, validation, chargement, explication des rejets | phases 0 et 1 |
 | **3** | Généralisation multi-objets | métadonnées HDL (§7.1) |
 | **4** | Volumétrie au-delà de quelques centaines de lignes | mesure réelle |
 
 ---
 
-## 9. Ce qu'il faut du Designer (utilisateur)
+## 9. Câblage vers AI Agent Studio
 
-Conformément à la répartition établie — le Designer scaffolde ce qui est opaque,
-le code fait la logique métier :
+Fait en code, par **transposition des fichiers réels de `site_THELAB`** vérifiés en
+Run — pas par génération à l'aveugle depuis le Designer :
 
-1. **Backend custom `fusionAi`** dans cette extension (l'équivalent existe dans
-   `site_THELAB`, il n'est pas partagé entre extensions) : enveloppe `base:fa` en
-   surchargeant l'authentification en OAuth 2.0 User Assertion, scope
-   `urn:opc:resource:fusion:<pod>:fusion-ai/`.
-2. **Service Connection `aiAgentHdl`** de type REST classique vers
-   `/api/fusion-ai/orchestrator/agent/v2/<code>/invokeAsync` et `/status/{jobId}`,
-   **repointée à la main sur le backend `fusionAi`** — créer le backend ne
-   repointe pas la connexion, et rien ne le signale.
-3. **App UI** dédiée pour la page agent, avec les chemins réels du scaffold à
-   relever une fois générés.
+- Backend **`fusionAi`** dans `services/self/catalog.json` : enveloppe `base:fa`
+  en surchargeant l'authentification en OAuth 2.0 User Assertion, scope
+  `urn:opc:resource:fusion:eqjz:fusion-ai/` (même pod).
+- Service Connection **`aiAgentHdl`** dans `services/self/aiAgentHdl/openapi3.json` :
+  `POST …/agent/v2/AIAGENTHDL/invokeAsync` et `GET …/agent/v1/AIAGENTHDL/status/{jobId}`.
+  Noter les versions différentes — **`v2` pour l'invocation, `v1` pour le statut** ;
+  ce n'est pas une coquille.
+- Le piège connu — le Designer écrit `base:fa` dans les `servers` et ne repointe
+  jamais vers `fusionAi` tout seul, ce qui donne un 401 silencieux — est **évité
+  d'emblée** : le fichier est écrit directement avec
+  `"servers": [{ "url": "vb-catalog://backends/fusionAi" }]`.
 
-Une Agent Team AI Agent Studio devra par ailleurs être créée et publiée, avec un
-code stable (proposition : `AIAGENTHDL`) pour que l'URL d'invocation ne bouge plus.
+App UI **`hcmloaderagent`**, urlId `x-hcmLoaderAgent`, flow `main`, page `main-start`.
+
+**Reste à faire côté Fusion (hors git)** : créer et **publier** l'Agent Team sous
+le code `AIAGENTHDL`, et donner accès à cette équipe au rôle des utilisateurs
+concernés. Tant qu'elle n'existe pas, l'invocation renvoie un 404 — la page le dit
+explicitement plutôt que d'afficher une erreur générique.
+
+Rappel qui fait perdre du temps : **l'onglet Test du Designer répond 401 même
+quand tout est juste** (il n'exécute pas la requête avec la session Fusion de
+l'utilisateur). C'est un faux négatif — seul le mode **Run** tranche.

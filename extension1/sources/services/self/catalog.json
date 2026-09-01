@@ -1,5 +1,23 @@
 {
-    "backends": {},
+    "backends": {
+        "fusionAi": {
+            "headers": {},
+            "servers": [
+                {
+                    "url": "vb-catalog://backends/base:fa",
+                    "description": "Default Server",
+                    "x-vb": {
+                        "authentication": {
+                            "authenticated": {
+                                "type": "oauth2_user_assertion",
+                                "scope": "urn:opc:resource:fusion:eqjz:fusion-ai/"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
     "services": {
         "hcmRestLocations": {
             "openapi": "3.0.0",

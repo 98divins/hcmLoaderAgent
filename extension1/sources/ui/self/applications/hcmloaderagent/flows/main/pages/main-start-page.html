@@ -1,0 +1,144 @@
+<div class="hdl-shell oj-flex oj-sm-flex-direction-column">
+
+  <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
+    <span class="oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Agent de chargement HCM</span>
+    <oj-c-button label="Nouvelle discussion" chroming="borderless" size="sm"
+                 button-type="button" disabled="[[ $variables.isThinking ]]"
+                 on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
+  </div>
+
+  <div class="hdl-thread oj-sm-padding-5x" role="log" aria-live="polite"
+       aria-label="Conversation avec l’agent de chargement">
+
+    <oj-bind-if test="[[ !$variables.turns.length && !$variables.pendingQuestion ]]">
+      <div class="hdl-empty oj-flex oj-sm-flex-direction-column oj-sm-align-items-center">
+        <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0
+                   oj-sm-margin-2x-bottom">Que souhaitez-vous charger&nbsp;?</h1>
+        <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 hdl-subtitle">Décrivez
+          votre chargement en masse. L’assistant identifie l’objet métier concerné, vérifie les
+          champs attendus et prépare le fichier — rien n’est chargé sans votre validation
+          explicite.</p>
+      </div>
+    </oj-bind-if>
+
+    <oj-bind-for-each data="[[ $variables.turns ]]">
+      <template>
+        <div class="hdl-turn oj-sm-margin-4x-bottom">
+          <div class="hdl-question oj-typography-body-md oj-text-color-primary
+                      oj-sm-margin-2x-bottom"><oj-bind-text value="[[ $current.data.question ]]"></oj-bind-text></div>
+          <div class="hdl-answer oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $current.data.answer ]]"></oj-bind-text></div>
+          <oj-bind-if test="[[ $current.data.rawData ]]">
+            <pre class="hdl-raw oj-typography-body-xs oj-text-color-secondary
+                        oj-sm-margin-2x-top oj-sm-padding-2x"><oj-bind-text value="[[ $current.data.rawData ]]"></oj-bind-text></pre>
+          </oj-bind-if>
+          <div class="hdl-meta oj-typography-body-xs oj-text-color-secondary
+                      oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data.meta ]]"></oj-bind-text></div>
+        </div>
+      </template>
+    </oj-bind-for-each>
+
+    <oj-bind-if test="[[ $variables.isThinking ]]">
+      <div class="hdl-turn oj-sm-margin-4x-bottom">
+        <div class="hdl-question oj-typography-body-md oj-text-color-primary
+                    oj-sm-margin-2x-bottom"><oj-bind-text value="[[ $variables.pendingQuestion ]]"></oj-bind-text></div>
+        <div class="oj-flex oj-sm-align-items-center">
+          <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
+          <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $variables.currentStep ]]"></oj-bind-text></span>
+        </div>
+        <oj-bind-for-each data="[[ $variables.agentSteps ]]">
+          <template>
+            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data ]]"></oj-bind-text></div>
+          </template>
+        </oj-bind-for-each>
+      </div>
+    </oj-bind-if>
+
+    <oj-bind-if test="[[ $variables.errorText ]]">
+      <div class="hdl-error oj-typography-body-sm oj-sm-padding-3x oj-sm-margin-2x-top"><oj-bind-text value="[[ $variables.errorText ]]"></oj-bind-text></div>
+    </oj-bind-if>
+
+  </div>
+
+  <div class="hdl-composer oj-flex oj-sm-align-items-center oj-sm-padding-3x">
+    <oj-c-input-text class="oj-sm-flex-1" label-hint="Votre demande" label-edge="none"
+                     placeholder="Décrivez votre chargement…"
+                     value="{{ $variables.question }}"
+                     disabled="[[ $variables.isThinking ]]"
+                     on-keyup="[[ $listeners.onAsk ]]"></oj-c-input-text>
+    <oj-bind-if test="[[ !$variables.isThinking ]]">
+      <oj-c-button label="Envoyer" button-type="button" class="oj-sm-margin-2x-start"
+                   disabled="[[ !$variables.question ]]"
+                   on-oj-action="[[ $listeners.onAsk ]]"></oj-c-button>
+    </oj-bind-if>
+    <oj-bind-if test="[[ $variables.isThinking ]]">
+      <oj-c-button label="Arrêter" button-type="button" chroming="outlined"
+                   class="oj-sm-margin-2x-start"
+                   on-oj-action="[[ $listeners.onStop ]]"></oj-c-button>
+    </oj-bind-if>
+  </div>
+
+  <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-3x-horizontal
+              oj-sm-padding-2x-bottom">Réponses générées par IA à partir de vos données Oracle HCM.
+    Aucun chargement n’est déclenché sans validation explicite de votre part.</div>
+
+</div>
+
+<style>
+  .hdl-shell {
+    height: 100%;
+    min-height: 30rem;
+    background-color: var(--oj-core-bg-color-content);
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-lg);
+    overflow: hidden;
+  }
+
+  .hdl-bar {
+    min-height: 3rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-thread {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 18rem;
+  }
+
+  .hdl-empty {
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hdl-subtitle {
+    max-width: 34rem;
+  }
+
+  .hdl-question {
+    font-weight: var(--oj-typography-body-md-font-weight, 600);
+  }
+
+  .hdl-answer {
+    white-space: pre-wrap;
+  }
+
+  .hdl-raw {
+    white-space: pre-wrap;
+    overflow-x: auto;
+    background-color: var(--oj-core-bg-color-subtle);
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-md);
+    font-family: var(--oj-typography-code-font-family, monospace);
+  }
+
+  .hdl-error {
+    background-color: var(--oj-message-error-background-color, var(--oj-core-bg-color-subtle));
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-md);
+    color: var(--oj-core-text-color-primary);
+  }
+
+  .hdl-composer {
+    border-top: 1px solid var(--oj-core-divider-color);
+  }
+</style>
