@@ -9,5 +9,15 @@
     "name": "HCM Extension",
     "description": "",
     "version": "0.1",
-    "frameworkVersion": "1.0.0"
+    "frameworkVersion": "1.0.0",
+    "dependencies": [
+{
+            "id": "oracle_hcm_hiringUI",
+            "version": ">=2607.164.262170148"
+        },
+        {
+            "id": "oracle_hcm_jobsandpositionsUI",
+            "version": ">=2607.30.261690518"
+        }
+    ]
 }

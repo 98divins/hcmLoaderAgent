@@ -1,0 +1,32 @@
+{
+    "addMetadataRules": [
+        {
+            "id": "test",
+            "label": "Test",
+            "description": "",
+            "status": "active",
+            "overlay": {
+                "fields": {
+                    "positionsV2.positionsDFF": {
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "positionsV2.positionsDFF.jobBand": {
+                        "hidden": {
+                            "value": false
+                        }
+                    }
+                }
+            },
+            "condition": {
+                "expression": true
+            }
+        }
+      ],
+    "addCollectionMetadataRules": {
+        "metadataRules": []
+    },
+    "imports": {},
+    "metadataRulesVersion": "2607.8.0"
+}
