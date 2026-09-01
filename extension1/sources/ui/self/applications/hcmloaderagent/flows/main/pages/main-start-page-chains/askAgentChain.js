@@ -127,6 +127,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       if (!question) { return; }
 
       $variables.errorText = '';
+      // Une proposition appartient au tour qui l'a produite. La garder ferait
+      // qu'une reponse sans correction affiche celle du tour precedent, avec un
+      // bouton Appliquer actif : une proposition hors sujet ressemble a une
+      // preuve, c'est pire que pas de proposition du tout.
+      $variables.hasProposal = false;
+      $variables.proposalText = '';
+      $variables.proposalJson = '';
       $variables.agentSteps = [];
       $variables.currentStep = 'Analyse de la demande...';
       $variables.aborted = false;

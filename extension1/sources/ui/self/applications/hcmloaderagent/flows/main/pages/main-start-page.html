@@ -3,7 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 7</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 8</span>
     <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                  chroming="borderless" size="sm" button-type="button"
                  on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
@@ -44,6 +44,11 @@
       <oj-bind-if test="[[ $variables.rows.length ]]">
         <div class="oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
           <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-flex-1"><oj-bind-text value="[[ $variables.fileName ]]"></oj-bind-text></span>
+          <div class="hdl-reimport oj-sm-margin-2x-end">
+            <div class="oj-typography-body-xs oj-text-color-secondary">Remplacer les donnees</div>
+            <oj-c-file-picker accept='["text/csv",".csv",".txt"]'
+                              on-oj-select="[[ $listeners.onFilePick ]]"></oj-c-file-picker>
+          </div>
           <oj-c-button label="Exporter" button-type="button" size="sm" chroming="outlined"
                        class="oj-sm-margin-2x-end"
                        on-oj-action="[[ $listeners.onExport ]]"></oj-c-button>
@@ -216,6 +221,17 @@
     min-inline-size: 0;
     min-height: 0;
     overflow: hidden;
+  }
+
+  /* La zone de depot du reimport tient dans la barre d'outils : compacte, elle
+     ne prend pas la place de la grille. */
+  .hdl-reimport {
+    max-inline-size: 15rem;
+  }
+
+  .hdl-reimport .oj-filepicker-dropzone,
+  .hdl-reimport .oj-c-file-picker {
+    padding-block: 0.25rem;
   }
 
   .hdl-table-scroll {
