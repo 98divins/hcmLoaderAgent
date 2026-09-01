@@ -3,6 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 5</span>
     <oj-c-button label="Nouveau dossier" chroming="borderless" size="sm" button-type="button"
                  disabled="[[ $variables.isThinking ]]"
                  on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
@@ -201,6 +202,7 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 0;
+    inline-size: 0;
     min-inline-size: 0;
     min-height: 0;
     overflow: hidden;
@@ -209,7 +211,8 @@
   .hdl-table-scroll {
     flex: 1 1 auto;
     min-height: 0;
-    min-inline-size: 0;
+    inline-size: 100%;
+    max-inline-size: 100%;
     overflow-x: auto;
   }
 
@@ -224,7 +227,8 @@
   }
 
   .hdl-table {
-    inline-size: 100%;
+    inline-size: max-content;
+    min-inline-size: 100%;
     block-size: 24rem;
   }
 
