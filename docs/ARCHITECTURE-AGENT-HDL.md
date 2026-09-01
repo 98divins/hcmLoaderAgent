@@ -1,289 +1,310 @@
-# Agent de chargement en masse HCM (HDL) — architecture
+# Plateforme de chargement en masse HCM — architecture
 
-Assistant conversationnel qui accompagne un utilisateur RH de bout en bout sur un
-chargement HCM Data Loader : comprendre la demande, identifier l'objet métier et
-ses champs, nettoyer et rapprocher le fichier avec les données existantes,
-prévisualiser, charger, puis expliquer les rejets.
+Une plateforme de bout en bout pour préparer, contrôler, charger et corriger des
+données HCM en masse. Un agent l'assiste **à quatre endroits précis** ; il n'en
+est pas la porte d'entrée.
 
-Extension `site_hcm_extension`, branche `hcmLoaderAgent`. Elle hérite du loader
-Location déjà validé et des Service Connections HCM (`hcmRestLocations`,
-`hcmRestLoader`).
+Extension `site_hcm_extension`, branche `hcmLoaderAgent`, App UI `hcmloaderagent`.
 
 ---
 
-## 1. La contrainte qui décide de tout
+## 1. Ce que le produit est, et ce qu'il n'est pas
 
-Le projet Agent RH (dépôt `hragent`, extension `site_THELAB`) a établi et vérifié
-en exécution la couche LLM utilisable ici :
+**Ce n'est pas un chat.** Un utilisateur qui doit charger 100 sites n'a pas envie
+de décrire 100 sites en langage naturel. Il a un fichier, ou des lignes à saisir,
+et il veut savoir avant de charger ce qui va se passer.
 
-- **Oracle AI Agent Studio**, invoqué en REST asynchrone depuis la page VB :
-  `POST /api/fusion-ai/orchestrator/agent/v2/<AgentTeamCode>/invokeAsync` → `jobId`,
-  puis `GET .../status/<jobId>` jusqu'à un statut terminal.
-- Service Connection classique → backend custom `fusionAi` qui enveloppe `base:fa`
-  en surchargeant l'authentification en **OAuth 2.0 User Assertion**
-  (`urn:opc:resource:fusion:<pod>:fusion-ai/`). Vérifié en Run (HTTP 202).
-- **Aucune clé d'API à héberger** : l'identité de l'utilisateur connecté est
-  propagée jusqu'à l'orchestrateur.
+L'objet central du produit est donc un **dossier de chargement** : un plan de
+lignes, avec son objet métier, son mapping, son état de rapprochement, ses
+anomalies et son historique de soumission. La conversation n'est qu'un des moyens
+d'agir dessus, jamais le dépôt de vérité.
 
-Point décisif, relevé dans les définitions d'agent de `hragent` : **les outils
-d'un agent AI Agent Studio sont des objets métier Oracle référencés par
-`sourceObjectCode`** (`ORA_MY_TEAM`, `ORA_CURRENT_SALARY`…), copiés depuis
-l'export du Manager Concierge. Rien dans ce qui a été prouvé jusqu'ici ne montre
-qu'on peut déclarer un outil REST arbitraire pointant sur `dataLoadDataSets`
-(les définitions existantes portent toutes `customFlag: false`).
-
-**Conséquence : l'agent ne charge pas. Il raisonne.** L'exécution reste dans la
-page VB, avec `Actions.callRest`, sous l'identité de l'utilisateur.
-
-Ce n'est pas un contournement, c'est la bonne frontière. Elle rejoint la règle de
-sécurité déjà posée sur le projet Agent RH — *le périmètre ne doit jamais reposer
-uniquement sur les instructions données à l'agent* — et elle rend la validation
-avant chargement (exigence n°5 du cadrage) **structurelle** : l'agent n'a
-matériellement aucun moyen de déclencher un chargement.
+**La grille de données est la source de vérité.** Tout ce que l'agent propose
+atterrit dedans sous forme de modification visible et réversible. Rien ne change
+sans que l'utilisateur l'ait vu.
 
 ---
 
-## 2. Partage des rôles
+## 2. Correction d'une hypothèse précédente
+
+La première version de ce document affirmait qu'AI Agent Studio ne permettait que
+des outils adossés à des objets métier Oracle (`sourceObjectCode`), et en tirait
+que l'agent était *dans l'incapacité* de déclencher un chargement.
+
+**C'était faux, et fondé sur un inventaire incomplet** — les seuls exports que
+j'avais sous les yeux. L'inventaire réel des Tools du pod montre un type
+**`External REST`**, et un bouton **Add** sur les onglets Tools et Business
+Objects : des outils personnalisés sont créables, y compris vers des ressources
+REST arbitraires.
+
+La conclusion, elle, ne change pas — mais elle change de nature :
+
+> Que l'agent ne déclenche aucun chargement n'est plus une limite de plateforme,
+> c'est une **décision d'architecture**.
+
+Elle se justifie par l'asymétrie entre lire et écrire. Un chargement HDL est une
+action large, différée de plusieurs minutes, et difficilement réversible. Le
+déclencheur doit donc être un geste humain explicite, exécuté par la page, tracé
+sous l'identité de l'utilisateur — pas la conséquence d'une phrase interprétée.
+
+En revanche, un outil `External REST` **en lecture** est une bonne idée à
+instruire : il permettrait à l'agent d'aller chercher lui-même les métadonnées
+d'un objet ou de vérifier une valeur existante, au lieu que la page les lui
+injecte. À évaluer en phase 3, quand le multi-objets arrivera.
+
+---
+
+## 3. Le dossier de chargement et ses états
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ Page VB « Agent HDL »  (extension site_hcm_extension)       │
-│                                                              │
-│  ① saisie / dépôt fichier        ⑤ tableau de prévisualisation│
-│  ② fil de conversation           ⑥ validation explicite       │
-│                                  ⑦ résultat + rejets expliqués│
-│                                                              │
-│  EXÉCUTION (déterministe, tracée, identité utilisateur) :    │
-│   • construction du .dat + .zip        [validé]              │
-│   • uploadFile → createFileDataSet     [validé]              │
-│   • statut + child resource messages   [validé]              │
-│   • lectures REST de rapprochement     [mécanique connue]    │
-└───────────────┬─────────────────────────────────────────────┘
-                │ invokeAsync / status  (OAuth User Assertion)
-                ▼
-┌─────────────────────────────────────────────────────────────┐
-│ AI Agent Studio — Agent Team « AIAGENTHDL »                 │
-│                                                              │
-│  RAISONNEMENT uniquement :                                   │
-│   • identifier l'objet métier visé                           │
-│   • mapper les colonnes du fichier sur les attributs HDL     │
-│   • choisir l'instruction (MERGE / DELETE) et les clés       │
-│   • signaler les champs obligatoires manquants               │
-│   • expliquer chaque ligne rejetée à partir du message réel  │
-│                                                              │
-│  Ne dispose d'aucun outil de chargement.                     │
-└─────────────────────────────────────────────────────────────┘
+   brouillon ──► mappé ──► rapproché ──► validé ──► soumis ──┬─► terminé
+       ▲                                                      │
+       └──────────── correction des rejets ◄──────────────────┴─► partiel
+                                                              └─► échoué
 ```
 
-L'agent reçoit du contexte **factuel** injecté par la page (métadonnées de l'objet,
-extrait du fichier, données existantes rapprochées, messages d'erreur bruts) et
-répond en prose + un bloc de données structuré.
+| État | Ce qui est acquis | Ce qui reste à faire |
+|---|---|---|
+| **brouillon** | des lignes existent (fichier, saisie, collage) | l'objet métier n'est pas encore tranché |
+| **mappé** | objet métier choisi, colonnes du fichier associées aux attributs HDL | rien n'est confronté au réel |
+| **rapproché** | chaque ligne sait si elle crée ou met à jour, et par quelle clé | les anomalies ne sont pas corrigées |
+| **validé** | plus aucune anomalie bloquante, l'utilisateur a vu le fichier | rien n'est parti |
+| **soumis** | `RequestId` obtenu, traitement Oracle en cours | l'issue est inconnue |
+| **terminé / partiel / échoué** | statut et messages ligne à ligne lus | les rejets restent à corriger |
+
+Un dossier **partiel** se recycle en brouillon ne contenant que les lignes
+rejetées : c'est la boucle qui fait gagner du temps, et c'est là que l'agent est
+le plus utile.
 
 ---
 
-## 3. Le pipeline
+## 4. La surface
 
-| # | Étape | Qui | État |
-|---|---|---|---|
-| 1 | L'utilisateur décrit son besoin / dépose un fichier | page | à faire |
-| 2 | L'agent identifie l'objet métier et propose un mapping de colonnes | agent | à faire |
-| 3 | La page lit les données existantes pour rapprocher (create vs update) | page (REST) | mécanique connue |
-| 4 | L'agent produit le plan de chargement ligne à ligne (instruction, clés, anomalies) | agent | à faire |
-| 5 | La page affiche le tableau de prévisualisation | page | à faire |
-| 6 | **Validation explicite de l'utilisateur** | utilisateur | obligatoire |
-| 7 | Génération `.dat` + `.zip`, `uploadFile`, `createFileDataSet` | page | **validé** |
-| 8 | Polling du statut, lecture de la child resource `messages` | page | **validé** |
-| 9 | L'agent explique les rejets et propose des corrections | agent | à faire |
-| 10 | Production du `.dat` final + synthèse du chargement | page | à faire |
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Chargement de sites (Location)          brouillon · 100 lignes      │
+├───────────┬──────────────────────────────────────────┬───────────────┤
+│  ÉTAPES   │  PLAN DE CHARGEMENT                      │  ASSISTANT    │
+│           │                                          │               │
+│ ○ Données │  ┌────┬──────────┬─────────┬───────────┐ │ Contextuel :  │
+│ ● Mapping │  │ ⚠  │LocationCd│ SetCode │LocationNam│ │ il voit       │
+│ ○ Rapproch│  ├────┼──────────┼─────────┼───────────┤ │ l'étape,      │
+│ ○ Contrôle│  │ ✓  │ PAR01    │ COMMON  │ Paris     │ │ l'objet, les  │
+│ ○ Valider │  │ ⚠  │ LYO01    │ (vide)  │ Lyon      │ │ anomalies.    │
+│ ○ Charger │  │ ✓  │ MAR01    │ COMMON  │ Marseille │ │               │
+│ ○ Résultat│  └────┴──────────┴─────────┴───────────┘ │ [Proposition] │
+│           │                                          │  ┌──────────┐ │
+│           │  92 à créer · 8 à mettre à jour · 1 ⚠     │  │ 8 lignes │ │
+│           │                                          │  │ sans Set │ │
+│           │                                          │  │ Code     │ │
+│           │                                          │  │[Appliquer│ │
+│           │                                          │  │ Ignorer] │ │
+└───────────┴──────────────────────────────────────────┴───────────────┘
+```
 
-À l'étape 6, deux sorties possibles, conformément au besoin exprimé :
-**« je télécharge le `.dat` et je charge moi-même »** ou **« charge pour moi »**.
+Trois zones, et une règle par zone :
+
+- **Le rail d'étapes** montre où on en est et ce qui reste. Il n'est pas un
+  tunnel : on revient en arrière sans perdre le travail fait.
+- **La grille** est le poste de travail. C'est là qu'on lit, qu'on corrige, qu'on
+  décide. Elle porte l'état de chaque ligne (saine, anomalie, à créer, à mettre à
+  jour, rejetée).
+- **L'assistant** est un panneau latéral **contextuel**, jamais une page blanche.
+  Il connaît l'étape courante, l'objet métier, les colonnes et les anomalies. Ses
+  réponses arrivent sous forme de **propositions applicables**, avec un bouton
+  Appliquer et un bouton Ignorer.
+
+Le champ de saisie libre reste disponible dans ce panneau, mais il est le
+complément du parcours, pas son point de départ.
 
 ---
 
-## 4. Modèle d'opérations HDL
+## 5. Où l'agent intervient — et où il n'intervient pas
 
-C'est le point qui doit être cadré avant d'écrire la moindre ligne de génération
-générique, parce qu'il varie par objet métier.
+| Étape | Agent | Pourquoi |
+|---|---|---|
+| Apporter les données | **non** | lire un CSV est déterministe, un modèle n'y ajoute rien et peut y perdre des lignes |
+| Identifier l'objet métier | **oui** | « je veux charger des sites » → `Location`. Ambigu par nature, c'est du langage |
+| Mapper les colonnes | **oui** | `code_site`, `Code du site`, `LOC_CODE` → `LocationCode`. Le rapprochement lexical est exactement son métier |
+| Rapprocher avec l'existant | **non** | c'est une requête REST sur la clé. Une réponse d'API, pas une opinion |
+| Contrôler et corriger | **oui** | expliquer pourquoi une ligne est douteuse, proposer une normalisation |
+| Prévisualiser le fichier | **non** | le `.dat` se génère à partir du plan, sans interprétation |
+| Valider | **non** | geste humain, par définition |
+| Charger et suivre | **non** | appels REST sous l'identité de l'utilisateur |
+| Expliquer les rejets | **oui** | traduire un message Oracle cryptique en cause et en correctif : le plus fort gain du produit |
 
-### 4.1 Instruction
+Le fil conducteur : **l'agent traite ce qui relève du langage et de
+l'interprétation ; la page traite ce qui relève du calcul et de l'appel réseau.**
+Chaque fois que la réponse est déterministe, le code la produit — c'est plus
+rapide, gratuit, reproductible, et ça ne se trompe pas.
 
-La première colonne de chaque ligne de données porte l'instruction. Le loader
-Location validé n'utilise que `MERGE` (créer si absent, mettre à jour si présent).
-`DELETE` existe pour les objets qui l'autorisent — **à vérifier objet par objet
-sur le pod, pas à supposer.** L'instruction est donc une **propriété du plan de
-chargement**, décidée ligne à ligne à l'étape 4, jamais codée en dur.
+---
 
-### 4.2 Identification d'un enregistrement
+## 6. Le contrat entre la page et l'agent
 
-HDL admet plusieurs familles de clés, et le choix conditionne tout le
-rapprochement de l'étape 3 :
+L'agent reçoit du contexte factuel injecté par la page, jamais un simple
+« aide-moi ». Il répond en prose plus un bloc balisé `agentdata` que la page
+extrait puis retire du texte affiché.
+
+Trois formes de réponse :
+
+```jsonc
+{"display":"mapping",       // proposition d'association de colonnes
+ "pairs":[{"source":"code_site","target":"LocationCode","confidence":"high"}],
+ "unmapped":["commentaire"]}
+
+{"display":"issues",        // anomalies détectées, avec correctif proposé
+ "rows":[{"rowRef":"LYO01","field":"SetCode","problem":"valeur absente",
+          "suggestedValue":"COMMON","rationale":"toutes les autres lignes"}]}
+
+{"display":"diagnosis",     // lecture des rejets après chargement
+ "rows":[{"rowRef":"PAR01","oracleMessage":"<texte exact>",
+          "explanation":"...","suggestedFix":{"field":"SetCode","value":"COMMON"}}]}
+```
+
+**Règles non négociables :**
+
+- toute proposition est **applicable ou ignorable**, jamais appliquée d'office ;
+- l'agent ne nomme un attribut que s'il figure dans les métadonnées qui lui ont
+  été fournies ; sinon il le dit et demande ;
+- un bloc absent ou malformé n'efface jamais la réponse rédigée — le parsing est
+  isolé dans son propre `try` ;
+- une proposition ne porte que sur des lignes réellement présentes dans le plan.
+
+---
+
+## 7. Modèle d'opérations HDL
+
+Inchangé, et toujours le socle : c'est ce que le générateur consomme et ce que la
+grille affiche.
+
+### 7.1 Instruction
+
+La première colonne de chaque ligne porte l'instruction. `MERGE` crée si absent
+et met à jour si présent. `DELETE` supprime, pour les objets qui l'autorisent —
+**à vérifier objet par objet, pas à supposer**. L'instruction est une propriété
+de la ligne dans le plan, jamais une constante du code.
+
+### 7.2 Identification d'un enregistrement
 
 | Famille | Nature | Usage |
 |---|---|---|
-| **User key** | Attributs métier lisibles formant une référence unique | Le cas du loader Location : `LocationCode` **+ `SetCode`** — la seule combinaison des deux constitue la référence unique. C'est la voie par défaut. |
-| **Source key** | Clé du système source, conservée par HCM entre chargements | Réimports successifs depuis un même système externe. |
-| **Surrogate ID / GUID** | Identifiant interne Fusion | Mise à jour d'enregistrements déjà connus par leur ID. |
+| **User key** | attributs métier formant une référence unique | le cas de Location : `LocationCode` **+** `SetCode`. Voie par défaut |
+| **Source key** | clé du système source, conservée entre chargements | réimports successifs depuis un même système |
+| **Surrogate ID / GUID** | identifiant interne Fusion | mise à jour d'enregistrements déjà connus par leur ID |
 
-**Leçon déjà payée** : le message `"The line for component Location with instruction
-MERGE doesn't include values that define a unique reference to the record"` a été
-obtenu parce que la user key était incomplète (`SetCode` manquant). La composition
-exacte de la user key est **une donnée par objet métier**, à lire dans les
-métadonnées HDL — jamais à deviner.
+Leçon déjà payée : `"...doesn't include values that define a unique reference to
+the record"` venait d'une user key incomplète (`SetCode` manquant). La composition
+de la user key est **une donnée par objet**, à lire, jamais à deviner.
 
-### 4.3 Dates d'effet
+### 7.3 Dates d'effet
 
-Les objets date-effective (Location en fait partie) exigent une gestion explicite :
+- `EffectiveStartDate` au format **`yyyy/MM/dd`** dans le fichier (la saisie ISO
+  `yyyy-MM-dd` est convertie par le moteur) ;
+- `EffectiveEndDate` à `4712/12/31` pour un enregistrement ouvert ;
+- une mise à jour peut **corriger** la version courante ou **créer une nouvelle
+  version** à une date donnée. C'est une décision fonctionnelle : elle remonte à
+  l'utilisateur, l'agent ne la prend pas en silence.
 
-- `EffectiveStartDate` au format **`yyyy/MM/dd`** dans le fichier HDL (attention :
-  le format ISO `yyyy-MM-dd` de la saisie doit être converti — c'est déjà fait
-  dans le code validé).
-- `EffectiveEndDate` : `4712/12/31` pour un enregistrement ouvert.
-- Une mise à jour peut vouloir **corriger** l'enregistrement courant ou **créer une
-  nouvelle version** à une date donnée. Ce choix est une décision fonctionnelle
-  qui doit remonter à l'utilisateur, pas être prise silencieusement par l'agent.
+### 7.4 Le plan de chargement
 
-### 4.4 Modèle de plan de chargement
-
-Structure pivot entre l'agent et la page, indépendante de l'objet métier :
+Format pivot unique — l'agent le produit ou l'amende, la grille l'affiche, le
+générateur le consomme. Pas de traduction intermédiaire.
 
 ```jsonc
 {
   "businessObject": "Location",
   "keyStrategy": "userKey",
   "keyColumns": ["LocationCode", "SetCode"],
-  "columns": ["LocationCode", "SetCode", "EffectiveStartDate", "LocationName", "..."],
+  "columns": ["LocationCode", "SetCode", "EffectiveStartDate", "LocationName"],
   "rows": [
-    {
-      "instruction": "MERGE",
-      "operation": "create",          // create | update | delete — issu du rapprochement
-      "values": { "LocationCode": "PAR01", "SetCode": "COMMON", "...": "..." },
-      "issues": [                      // vide si la ligne est saine
-        { "severity": "error", "field": "Country",
-          "message": "Valeur absente et obligatoire pour cet objet" }
-      ]
-    }
+    { "instruction": "MERGE",
+      "operation": "create",
+      "values": { "LocationCode": "PAR01", "SetCode": "COMMON" },
+      "issues": [] }
   ]
 }
 ```
 
-Ce plan est ce que le tableau de prévisualisation affiche, et exactement ce que le
-générateur `.dat` consomme. Un seul format, pas de traduction intermédiaire.
+---
+
+## 8. Deux questions ouvertes qui touchent le fond
+
+### 8.1 Où vit un dossier de chargement entre deux sessions ?
+
+Un chargement HDL prend plusieurs minutes. Un utilisateur qui ferme son onglet
+pendant l'attente doit retrouver son dossier — sinon la promesse « je charge pour
+vous » ne tient pas.
+
+Aujourd'hui l'état vit dans les variables de la page : il disparaît au
+rechargement. Trois voies, par ordre de préférence :
+
+1. **Ne rien persister, mais rendre le dossier reconstructible** : le `RequestId`
+   suffit à retrouver un chargement soumis via `dataLoadDataSets`. L'utilisateur
+   colle ou choisit son `RequestId` et retrouve statut et rejets. Simple, sans
+   stockage, et suffisant pour tout ce qui suit la soumission.
+2. **Persister côté navigateur** le dossier en cours de préparation. Couvre la
+   fermeture accidentelle, mais reste local à un poste.
+3. **Persister côté serveur** — le seul vrai partage entre utilisateurs, et le
+   plus coûteux. Aucune brique évidente côté extension VB : à instruire avant
+   d'être promis.
+
+Recommandation : (1) tout de suite, (2) si la gêne se manifeste, (3) seulement si
+le partage entre utilisateurs devient un besoin exprimé.
+
+### 8.2 Où lire les métadonnées d'un objet métier ?
+
+C'est ce qui décide si la plateforme reste sur Location ou s'ouvre à tout HDL.
+`docs.oracle.com` est **bloqué par la politique d'egress** de l'environnement de
+développement, dans les deux sens — la documentation en ligne n'est donc pas
+exploitable par moi, et de toute façon une doc n'est pas une source d'exécution.
+
+La bonne source est le pod lui-même. Les Service Connections `adf-rest` résolvent
+déjà leur schéma dynamiquement via `describe.openapi` : la page peut donc, **à
+l'exécution**, lire les attributs réels d'une ressource et les injecter dans le
+contexte de l'agent. Les métadonnées cessent d'être des constantes écrites en dur
+et deviennent une lecture — ce qui supprime d'un coup le risque d'attribut
+inventé.
+
+Reste à établir si la liste des attributs **HDL** (qui n'est pas exactement celle
+de la ressource REST) est atteignable par le même chemin. C'est le premier point
+à instruire en phase 3.
 
 ---
 
-## 5. Contrat de données page ↔ agent
+## 9. Ce qui est acquis
 
-Reprise de la convention déjà éprouvée sur l'Agent RH : l'agent répond en prose,
-et **joint en fin de message un bloc JSON** que la page retire du texte avant
-affichage. Si le bloc manque ou est malformé, la prose s'affiche seule — jamais
-d'écran cassé.
+Vérifié en exécution réelle, rien de supposé :
 
-Ici le bloc porte soit un **plan de chargement** (section 4.4), soit un
-**diagnostic de rejets** :
+- **Chaîne agent complète** : `invokeAsync` puis scrutation du statut, sous OAuth
+  2.0 User Assertion via le backend `fusionAi`. Première réponse obtenue en 9,2 s,
+  conversation multi-tours par `conversationId`.
+- **Chaîne de chargement complète** : génération du `.dat`, archive `.zip`
+  construite en pur JS, `uploadFile` → `ContentId`, `createFileDataSet` →
+  `RequestId`, puis statut et child resource `messages`
+  (`RequestId 9908614`, `ORA_SUCCESS`, 3/3 lignes chargées).
+- **Moteur HDL** découplé et piloté par le plan, testé hors VB.
+- **Objet Location** : colonnes, user key `LocationCode` + `SetCode`, attribut
+  `LocationName` et non `Name` — chacun établi par un message d'erreur réel.
 
-```jsonc
-{
-  "display": "loadPlan" | "loadResult" | "clarification",
-  "sources": ["Métadonnées Location", "locationsV2"],
-  "plan": { /* section 4.4 */ },
-  "explanations": [
-    { "rowRef": "PAR01", "oracleMessage": "<message brut Oracle>",
-      "explanation": "…", "suggestedFix": { "field": "SetCode", "value": "COMMON" } }
-  ]
-}
-```
-
-**Règle anti-invention.** L'agent ne nomme un attribut que s'il figure dans les
-métadonnées qui lui ont été fournies, n'affirme une correspondance que si le
-rapprochement de la page l'a retournée, et n'explique un rejet qu'à partir du
-message Oracle réel joint au contexte. Quand il ne sait pas, il le dit et demande
-— la clarification est une sortie prévue du contrat (`display: "clarification"`),
-pas un échec.
+À prouver, dans cet ordre : les métadonnées HDL (§8.2), l'existence d'un
+`fileAction` d'import seul permettant une validation Oracle avant engagement, le
+comportement de `DELETE` par objet.
 
 ---
 
-## 6. Garde-fous
+## 10. Phasage
 
-- **Validation explicite obligatoire** avant tout chargement réel. Structurelle :
-  l'agent n'a pas d'outil de chargement.
-- **Identité de l'utilisateur** de bout en bout (session Fusion pour `hcmRestApi`,
-  OAuth User Assertion pour l'orchestrateur). La sécurité de données Fusion
-  s'applique en plus, et les actions restent traçables au nom de l'utilisateur.
-- **Validation côté Oracle avant engagement** : HDL distingue l'import (mise en
-  tables de staging) du chargement effectif. Si le pod expose bien un `fileAction`
-  d'import seul, la prévisualisation peut être adossée à une **validation réelle
-  Oracle** plutôt qu'à une vérification devinée côté navigateur — gain majeur de
-  fiabilité. **À prouver sur le pod avant d'être promis.**
-- **Volumétrie** : cible initiale 100 lignes. La construction du ZIP et l'encodage
-  base64 se font dans le navigateur ; au-delà de quelques milliers de lignes il
-  faudra déplacer cette étape. Ne pas promettre un volume non mesuré.
-
----
-
-## 7. Acquis vs à prouver
-
-**Validé en exécution réelle** (loader Location, `RequestId 9908614`, `ORA_SUCCESS`,
-3/3 lignes chargées) :
-
-- format HDL `METADATA|<Objet>|<Col…>` / `MERGE|<Objet>|<Val…>`, pipe-délimité,
-  dates `yyyy/MM/dd` ;
-- construction du `.zip` en pur JS (en-têtes locaux, annuaire central, EOCD, CRC32),
-  testée indépendamment avant intégration ;
-- `uploadFile` → `ContentId`, puis `createFileDataSet` → `RequestId` ;
-- lecture du statut et de la child resource `messages` — c'est elle qui a livré les
-  vrais messages Oracle ayant permis de corriger `Name` → `LocationName` puis
-  d'ajouter `SetCode`.
-
-**À prouver, dans cet ordre :**
-
-1. La source des **métadonnées HDL** (attributs, obligatoires, composition de la
-   user key) accessible depuis le pod. C'est le principal inconnu : sans elle,
-   l'agent ne peut pas être générique et reste cantonné à Location.
-2. L'existence d'un `fileAction` d'**import seul** (validation sans chargement).
-3. Le comportement de `DELETE` et des autres instructions par objet.
-4. La capacité d'AI Agent Studio à porter un **outil REST custom** — si elle
-   existe, elle ouvre une variante où l'agent lit lui-même les métadonnées ; sinon
-   la page les lui injecte, ce qui suffit.
-
----
-
-## 8. Phasage
-
-| Phase | Contenu | Dépend de |
+| Phase | Contenu | État |
 |---|---|---|
-| **0** | Portage du moteur HDL validé en module réutilisable, découplé de la page loader | rien — faisable tout de suite |
-| **1** | Page « Agent HDL » : fil de conversation + `invokeAsync`/poll | Agent Team `AIAGENTHDL` publiée dans AI Agent Studio |
-| **2** | Objet **Location** de bout en bout : mapping, rapprochement, prévisualisation, validation, chargement, explication des rejets | phases 0 et 1 |
-| **3** | Généralisation multi-objets | métadonnées HDL (§7.1) |
-| **4** | Volumétrie au-delà de quelques centaines de lignes | mesure réelle |
+| **0** | Moteur HDL réutilisable, piloté par le plan | **fait** |
+| **1** | Câblage agent : `invokeAsync`, polling, conversation | **fait** |
+| **2** | Poste de travail : grille, rail d'étapes, panneau contextuel | à faire |
+| **3** | Location de bout en bout : mapping, rapprochement, validation, chargement, explication des rejets | après 2 |
+| **4** | Boucle de correction : un dossier partiel se recycle en brouillon | après 3 |
+| **5** | Multi-objets, adossé aux métadonnées lues à l'exécution | §8.2 |
+| **6** | Volumétrie au-delà de quelques centaines de lignes | mesure réelle |
 
----
-
-## 9. Câblage vers AI Agent Studio
-
-Fait en code, par **transposition des fichiers réels de `site_THELAB`** vérifiés en
-Run — pas par génération à l'aveugle depuis le Designer :
-
-- Backend **`fusionAi`** dans `services/self/catalog.json` : enveloppe `base:fa`
-  en surchargeant l'authentification en OAuth 2.0 User Assertion, scope
-  `urn:opc:resource:fusion:eqjz:fusion-ai/` (même pod).
-- Service Connection **`aiAgentHdl`** dans `services/self/aiAgentHdl/openapi3.json` :
-  `POST …/agent/v2/AIAGENTHDL/invokeAsync` et `GET …/agent/v1/AIAGENTHDL/status/{jobId}`.
-  Noter les versions différentes — **`v2` pour l'invocation, `v1` pour le statut** ;
-  ce n'est pas une coquille.
-- Le piège connu — le Designer écrit `base:fa` dans les `servers` et ne repointe
-  jamais vers `fusionAi` tout seul, ce qui donne un 401 silencieux — est **évité
-  d'emblée** : le fichier est écrit directement avec
-  `"servers": [{ "url": "vb-catalog://backends/fusionAi" }]`.
-
-App UI **`hcmloaderagent`**, urlId `x-hcmLoaderAgent`, flow `main`, page `main-start`.
-
-**Reste à faire côté Fusion (hors git)** : créer et **publier** l'Agent Team sous
-le code `AIAGENTHDL`, et donner accès à cette équipe au rôle des utilisateurs
-concernés. Tant qu'elle n'existe pas, l'invocation renvoie un 404 — la page le dit
-explicitement plutôt que d'afficher une erreur générique.
-
-Rappel qui fait perdre du temps : **l'onglet Test du Designer répond 401 même
-quand tout est juste** (il n'exécute pas la requête avec la session Fusion de
-l'utilisateur). C'est un faux négatif — seul le mode **Run** tranche.
+La phase 2 est le vrai changement de nature : on passe d'une conversation à un
+poste de travail. C'est elle qui rend le produit utilisable par quelqu'un qui a
+un fichier et pas de patience.
