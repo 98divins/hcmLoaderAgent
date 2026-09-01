@@ -3,7 +3,10 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 5</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 6</span>
+    <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
+                 chroming="borderless" size="sm" button-type="button"
+                 on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
     <oj-c-button label="Nouveau dossier" chroming="borderless" size="sm" button-type="button"
                  disabled="[[ $variables.isThinking ]]"
                  on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
@@ -58,7 +61,10 @@
     </div>
 
     <!-- Zone 3 : l'assistant. Contextuel, et ses propositions sont applicables
-         ou ignorables : rien ne modifie le plan sans geste explicite. -->
+         ou ignorables : rien ne modifie le plan sans geste explicite. Escamotable :
+         replie, il rend sa largeur a la grille, qui en manque des que l'objet
+         metier porte beaucoup de colonnes. -->
+    <oj-bind-if test="[[ $variables.assistOpen ]]">
     <div class="hdl-assist oj-flex oj-sm-flex-direction-column">
 
       <div class="hdl-assist-head oj-sm-padding-3x">
@@ -128,6 +134,7 @@
       </div>
 
     </div>
+    </oj-bind-if>
   </div>
 
   <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-2x-horizontal oj-sm-padding-2x-bottom">Aucun

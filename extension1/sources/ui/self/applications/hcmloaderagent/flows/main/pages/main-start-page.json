@@ -88,6 +88,10 @@
     "currentStep": {
       "type": "string",
       "defaultValue": ""
+    },
+    "assistOpen": {
+      "type": "boolean",
+      "defaultValue": true
     }
   },
   "metadata": {},
@@ -141,6 +145,13 @@
       "chains": [
         {
           "chain": "stopChain"
+        }
+      ]
+    },
+    "onToggleAssist": {
+      "chains": [
+        {
+          "chain": "toggleAssistChain"
         }
       ]
     }

@@ -30,8 +30,8 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       const list = [{
         field: 'statusLabel',
         headerText: 'Etat',
-        weight: 5,
-        minWidth: 180
+        weight: 4,
+        minWidth: 150
       }];
       (columns || []).forEach((name) => {
         list.push({ field: name, headerText: name, weight: 2 });
