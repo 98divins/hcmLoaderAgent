@@ -45,11 +45,13 @@
                        on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
         </div>
 
-        <oj-c-table class="hdl-table"
-                    data="[[ $page.functions.getRowsDP($variables.rows) ]]"
-                    columns="[[ $page.functions.getTableColumns($variables.columns) ]]"
-                    layout="fixed"
-                    vertical-grid-visible="enabled"></oj-c-table>
+        <div class="hdl-table-scroll">
+          <oj-c-table class="hdl-table"
+                      data="[[ $page.functions.getRowsDP($variables.rows) ]]"
+                      columns="[[ $page.functions.getTableColumns($variables.columns) ]]"
+                      layout="fixed"
+                      vertical-grid-visible="enabled"></oj-c-table>
+        </div>
       </oj-bind-if>
 
     </div>
@@ -136,6 +138,10 @@
   .hdl-shell {
     height: 100%;
     min-height: 34rem;
+    /* Rien ne doit pouvoir elargir la page : un debordement horizontal fait
+       sortir le rail de l'ecran, et l'utilisateur ne voit plus ou il en est. */
+    max-inline-size: 100%;
+    min-inline-size: 0;
     background-color: var(--oj-core-bg-color-content);
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-lg);
@@ -150,6 +156,7 @@
   .hdl-body {
     flex: 1 1 auto;
     min-height: 0;
+    min-inline-size: 0;
     align-items: stretch;
     /* oj-flex autorise le retour a la ligne : sans cela le panneau lateral
        passe sous la grille des que les trois zones ne tiennent pas. */
@@ -188,10 +195,22 @@
     background-color: var(--oj-core-bg-color-subtle);
   }
 
+  /* flex-basis a 0 et min-inline-size a 0 : sans les deux, un enfant large
+     impose sa largeur intrinseque au conteneur au lieu de defiler. */
   .hdl-plan {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-inline-size: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .hdl-table-scroll {
     flex: 1 1 auto;
-    min-width: 0;
-    overflow: auto;
+    min-height: 0;
+    min-inline-size: 0;
+    overflow-x: auto;
   }
 
   .hdl-empty {
@@ -213,6 +232,21 @@
     flex: 0 0 21rem;
     border-inline-start: 1px solid var(--oj-core-divider-color);
     min-height: 0;
+    min-inline-size: 0;
+  }
+
+  /* Trois colonnes fixes ne tiennent pas sur un ecran etroit : plutot que de
+     rogner le rail, on empile. */
+  @media (max-width: 64rem) {
+    .hdl-body {
+      flex-wrap: wrap;
+    }
+
+    .hdl-assist {
+      flex: 1 1 100%;
+      border-inline-start: none;
+      border-top: 1px solid var(--oj-core-divider-color);
+    }
   }
 
   .hdl-assist-head {
