@@ -39,6 +39,19 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       return list;
     }
 
+    /** Suivi du job : une ligne par phase, colonnes fixes car connues. */
+    getPhasesDP(rows) {
+      return new ArrayDataProvider(rows || [], { keyAttributes: 'rowKey' });
+    }
+
+    getPhaseColumns() {
+      return [
+        { field: 'Etape', headerText: 'Etape', weight: 2 },
+        { field: 'Etat', headerText: 'Etat', weight: 3 },
+        { field: 'Avancement', headerText: 'Avancement', weight: 2 }
+      ];
+    }
+
     /** Meme mecanique que le plan, pour les messages rendus par le moteur HDL. */
     getLoadRowsDP(rows) {
       return new ArrayDataProvider(rows || [], { keyAttributes: 'rowKey' });

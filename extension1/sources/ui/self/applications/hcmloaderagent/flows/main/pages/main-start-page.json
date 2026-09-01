@@ -140,6 +140,10 @@
     "loadColumns": {
       "type": "string[]",
       "defaultValue": []
+    },
+    "loadPhases": {
+      "type": "object[]",
+      "defaultValue": []
     }
   },
   "metadata": {},
@@ -252,6 +256,15 @@
       "chains": [
         {
           "chain": "submitLoadChain"
+        },
+        {
+          "chain": "checkLoadStatusChain",
+          "parameters": {
+            "auto": true
+          }
+        },
+        {
+          "chain": "askAgentChain"
         }
       ]
     },
@@ -265,7 +278,10 @@
     "onCheckLoad": {
       "chains": [
         {
-          "chain": "checkLoadStatusChain"
+          "chain": "checkLoadStatusChain",
+          "parameters": {
+            "auto": false
+          }
         },
         {
           "chain": "askAgentChain"
@@ -276,6 +292,19 @@
       "chains": [
         {
           "chain": "backToPlanChain"
+        }
+      ]
+    },
+    "onAutoCheckLoad": {
+      "chains": [
+        {
+          "chain": "checkLoadStatusChain",
+          "parameters": {
+            "auto": true
+          }
+        },
+        {
+          "chain": "askAgentChain"
         }
       ]
     }

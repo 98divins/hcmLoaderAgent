@@ -18,6 +18,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.step = $variables.countIssues ? 'review' : 'submit';
       $variables.loadStatus = '';
       $variables.loadDetail = '';
+      $variables.loadPhases = [];
       $variables.loadRows = [];
       $variables.loadColumns = [];
       $variables.errorText = '';

@@ -3,7 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 14</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 15</span>
     <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                  chroming="borderless" size="sm" button-type="button"
                  on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
@@ -83,6 +83,17 @@
               <span class="oj-typography-body-sm oj-sm-flex-1"><oj-bind-text value="[[ $variables.loadStatus ]]"></oj-bind-text></span>
             </div>
             <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $variables.loadDetail ]]"></oj-bind-text></div>
+
+            <!-- Le job avance en trois phases : les lire separement dit ou il en
+                 est, la ou un statut global ne dit que "en cours". -->
+            <oj-bind-if test="[[ $variables.loadPhases.length ]]">
+              <div class="hdl-phases oj-sm-margin-2x-top">
+                <oj-c-table data="[[ $page.functions.getPhasesDP($variables.loadPhases) ]]"
+                            columns="[[ $page.functions.getPhaseColumns() ]]"
+                            layout="fixed"
+                            vertical-grid-visible="enabled"></oj-c-table>
+              </div>
+            </oj-bind-if>
 
             <!-- Apres soumission : suivre le job, recuperer le fichier malgre
                  tout, ou revenir au plan pour corriger les rejets et recharger. -->
@@ -306,6 +317,11 @@
   .hdl-reimport .oj-filepicker-dropzone,
   .hdl-reimport .oj-c-file-picker {
     padding-block: 0.25rem;
+  }
+
+  .hdl-phases oj-c-table {
+    inline-size: 100%;
+    block-size: 9rem;
   }
 
   .hdl-ready {
