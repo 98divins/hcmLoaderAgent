@@ -1,0 +1,14 @@
+{
+  "id": "hcmloaderagent",
+  "urlId": "x-hcmLoaderAgent",
+  "description": "An App UI",
+  "defaultFlow": "main",
+  "events": {},
+  "types": {},
+  "variables": {},
+  "eventListeners": {},
+  "unifiedAppSettings": {
+    "displayName": "hcmloaderagent"
+  },
+  "security": {}
+}
