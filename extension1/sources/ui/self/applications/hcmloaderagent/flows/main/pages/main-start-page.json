@@ -1,15 +1,58 @@
 {
-  "title": "Agent de chargement HCM",
-  "description": "Assistant conversationnel pour les chargements en masse HCM Data Loader",
+  "title": "Chargement en masse HCM",
+  "description": "Poste de travail pour preparer, controler et charger des donnees HCM en masse",
   "types": {
     "turnType": {
       "question": "string",
       "answer": "string",
-      "meta": "string",
-      "rawData": "string"
+      "meta": "string"
     }
   },
   "variables": {
+    "businessObject": {
+      "type": "string",
+      "defaultValue": "Location"
+    },
+    "step": {
+      "type": "string",
+      "defaultValue": "data"
+    },
+    "fileName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "columns": {
+      "type": "string[]",
+      "defaultValue": []
+    },
+    "rows": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "countTotal": {
+      "type": "number",
+      "defaultValue": 0
+    },
+    "countIssues": {
+      "type": "number",
+      "defaultValue": 0
+    },
+    "summaryText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "hasProposal": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "proposalText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "proposalJson": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "question": {
       "type": "string",
       "defaultValue": ""
@@ -49,6 +92,23 @@
   },
   "metadata": {},
   "eventListeners": {
+    "onFilePick": {
+      "chains": [
+        {
+          "chain": "importFileChain",
+          "parameters": {
+            "files": "[[ Array.prototype.slice.call($event.detail.files) ]]"
+          }
+        }
+      ]
+    },
+    "onCheck": {
+      "chains": [
+        {
+          "chain": "checkPlanChain"
+        }
+      ]
+    },
     "onAsk": {
       "chains": [
         {
@@ -56,17 +116,31 @@
         }
       ]
     },
+    "onApplyProposal": {
+      "chains": [
+        {
+          "chain": "applyProposalChain"
+        }
+      ]
+    },
+    "onIgnoreProposal": {
+      "chains": [
+        {
+          "chain": "ignoreProposalChain"
+        }
+      ]
+    },
     "onReset": {
       "chains": [
         {
-          "chain": "resetActionChain"
+          "chain": "resetChain"
         }
       ]
     },
     "onStop": {
       "chains": [
         {
-          "chain": "stopActionChain"
+          "chain": "stopChain"
         }
       ]
     }
@@ -81,6 +155,12 @@
       },
       "oj-c-progress-circle": {
         "path": "oj-c/progress-circle"
+      },
+      "oj-c-file-picker": {
+        "path": "oj-c/file-picker"
+      },
+      "oj-c-table": {
+        "path": "oj-c/table"
       }
     }
   }

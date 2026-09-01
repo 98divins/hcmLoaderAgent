@@ -1,92 +1,141 @@
 <div class="hdl-shell oj-flex oj-sm-flex-direction-column">
 
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
-    <span class="oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Agent de chargement HCM</span>
-    <oj-c-button label="Nouvelle discussion" chroming="borderless" size="sm"
-                 button-type="button" disabled="[[ $variables.isThinking ]]"
+    <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
+    <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
+    <oj-c-button label="Nouveau dossier" chroming="borderless" size="sm" button-type="button"
+                 disabled="[[ $variables.isThinking ]]"
                  on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
   </div>
 
-  <div class="hdl-thread oj-sm-padding-5x" role="log" aria-live="polite"
-       aria-label="Conversation avec l’agent de chargement">
+  <div class="hdl-body oj-flex">
 
-    <oj-bind-if test="[[ !$variables.turns.length && !$variables.pendingQuestion ]]">
-      <div class="hdl-empty oj-flex oj-sm-flex-direction-column oj-sm-align-items-center">
-        <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0
-                   oj-sm-margin-2x-bottom">Que souhaitez-vous charger&nbsp;?</h1>
-        <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 hdl-subtitle">Décrivez
-          votre chargement en masse. L’assistant identifie l’objet métier concerné, vérifie les
-          champs attendus et prépare le fichier — rien n’est chargé sans votre validation
-          explicite.</p>
+    <!-- Zone 1 : le rail. Il reflete l'avancement du dossier ; on avance en
+         agissant, pas en cliquant sur une etape. -->
+    <div class="hdl-rail oj-sm-padding-4x">
+      <oj-bind-for-each data="[[ $page.functions.getSteps($variables.step) ]]">
+        <template>
+          <div :class="[[ $current.data.cls ]]">
+            <span class="hdl-step-marker oj-typography-body-xs"><oj-bind-text value="[[ $current.data.marker ]]"></oj-bind-text></span>
+            <span class="oj-typography-body-sm oj-sm-margin-2x-start"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+          </div>
+        </template>
+      </oj-bind-for-each>
+    </div>
+
+    <!-- Zone 2 : le plan. C'est lui qui fait foi. -->
+    <div class="hdl-plan oj-sm-padding-4x">
+
+      <oj-bind-if test="[[ !$variables.rows.length ]]">
+        <div class="hdl-empty oj-flex oj-sm-flex-direction-column oj-sm-align-items-center">
+          <h1 class="oj-typography-heading-sm oj-text-color-primary oj-sm-margin-0 oj-sm-margin-2x-bottom">Apportez vos donnees</h1>
+          <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-4x-bottom hdl-subtitle">Deposez
+            un fichier CSV. La premiere ligne doit porter les noms de colonnes. Rien ne part
+            vers Oracle avant votre validation explicite.</p>
+          <oj-c-file-picker accept='["text/csv",".csv",".txt"]'
+                            on-oj-select="[[ $listeners.onFilePick ]]"></oj-c-file-picker>
+        </div>
+      </oj-bind-if>
+
+      <oj-bind-if test="[[ $variables.rows.length ]]">
+        <div class="oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
+          <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-flex-1"><oj-bind-text value="[[ $variables.fileName ]]"></oj-bind-text></span>
+          <oj-c-button label="Controler le plan" button-type="button" size="sm"
+                       disabled="[[ $variables.isThinking ]]"
+                       on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
+        </div>
+
+        <oj-c-table class="hdl-table"
+                    data="[[ $page.functions.getRowsDP($variables.rows) ]]"
+                    columns="[[ $page.functions.getTableColumns($variables.columns) ]]"
+                    layout="fixed"
+                    vertical-grid-visible="enabled"></oj-c-table>
+      </oj-bind-if>
+
+    </div>
+
+    <!-- Zone 3 : l'assistant. Contextuel, et ses propositions sont applicables
+         ou ignorables : rien ne modifie le plan sans geste explicite. -->
+    <div class="hdl-assist oj-flex oj-sm-flex-direction-column">
+
+      <div class="hdl-assist-head oj-sm-padding-3x">
+        <span class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary">Assistant</span>
+        <div class="oj-typography-body-xs oj-text-color-secondary">Il voit l'etape, l'objet metier et les anomalies du plan.</div>
       </div>
-    </oj-bind-if>
 
-    <oj-bind-for-each data="[[ $variables.turns ]]">
-      <template>
-        <div class="hdl-turn oj-sm-margin-4x-bottom">
-          <div class="hdl-question oj-typography-body-md oj-text-color-primary
-                      oj-sm-margin-2x-bottom"><oj-bind-text value="[[ $current.data.question ]]"></oj-bind-text></div>
-          <div class="hdl-answer oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $current.data.answer ]]"></oj-bind-text></div>
-          <oj-bind-if test="[[ $current.data.rawData ]]">
-            <pre class="hdl-raw oj-typography-body-xs oj-text-color-secondary
-                        oj-sm-margin-2x-top oj-sm-padding-2x"><oj-bind-text value="[[ $current.data.rawData ]]"></oj-bind-text></pre>
-          </oj-bind-if>
-          <div class="hdl-meta oj-typography-body-xs oj-text-color-secondary
-                      oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data.meta ]]"></oj-bind-text></div>
-        </div>
-      </template>
-    </oj-bind-for-each>
+      <div class="hdl-assist-thread oj-sm-padding-3x">
 
-    <oj-bind-if test="[[ $variables.isThinking ]]">
-      <div class="hdl-turn oj-sm-margin-4x-bottom">
-        <div class="hdl-question oj-typography-body-md oj-text-color-primary
-                    oj-sm-margin-2x-bottom"><oj-bind-text value="[[ $variables.pendingQuestion ]]"></oj-bind-text></div>
-        <div class="oj-flex oj-sm-align-items-center">
-          <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
-          <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $variables.currentStep ]]"></oj-bind-text></span>
-        </div>
-        <oj-bind-for-each data="[[ $variables.agentSteps ]]">
+        <oj-bind-if test="[[ $variables.hasProposal ]]">
+          <div class="hdl-proposal oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-typography-body-xs oj-typography-semi-bold oj-sm-margin-1x-bottom">PROPOSITION</div>
+            <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $variables.proposalText ]]"></oj-bind-text></div>
+            <div class="oj-flex oj-sm-margin-2x-top">
+              <oj-c-button label="Appliquer" button-type="button" size="sm"
+                           on-oj-action="[[ $listeners.onApplyProposal ]]"></oj-c-button>
+              <oj-c-button label="Ignorer" button-type="button" size="sm" chroming="outlined"
+                           class="oj-sm-margin-2x-start"
+                           on-oj-action="[[ $listeners.onIgnoreProposal ]]"></oj-c-button>
+            </div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-for-each data="[[ $variables.turns ]]">
           <template>
-            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data ]]"></oj-bind-text></div>
+            <div class="hdl-turn oj-sm-margin-3x-bottom">
+              <div class="hdl-q oj-typography-body-sm oj-sm-margin-1x-bottom"><oj-bind-text value="[[ $current.data.question ]]"></oj-bind-text></div>
+              <div class="hdl-a oj-typography-body-sm oj-text-color-primary"><oj-bind-text value="[[ $current.data.answer ]]"></oj-bind-text></div>
+              <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data.meta ]]"></oj-bind-text></div>
+            </div>
           </template>
         </oj-bind-for-each>
+
+        <oj-bind-if test="[[ $variables.isThinking ]]">
+          <div class="hdl-turn oj-sm-margin-3x-bottom">
+            <div class="hdl-q oj-typography-body-sm oj-sm-margin-1x-bottom"><oj-bind-text value="[[ $variables.pendingQuestion ]]"></oj-bind-text></div>
+            <div class="oj-flex oj-sm-align-items-center">
+              <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
+              <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $variables.currentStep ]]"></oj-bind-text></span>
+            </div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ $variables.errorText ]]">
+          <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x"><oj-bind-text value="[[ $variables.errorText ]]"></oj-bind-text></div>
+        </oj-bind-if>
+
       </div>
-    </oj-bind-if>
 
-    <oj-bind-if test="[[ $variables.errorText ]]">
-      <div class="hdl-error oj-typography-body-sm oj-sm-padding-3x oj-sm-margin-2x-top"><oj-bind-text value="[[ $variables.errorText ]]"></oj-bind-text></div>
-    </oj-bind-if>
+      <div class="hdl-assist-composer oj-sm-padding-3x">
+        <oj-c-input-text label-hint="Question" label-edge="none"
+                         placeholder="Poser une question sur ce dossier..."
+                         value="{{ $variables.question }}"
+                         disabled="[[ $variables.isThinking ]]"
+                         on-keyup="[[ $listeners.onAsk ]]"></oj-c-input-text>
+        <div class="oj-flex oj-sm-margin-2x-top">
+          <oj-bind-if test="[[ !$variables.isThinking ]]">
+            <oj-c-button label="Envoyer" button-type="button" size="sm"
+                         disabled="[[ !$variables.question ]]"
+                         on-oj-action="[[ $listeners.onAsk ]]"></oj-c-button>
+          </oj-bind-if>
+          <oj-bind-if test="[[ $variables.isThinking ]]">
+            <oj-c-button label="Arreter" button-type="button" size="sm" chroming="outlined"
+                         on-oj-action="[[ $listeners.onStop ]]"></oj-c-button>
+          </oj-bind-if>
+        </div>
+      </div>
 
+    </div>
   </div>
 
-  <div class="hdl-composer oj-flex oj-sm-align-items-center oj-sm-padding-3x">
-    <oj-c-input-text class="oj-sm-flex-1" label-hint="Votre demande" label-edge="none"
-                     placeholder="Décrivez votre chargement…"
-                     value="{{ $variables.question }}"
-                     disabled="[[ $variables.isThinking ]]"
-                     on-keyup="[[ $listeners.onAsk ]]"></oj-c-input-text>
-    <oj-bind-if test="[[ !$variables.isThinking ]]">
-      <oj-c-button label="Envoyer" button-type="button" class="oj-sm-margin-2x-start"
-                   disabled="[[ !$variables.question ]]"
-                   on-oj-action="[[ $listeners.onAsk ]]"></oj-c-button>
-    </oj-bind-if>
-    <oj-bind-if test="[[ $variables.isThinking ]]">
-      <oj-c-button label="Arrêter" button-type="button" chroming="outlined"
-                   class="oj-sm-margin-2x-start"
-                   on-oj-action="[[ $listeners.onStop ]]"></oj-c-button>
-    </oj-bind-if>
-  </div>
-
-  <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-3x-horizontal
-              oj-sm-padding-2x-bottom">Réponses générées par IA à partir de vos données Oracle HCM.
-    Aucun chargement n’est déclenché sans validation explicite de votre part.</div>
+  <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-2x-horizontal oj-sm-padding-2x-bottom">Aucun
+    chargement n'est declenche sans validation explicite de votre part.</div>
 
 </div>
 
 <style>
   .hdl-shell {
     height: 100%;
-    min-height: 30rem;
+    min-height: 34rem;
     background-color: var(--oj-core-bg-color-content);
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-lg);
@@ -98,10 +147,48 @@
     border-bottom: 1px solid var(--oj-core-divider-color);
   }
 
-  .hdl-thread {
+  .hdl-body {
     flex: 1 1 auto;
-    overflow-y: auto;
-    min-height: 18rem;
+    min-height: 0;
+    align-items: stretch;
+  }
+
+  .hdl-rail {
+    flex: 0 0 11rem;
+    border-inline-end: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-step {
+    display: flex;
+    align-items: center;
+    padding-block: 0.5rem;
+    color: var(--oj-core-text-color-secondary);
+  }
+
+  .hdl-step-courante {
+    color: var(--oj-core-text-color-primary);
+    font-weight: 600;
+  }
+
+  .hdl-step-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--oj-core-divider-color);
+    flex: none;
+  }
+
+  .hdl-step-faite .hdl-step-marker {
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+
+  .hdl-plan {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: auto;
   }
 
   .hdl-empty {
@@ -111,34 +198,55 @@
   }
 
   .hdl-subtitle {
-    max-width: 34rem;
+    max-width: 30rem;
   }
 
-  .hdl-question {
-    font-weight: var(--oj-typography-body-md-font-weight, 600);
+  .hdl-table {
+    inline-size: 100%;
+    block-size: 24rem;
   }
 
-  .hdl-answer {
-    white-space: pre-wrap;
+  .hdl-assist {
+    flex: 0 0 21rem;
+    border-inline-start: 1px solid var(--oj-core-divider-color);
+    min-height: 0;
   }
 
-  .hdl-raw {
-    white-space: pre-wrap;
-    overflow-x: auto;
+  .hdl-assist-head {
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-assist-thread {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .hdl-assist-composer {
+    border-top: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-proposal {
     background-color: var(--oj-core-bg-color-subtle);
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-md);
-    font-family: var(--oj-typography-code-font-family, monospace);
+  }
+
+  .hdl-pre {
+    white-space: pre-wrap;
+  }
+
+  .hdl-q {
+    font-weight: 600;
+  }
+
+  .hdl-a {
+    white-space: pre-wrap;
   }
 
   .hdl-error {
-    background-color: var(--oj-message-error-background-color, var(--oj-core-bg-color-subtle));
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-md);
-    color: var(--oj-core-text-color-primary);
-  }
-
-  .hdl-composer {
-    border-top: 1px solid var(--oj-core-divider-color);
+    background-color: var(--oj-core-bg-color-subtle);
   }
 </style>

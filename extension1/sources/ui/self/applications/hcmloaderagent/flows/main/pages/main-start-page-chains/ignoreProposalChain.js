@@ -1,11 +1,8 @@
 define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) => {
   'use strict';
 
-  /**
-   * Interrompt l'attente. La boucle de scrutation lit ce drapeau entre deux
-   * tentatives : le travail côté agent continue, mais on cesse de l'attendre.
-   */
-  class stopActionChain extends ActionChain {
+  /** Ecarte la proposition en cours sans toucher au plan. */
+  class ignoreProposalChain extends ActionChain {
 
     /**
      * @param {Object} context
@@ -14,9 +11,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
-      $variables.aborted = true;
+      $variables.hasProposal = false;
+      $variables.proposalText = '';
+      $variables.proposalJson = '';
     }
   }
 
-  return stopActionChain;
+  return ignoreProposalChain;
 });

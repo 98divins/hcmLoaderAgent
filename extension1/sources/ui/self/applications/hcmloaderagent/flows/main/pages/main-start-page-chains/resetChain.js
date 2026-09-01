@@ -1,8 +1,8 @@
 define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) => {
   'use strict';
 
-  /** Repart d'une page blanche : nouveau fil, nouvelle conversation côté agent. */
-  class resetActionChain extends ActionChain {
+  /** Repart d'un dossier vide, et d'une conversation neuve cote agent. */
+  class resetChain extends ActionChain {
 
     /**
      * @param {Object} context
@@ -11,6 +11,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
+      $variables.rows = [];
+      $variables.columns = [];
+      $variables.fileName = '';
+      $variables.countTotal = 0;
+      $variables.countIssues = 0;
+      $variables.summaryText = '';
+      $variables.step = 'data';
       $variables.turns = [];
       $variables.question = '';
       $variables.pendingQuestion = '';
@@ -19,8 +26,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.agentSteps = [];
       $variables.currentStep = '';
       $variables.aborted = false;
+      $variables.hasProposal = false;
+      $variables.proposalText = '';
+      $variables.proposalJson = '';
     }
   }
 
-  return resetActionChain;
+  return resetChain;
 });
