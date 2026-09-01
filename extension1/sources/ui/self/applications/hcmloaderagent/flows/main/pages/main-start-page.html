@@ -3,7 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 11</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 12</span>
     <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                  chroming="borderless" size="sm" button-type="button"
                  on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
@@ -56,6 +56,35 @@
                        disabled="[[ $variables.isThinking ]]"
                        on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
         </div>
+
+        <!-- Validation explicite : c'est ce geste, et lui seul, qui declenche un
+             envoi vers Oracle. L'assistant n'a aucun moyen de le provoquer. -->
+        <oj-bind-if test="[[ !$variables.countIssues && $variables.step !== 'result' ]]">
+          <div class="hdl-ready oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-typography-body-sm oj-typography-semi-bold">Le plan est pret</div>
+            <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-bottom"><oj-bind-text value="[[ $variables.rows.length + ' ligne' + ($variables.rows.length > 1 ? 's' : '') + ' seront creees ou mises a jour dans Oracle, objet ' + $variables.businessObject + '.' ]]"></oj-bind-text></div>
+            <div class="oj-flex oj-sm-margin-2x-top">
+              <oj-c-button label="Charger dans Oracle" button-type="button" size="sm"
+                           disabled="[[ $variables.isLoading ]]"
+                           on-oj-action="[[ $listeners.onSubmitLoad ]]"></oj-c-button>
+              <oj-c-button label="Telecharger le .dat" button-type="button" size="sm"
+                           chroming="outlined" class="oj-sm-margin-2x-start"
+                           on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
+            </div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ $variables.loadStatus ]]">
+          <div class="hdl-ready oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-flex oj-sm-align-items-center">
+              <oj-bind-if test="[[ $variables.isLoading ]]">
+                <oj-c-progress-circle value="-1" size="sm" class="oj-sm-margin-2x-end"></oj-c-progress-circle>
+              </oj-bind-if>
+              <span class="oj-typography-body-sm"><oj-bind-text value="[[ $variables.loadStatus ]]"></oj-bind-text></span>
+            </div>
+            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $variables.loadDetail ]]"></oj-bind-text></div>
+          </div>
+        </oj-bind-if>
 
         <div class="hdl-table-scroll">
           <oj-c-table class="hdl-table"
@@ -248,6 +277,12 @@
   .hdl-reimport .oj-filepicker-dropzone,
   .hdl-reimport .oj-c-file-picker {
     padding-block: 0.25rem;
+  }
+
+  .hdl-ready {
+    background-color: var(--oj-core-bg-color-subtle);
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-md);
   }
 
   .hdl-table-scroll {

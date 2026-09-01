@@ -22,7 +22,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       }
     }
     values.push(current);
-    return values.map((v) => v.trim());
+    return values.map((v) => unwrapText(v.trim()));
   }
 
   /**
@@ -38,6 +38,16 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       if (count > bestCount) { bestCount = count; best = candidate; }
     });
     return best;
+  }
+
+  /**
+   * Retire l'enveloppe ="valeur" posee a l'export pour empecher Excel de
+   * convertir les codes et les dates. Un tableur qui resout la formule et
+   * reecrit la valeur nue reste accepte : les deux formes passent.
+   */
+  function unwrapText(value) {
+    const match = /^="(.*)"$/.exec(value);
+    return match ? match[1].replace(/""/g, '"') : value;
   }
 
   function readFileAsText(file) {

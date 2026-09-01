@@ -108,6 +108,26 @@
     "appliedNote": {
       "type": "string",
       "defaultValue": ""
+    },
+    "isLoading": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadStatus": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "loadDetail": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "requestId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "dataSetName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "metadata": {},
@@ -213,6 +233,20 @@
           "parameters": {
             "source": "auto"
           }
+        }
+      ]
+    },
+    "onSubmitLoad": {
+      "chains": [
+        {
+          "chain": "submitLoadChain"
+        }
+      ]
+    },
+    "onDownloadDat": {
+      "chains": [
+        {
+          "chain": "downloadDatChain"
         }
       ]
     }

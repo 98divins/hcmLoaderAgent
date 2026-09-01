@@ -142,7 +142,9 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
       $variables.rows = checked;
       $variables.countIssues = issueCount;
-      $variables.step = 'review';
+      // Le rail suit l'etat reel du dossier : un plan sans anomalie est arrive
+      // a l'etape de chargement, il n'y a plus rien a controler.
+      $variables.step = issueCount ? 'review' : 'submit';
 
       // Ces corrections ne dependent d'aucun modele : elles sont disponibles des
       // la fin du controle, et restent la meme si l'assistant ne propose rien.
