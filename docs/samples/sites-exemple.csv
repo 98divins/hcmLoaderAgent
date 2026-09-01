@@ -1,0 +1,6 @@
+﻿LocationCode;SetCode;EffectiveStartDate;LocationName;AddressLine1;TownOrCity;Region1;PostalCode;Country
+PAR01;COMMON;2026/01/01;Paris Siège;"12 rue de la Paix, bâtiment A";Paris;Île-de-France;75002;FR
+LYO01;;2026/01/01;Lyon Part-Dieu;5 place Charles Béraudier;Lyon;Auvergne-Rhône-Alpes;69003;FR
+MAR01;COMMON;01/03/2026;Marseille Joliette;41 quai du Lazaret;Marseille;Provence-Alpes-Côte d'Azur;13002;FR
+TLS01;COMMON;2026/02/15;;3 allée Jean Jaurès;Toulouse;Occitanie;31000;FR
+NAN01;COMMON;2026-03-01;Nantes Centre;7 rue Crébillon;Nantes;Pays de la Loire;44000;FR
