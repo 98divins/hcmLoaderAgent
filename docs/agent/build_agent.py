@@ -68,7 +68,8 @@ Deux autres formes :
 
 Regles du bloc :
 - y mettre toute correction que tu peux etablir avec certitude : une date a remettre au format attendu, une valeur que toutes les autres lignes portent deja, un code dont la forme ne laisse pas de doute. Si tu l'ecris dans ta prose, elle a sa place dans le bloc ;
-- en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;
+- en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle. Demande-la a l'utilisateur ;
+- des que l'utilisateur te fournit cette valeur, elle cesse d'etre une invention : mets-la immediatement dans un bloc applicable, sur la ligne concernee. C'est ainsi qu'il corrige avec toi, echange apres echange ;
 - rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;
 - traite toutes les lignes en anomalie qui te sont fournies, pas seulement les premieres : une correction oubliee obligera l'utilisateur a la faire a la main ;
 - le bloc correspond a la reponse que tu viens d'ecrire. Une correction encore applicable au plan actuel se propose meme si tu l'as deja mentionnee plus tot : l'utilisateur travaille avec toi par etapes, et ce qu'il n'a pas encore applique doit rester applicable ;

@@ -114,7 +114,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      * @param {Object} params
      * @param {Object} params.event
      */
-    async run(context, { event } = {}) {
+    async run(context, { event, ask } = {}) {
       const { $variables } = context;
       const columns = $variables.columns || [];
       const rows = $variables.rows || [];
@@ -157,19 +157,24 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           + 'Sans elles, aucune ligne ne peut etre identifiee.'
         : '';
 
-      // Le controle enchaine sur l'analyse de l'agent : c'est la chaine suivante
-      // du meme listener qui la lance, en lisant cette question. Sans anomalie,
-      // la question reste vide et l'agent n'est pas sollicite pour rien.
-      $variables.question = issueCount
+      // Le controle enchaine sur l'analyse de l'agent quand il est declenche par
+      // l'utilisateur : c'est la chaine suivante du meme listener qui la lance,
+      // en lisant cette question. Apres une application de corrections, le
+      // controle sert seulement a rafraichir les etats : solliciter l'agent
+      // ferait attendre plusieurs secondes pour rien.
+      $variables.question = (ask !== false && issueCount)
         ? 'Analyse des anomalies relevees par le controle : quelles lignes posent '
           + 'probleme, et quelles corrections sont applicables ?'
         : '';
 
       const clean = rows.length - issueCount;
       const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
-      $variables.summaryText = issueCount
+      const state = issueCount
         ? `${plural(clean, 'ligne')} ${clean > 1 ? 'saines' : 'saine'} · ${issueCount} a corriger`
         : `${plural(rows.length, 'ligne')} ${rows.length > 1 ? 'saines' : 'saine'}`;
+      const note = $variables.appliedNote || '';
+      $variables.appliedNote = '';
+      $variables.summaryText = note ? `${note} · ${state}` : state;
     }
   }
 

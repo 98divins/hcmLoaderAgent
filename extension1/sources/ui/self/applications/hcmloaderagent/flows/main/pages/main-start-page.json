@@ -104,6 +104,10 @@
     "autoFixJson": {
       "type": "string",
       "defaultValue": ""
+    },
+    "appliedNote": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "metadata": {},
@@ -121,7 +125,10 @@
     "onCheck": {
       "chains": [
         {
-          "chain": "checkPlanChain"
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": true
+          }
         },
         {
           "chain": "askAgentChain"
@@ -139,6 +146,12 @@
       "chains": [
         {
           "chain": "applyProposalChain"
+        },
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
         }
       ]
     },
@@ -183,6 +196,12 @@
           "chain": "applyProposalChain",
           "parameters": {
             "source": "auto"
+          }
+        },
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": false
           }
         }
       ]

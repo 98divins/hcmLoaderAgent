@@ -103,9 +103,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         $variables.proposalJson = '';
       }
       const mark = applied > 1 ? 's' : '';
-      $variables.summaryText = `${applied} modification${mark} appliquee${mark}`
-        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du plan` : '')
-        + '. Relancez le controle.';
+      // Le controle qui suit reecrit le resume : la note transite par sa propre
+      // variable pour ne pas etre perdue en route.
+      $variables.appliedNote = `${applied} modification${mark} appliquee${mark}`
+        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du plan` : '');
+      $variables.summaryText = $variables.appliedNote;
     }
   }
 
