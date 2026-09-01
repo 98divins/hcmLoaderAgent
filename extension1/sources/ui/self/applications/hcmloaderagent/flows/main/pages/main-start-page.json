@@ -128,6 +128,18 @@
     "dataSetName": {
       "type": "string",
       "defaultValue": ""
+    },
+    "isPolling": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadRows": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "loadColumns": {
+      "type": "string[]",
+      "defaultValue": []
     }
   },
   "metadata": {},
@@ -247,6 +259,23 @@
       "chains": [
         {
           "chain": "downloadDatChain"
+        }
+      ]
+    },
+    "onCheckLoad": {
+      "chains": [
+        {
+          "chain": "checkLoadStatusChain"
+        },
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onBackToPlan": {
+      "chains": [
+        {
+          "chain": "backToPlanChain"
         }
       ]
     }

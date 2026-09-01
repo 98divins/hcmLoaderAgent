@@ -3,7 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 13</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 14</span>
     <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                  chroming="borderless" size="sm" button-type="button"
                  on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
@@ -77,12 +77,41 @@
         <oj-bind-if test="[[ $variables.loadStatus ]]">
           <div class="hdl-ready oj-sm-padding-3x oj-sm-margin-3x-bottom">
             <div class="oj-flex oj-sm-align-items-center">
-              <oj-bind-if test="[[ $variables.isLoading ]]">
+              <oj-bind-if test="[[ $variables.isLoading || $variables.isPolling ]]">
                 <oj-c-progress-circle value="-1" size="sm" class="oj-sm-margin-2x-end"></oj-c-progress-circle>
               </oj-bind-if>
-              <span class="oj-typography-body-sm"><oj-bind-text value="[[ $variables.loadStatus ]]"></oj-bind-text></span>
+              <span class="oj-typography-body-sm oj-sm-flex-1"><oj-bind-text value="[[ $variables.loadStatus ]]"></oj-bind-text></span>
             </div>
             <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $variables.loadDetail ]]"></oj-bind-text></div>
+
+            <!-- Apres soumission : suivre le job, recuperer le fichier malgre
+                 tout, ou revenir au plan pour corriger les rejets et recharger. -->
+            <oj-bind-if test="[[ $variables.step === 'result' ]]">
+              <div class="oj-flex oj-sm-margin-2x-top">
+                <oj-c-button label="Actualiser le statut" button-type="button" size="sm"
+                             disabled="[[ $variables.isPolling || $variables.isThinking ]]"
+                             on-oj-action="[[ $listeners.onCheckLoad ]]"></oj-c-button>
+                <oj-c-button label="Telecharger le .dat" button-type="button" size="sm"
+                             chroming="outlined" class="oj-sm-margin-2x-start"
+                             on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
+                <oj-c-button label="Corriger et recharger" button-type="button" size="sm"
+                             chroming="outlined" class="oj-sm-margin-2x-start"
+                             on-oj-action="[[ $listeners.onBackToPlan ]]"></oj-c-button>
+              </div>
+            </oj-bind-if>
+          </div>
+        </oj-bind-if>
+
+        <!-- Messages rendus par le moteur HDL, ligne a ligne. Les colonnes sont
+             celles qu'Oracle renvoie reellement, pas une liste devinee. -->
+        <oj-bind-if test="[[ $variables.loadRows.length ]]">
+          <div class="oj-typography-body-sm oj-typography-semi-bold oj-sm-margin-2x-bottom">Messages du chargement</div>
+          <div class="hdl-table-scroll oj-sm-margin-3x-bottom">
+            <oj-c-table class="hdl-table"
+                        data="[[ $page.functions.getLoadRowsDP($variables.loadRows) ]]"
+                        columns="[[ $page.functions.getLoadColumns($variables.loadColumns) ]]"
+                        layout="fixed"
+                        vertical-grid-visible="enabled"></oj-c-table>
           </div>
         </oj-bind-if>
 

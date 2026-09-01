@@ -39,6 +39,15 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       return list;
     }
 
+    /** Meme mecanique que le plan, pour les messages rendus par le moteur HDL. */
+    getLoadRowsDP(rows) {
+      return new ArrayDataProvider(rows || [], { keyAttributes: 'rowKey' });
+    }
+
+    getLoadColumns(columns) {
+      return (columns || []).map((name) => ({ field: name, headerText: name, weight: 2 }));
+    }
+
     /** Le rail : chaque etape sait si elle est faite, courante ou a venir. */
     getSteps(step) {
       const current = STEPS.map((s) => s.id).indexOf(step);
