@@ -83,14 +83,26 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       }
 
       const separator = detectSeparator(lines[0]);
-      const headers = parseCsvLine(lines[0], separator).filter((h) => h !== '');
+      // Un fichier reimporte apres export porte les colonnes de service de la
+      // page. Les garder les ferait passer pour des attributs de l'objet metier
+      // et le chargement les rejetterait.
+      const META_COLUMNS = ['Etat', 'Anomalie', 'rowKey', 'statusLabel'];
+      const allHeaders = parseCsvLine(lines[0], separator);
+      const keptIndexes = [];
+      const headers = [];
+      allHeaders.forEach((name, index) => {
+        if (name === '' || META_COLUMNS.indexOf(name) !== -1) { return; }
+        keptIndexes.push(index);
+        headers.push(name);
+      });
 
       const rows = [];
       for (let i = 1; i < lines.length; i += 1) {
         const values = parseCsvLine(lines[i], separator);
         const row = { rowKey: `L${i}`, statusLabel: 'a controler' };
-        headers.forEach((header, index) => {
-          row[header] = values[index] === undefined ? '' : values[index];
+        headers.forEach((header, position) => {
+          const value = values[keptIndexes[position]];
+          row[header] = value === undefined ? '' : value;
         });
         rows.push(row);
       }

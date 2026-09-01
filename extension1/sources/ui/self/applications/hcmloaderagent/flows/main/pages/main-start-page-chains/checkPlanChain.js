@@ -92,6 +92,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           + 'Sans elles, aucune ligne ne peut etre identifiee.'
         : '';
 
+      // Le controle enchaine sur l'analyse de l'agent : c'est la chaine suivante
+      // du meme listener qui la lance, en lisant cette question. Sans anomalie,
+      // la question reste vide et l'agent n'est pas sollicite pour rien.
+      $variables.question = issueCount
+        ? 'Analyse des anomalies relevees par le controle : quelles lignes posent '
+          + 'probleme, et quelles corrections sont applicables ?'
+        : '';
+
       const clean = rows.length - issueCount;
       const plural = (n, word) => `${n} ${word}${n > 1 ? 's' : ''}`;
       $variables.summaryText = issueCount
