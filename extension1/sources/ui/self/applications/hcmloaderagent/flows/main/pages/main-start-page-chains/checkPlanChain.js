@@ -16,6 +16,62 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   const DATE_COLUMN = /Date$/;
   // HDL attend yyyy/MM/dd ; on accepte la saisie ISO, convertie a la generation.
   const DATE_OK = /^\d{4}[/-]\d{2}[/-]\d{2}$/;
+  // Format francais : 01/03/2026 se lit 1er mars. L'ambiguite avec le format
+  // americain est reelle, la proposition le dit donc explicitement.
+  const DATE_FR = /^(\d{2})[/-](\d{2})[/-](\d{4})$/;
+
+  /**
+   * Corrections que le code etablit lui-meme, sans passer par l'agent : une
+   * date a remettre au format attendu, ou une valeur absente que toutes les
+   * autres lignes portent a l'identique. Deterministe, immediat, gratuit, et
+   * surtout disponible meme quand l'agent ne propose rien.
+   */
+  function deriveFixes(rows, columns, rules) {
+    const fixes = [];
+
+    // Une colonne dont toutes les lignes renseignees portent la meme valeur :
+    // une ligne vide se comble sans risque d'invention.
+    const single = {};
+    rules.keyColumns.concat(rules.requiredColumns).forEach((name) => {
+      if (columns.indexOf(name) === -1 || single[name] !== undefined) { return; }
+      const seen = [];
+      rows.forEach((row) => {
+        const value = String(row[name] || '').trim();
+        if (value && seen.indexOf(value) === -1) { seen.push(value); }
+      });
+      single[name] = (seen.length === 1) ? seen[0] : null;
+    });
+
+    rows.forEach((row) => {
+      columns.forEach((name) => {
+        const raw = String(row[name] || '').trim();
+
+        if (!raw && single[name]) {
+          fixes.push({
+            rowRef: row.rowKey,
+            field: name,
+            suggestedValue: single[name],
+            rationale: `toutes les autres lignes portent "${single[name]}"`
+          });
+          return;
+        }
+
+        if (raw && DATE_COLUMN.test(name) && !DATE_OK.test(raw)) {
+          const parts = DATE_FR.exec(raw);
+          if (parts) {
+            fixes.push({
+              rowRef: row.rowKey,
+              field: name,
+              suggestedValue: `${parts[3]}/${parts[2]}/${parts[1]}`,
+              rationale: `"${raw}" lu comme jj/mm/aaaa`
+            });
+          }
+        }
+      });
+    });
+
+    return fixes;
+  }
 
   /**
    * Controles deterministes, faits par le code et non par l'agent : une regle
@@ -87,6 +143,15 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.rows = checked;
       $variables.countIssues = issueCount;
       $variables.step = 'review';
+
+      // Ces corrections ne dependent d'aucun modele : elles sont disponibles des
+      // la fin du controle, et restent la meme si l'assistant ne propose rien.
+      const fixes = deriveFixes(checked, columns, rules);
+      $variables.hasAutoFix = fixes.length > 0;
+      $variables.autoFixJson = fixes.length ? JSON.stringify({ display: 'issues', rows: fixes }) : '';
+      $variables.autoFixText = fixes
+        .map((f) => `${f.rowRef} · ${f.field} = "${f.suggestedValue}"\n    ${f.rationale}`)
+        .join('\n');
       $variables.errorText = missingKeys.length
         ? `Colonnes de cle absentes du fichier : ${missingKeys.join(', ')}. `
           + 'Sans elles, aucune ligne ne peut etre identifiee.'

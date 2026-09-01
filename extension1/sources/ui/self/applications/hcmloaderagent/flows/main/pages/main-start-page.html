@@ -3,7 +3,7 @@
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text value="[[ $variables.businessObject + ' · ' + $variables.summaryText ]]"></oj-bind-text></span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 9</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 10</span>
     <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                  chroming="borderless" size="sm" button-type="button"
                  on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
@@ -82,9 +82,25 @@
 
       <div class="hdl-assist-thread oj-sm-padding-3x">
 
+        <!-- Corrections etablies par le controle : disponibles sans l'assistant,
+             donc jamais dependantes de ce qu'il choisit d'emettre. -->
+        <oj-bind-if test="[[ $variables.hasAutoFix ]]">
+          <div class="hdl-proposal oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-typography-body-xs oj-typography-semi-bold oj-sm-margin-1x-bottom">CORRECTIONS AUTOMATIQUES</div>
+            <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $variables.autoFixText ]]"></oj-bind-text></div>
+            <div class="oj-flex oj-sm-margin-2x-top">
+              <oj-c-button label="Appliquer" button-type="button" size="sm"
+                           on-oj-action="[[ $listeners.onApplyAutoFix ]]"></oj-c-button>
+              <oj-c-button label="Ignorer" button-type="button" size="sm" chroming="outlined"
+                           class="oj-sm-margin-2x-start"
+                           on-oj-action="[[ $listeners.onIgnoreAutoFix ]]"></oj-c-button>
+            </div>
+          </div>
+        </oj-bind-if>
+
         <oj-bind-if test="[[ $variables.hasProposal ]]">
           <div class="hdl-proposal oj-sm-padding-3x oj-sm-margin-3x-bottom">
-            <div class="oj-typography-body-xs oj-typography-semi-bold oj-sm-margin-1x-bottom">PROPOSITION</div>
+            <div class="oj-typography-body-xs oj-typography-semi-bold oj-sm-margin-1x-bottom">PROPOSITION DE L'ASSISTANT</div>
             <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $variables.proposalText ]]"></oj-bind-text></div>
             <div class="oj-flex oj-sm-margin-2x-top">
               <oj-c-button label="Appliquer" button-type="button" size="sm"

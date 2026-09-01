@@ -16,13 +16,16 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      * @param {Object} params
      * @param {Object} params.event
      */
-    async run(context, { event } = {}) {
+    async run(context, { event, source } = {}) {
       const { $variables } = context;
-      if (!$variables.hasProposal) { return; }
+      // Deux sources, une seule mecanique : les corrections du controle et
+      // celles de l'assistant passent par les memes garde-fous.
+      const auto = source === 'auto';
+      if (auto ? !$variables.hasAutoFix : !$variables.hasProposal) { return; }
 
       let proposal;
       try {
-        proposal = JSON.parse($variables.proposalJson || '{}');
+        proposal = JSON.parse((auto ? $variables.autoFixJson : $variables.proposalJson) || '{}');
       } catch (e) {
         $variables.errorText = 'La proposition est illisible, elle n\'a pas ete appliquee.';
         return;
@@ -90,9 +93,15 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
       $variables.columns = columns;
       $variables.rows = rows;
-      $variables.hasProposal = false;
-      $variables.proposalText = '';
-      $variables.proposalJson = '';
+      if (auto) {
+        $variables.hasAutoFix = false;
+        $variables.autoFixText = '';
+        $variables.autoFixJson = '';
+      } else {
+        $variables.hasProposal = false;
+        $variables.proposalText = '';
+        $variables.proposalJson = '';
+      }
       const mark = applied > 1 ? 's' : '';
       $variables.summaryText = `${applied} modification${mark} appliquee${mark}`
         + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du plan` : '')

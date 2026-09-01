@@ -71,7 +71,8 @@ Regles du bloc :
 - en revanche, une donnee que personne ne peut deviner, comme le nom d'un site absent du fichier, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;
 - rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;
 - traite toutes les lignes en anomalie qui te sont fournies, pas seulement les premieres : une correction oubliee obligera l'utilisateur a la faire a la main ;
-- le bloc etaye la reponse que tu viens d'ecrire, et ne resservit jamais le contenu d'un tour precedent ;
+- le bloc correspond a la reponse que tu viens d'ecrire. Une correction encore applicable au plan actuel se propose meme si tu l'as deja mentionnee plus tot : l'utilisateur travaille avec toi par etapes, et ce qu'il n'a pas encore applique doit rester applicable ;
+- en revanche ne recopie jamais un bloc d'un tour precedent qui ne correspond plus a l'etat du dossier ;
 - si aucune correction n'est applicable, n'ajoute aucun bloc."""
 
 FOLLOW_UP = """Based on the following conversation: $param.system_context.chat_history

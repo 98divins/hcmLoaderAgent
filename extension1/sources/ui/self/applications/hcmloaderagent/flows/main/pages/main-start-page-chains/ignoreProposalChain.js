@@ -9,8 +9,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      * @param {Object} params
      * @param {Object} params.event
      */
-    async run(context, { event } = {}) {
+    async run(context, { event, source } = {}) {
       const { $variables } = context;
+      if (source === 'auto') {
+        $variables.hasAutoFix = false;
+        $variables.autoFixText = '';
+        $variables.autoFixJson = '';
+        return;
+      }
       $variables.hasProposal = false;
       $variables.proposalText = '';
       $variables.proposalJson = '';
