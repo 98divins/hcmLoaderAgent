@@ -33,8 +33,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   function buildContext($variables) {
     const columns = $variables.columns || [];
     const rows = $variables.rows || [];
+    // rowKey voyage avec chaque ligne : c'est par lui que l'agent designe une
+    // ligne, et c'est lui que la page retrouve pour appliquer une correction.
+    // Sans cette reference, l'agent numerote a sa facon et rien n'est applicable.
     const sample = rows.slice(0, SAMPLE_SIZE).map((row) => {
-      const copy = {};
+      const copy = { rowKey: row.rowKey };
       columns.forEach((name) => { copy[name] = row[name]; });
       return copy;
     });
@@ -51,7 +54,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       `Lignes : ${rows.length}, dont ${$variables.countIssues || 0} en anomalie`
     ];
     if (sample.length) {
-      lines.push(`Echantillon (${sample.length} premieres lignes) : ${JSON.stringify(sample)}`);
+      lines.push(`Lignes (${sample.length} premieres, chacune identifiee par rowKey) : `
+        + JSON.stringify(sample));
     }
     if (faulty.length) {
       lines.push(`Anomalies detectees par les controles : ${JSON.stringify(faulty)}`);
@@ -79,6 +83,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     }
     if (data.display === 'mapping' && Array.isArray(data.pairs)) {
       return data.pairs.map((p) => `${p.source} -> ${p.target}`).join('\n');
+    }
+    if (data.display === 'diagnosis' && Array.isArray(data.rows)) {
+      return data.rows
+        .filter((r) => r.suggestedFix && r.suggestedFix.field)
+        .map((r) => `${r.rowRef} · ${r.suggestedFix.field} = "${r.suggestedFix.value}"`
+          + (r.explanation ? `\n    ${r.explanation}` : ''))
+        .join('\n');
     }
     return '';
   }

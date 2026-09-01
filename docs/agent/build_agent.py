@@ -54,21 +54,23 @@ SUMMARIZATION = """Redige la reponse finale dans la langue de l'utilisateur, en 
 
 Sois bref et concret. Pas de formule d'accueil, pas d'annonce de ce que tu vas faire, pas de repetition de la question.
 
-Quand ta reponse porte un plan de chargement, une demande de precision ou un diagnostic de rejets, ajoute un bloc balise a la toute fin, apres la prose :
+Designe toujours une ligne par la reference rowKey donnee dans le contexte (L1, L2, L3...), jamais par sa position dans ta propre reponse.
+
+Quand ta reponse porte des corrections applicables, une correspondance de colonnes ou la lecture de rejets, ajoute un bloc balise a la toute fin, apres la prose :
 
 ```agentdata
-{"display":"loadPlan","businessObject":"Location","keyColumns":["LocationCode","SetCode"],"columns":["LocationCode","SetCode","EffectiveStartDate","LocationName"],"rows":[{"instruction":"MERGE","operation":"create","values":{"LocationCode":"PAR01","SetCode":"COMMON","EffectiveStartDate":"2026/01/01","LocationName":"Paris Siege"},"issues":[]}]}
+{"display":"issues","rows":[{"rowRef":"L2","field":"SetCode","suggestedValue":"COMMON","rationale":"toutes les autres lignes portent COMMON"}]}
 ```
 
-Deux autres formes possibles :
-{"display":"clarification","questions":["Quel jeu de donnees de reference (SetCode) utiliser ?"]}
-{"display":"diagnosis","explanations":[{"rowRef":"PAR01","oracleMessage":"texte exact renvoye par Oracle","explanation":"cause en une phrase","suggestedFix":{"field":"SetCode","value":"COMMON"}}]}
+Deux autres formes :
+{"display":"mapping","pairs":[{"source":"code_site","target":"LocationCode"}]}
+{"display":"diagnosis","rows":[{"rowRef":"L2","oracleMessage":"texte exact renvoye par Oracle","explanation":"cause en une phrase","suggestedFix":{"field":"SetCode","value":"COMMON"}}]}
 
 Regles du bloc :
-- il doit etayer la reponse que tu viens d'ecrire, et jamais resservir le contenu d'un tour precedent ;
-- si ta reponse ne porte ni plan, ni question, ni diagnostic, n'ajoute aucun bloc ;
-- le plan ne contient que des donnees fournies par l'utilisateur, jamais des lignes inventees pour l'exemple ;
-- dans issues, ne signale que des problemes que tu peux justifier : colonne obligatoire absente, valeur incoherente avec le format attendu, reference unique incomplete."""
+- n'y mettre qu'une correction dont tu connais reellement la valeur. Une donnee que personne ne peut deviner, comme le nom d'un site absent, se signale dans la prose et jamais dans le bloc : une valeur inventee serait chargee telle quelle ;
+- rowRef doit exister dans le contexte, et field doit etre une colonne du dossier ;
+- le bloc etaye la reponse que tu viens d'ecrire, et ne resservit jamais le contenu d'un tour precedent ;
+- si aucune correction n'est applicable, n'ajoute aucun bloc."""
 
 FOLLOW_UP = """Based on the following conversation: $param.system_context.chat_history
 generate $param.system_context.number_of_follow_up_questions follow-up questions.

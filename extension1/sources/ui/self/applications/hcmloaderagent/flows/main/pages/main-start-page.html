@@ -151,6 +151,9 @@
     flex: 1 1 auto;
     min-height: 0;
     align-items: stretch;
+    /* oj-flex autorise le retour a la ligne : sans cela le panneau lateral
+       passe sous la grille des que les trois zones ne tiennent pas. */
+    flex-wrap: nowrap;
   }
 
   .hdl-rail {

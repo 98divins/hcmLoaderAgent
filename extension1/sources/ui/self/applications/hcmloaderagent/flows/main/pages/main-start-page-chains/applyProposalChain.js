@@ -33,22 +33,37 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       let applied = 0;
       let skipped = 0;
 
-      if (proposal.display === 'issues' && Array.isArray(proposal.rows)) {
+      // Un diagnostic post-chargement porte les memes corrections qu'une
+      // anomalie, sous une autre forme : on le ramene a la forme commune.
+      const asIssues = (proposal.display === 'diagnosis' && Array.isArray(proposal.rows))
+        ? proposal.rows
+          .filter((r) => r && r.suggestedFix && r.suggestedFix.field)
+          .map((r) => ({ rowRef: r.rowRef, field: r.suggestedFix.field,
+            suggestedValue: r.suggestedFix.value }))
+        : proposal.rows;
+
+      if ((proposal.display === 'issues' || proposal.display === 'diagnosis')
+          && Array.isArray(asIssues)) {
         const byKey = {};
-        proposal.rows.forEach((item) => {
+        asIssues.forEach((item) => {
           if (!item || !item.rowRef || !item.field) { skipped += 1; return; }
           if (columns.indexOf(item.field) === -1) { skipped += 1; return; }
           byKey[item.rowRef] = item;
         });
+        const matched = {};
         rows = rows.map((row) => {
           const item = byKey[row.rowKey];
           if (!item) { return row; }
+          matched[row.rowKey] = true;
           applied += 1;
           const next = Object.assign({}, row);
           next[item.field] = item.suggestedValue === undefined ? '' : String(item.suggestedValue);
           next.statusLabel = 'a controler';
           return next;
         });
+        // Une reference de ligne qui ne correspond a rien doit etre comptee :
+        // silencieusement ignoree, elle laisserait croire a une correction faite.
+        Object.keys(byKey).forEach((key) => { if (!matched[key]) { skipped += 1; } });
       } else if (proposal.display === 'mapping' && Array.isArray(proposal.pairs)) {
         // Renommer une colonne revient a renommer la meme cle sur chaque ligne.
         const renames = proposal.pairs.filter((p) => p && p.source && p.target

@@ -25,10 +25,13 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * dossier : rien n'est fige pour un objet metier donne.
      */
     getTableColumns(columns) {
+      // L'etat porte un message, pas un code : il lui faut plus de place qu'une
+      // colonne de donnee, sinon il est tronque a quelques lettres.
       const list = [{
         field: 'statusLabel',
         headerText: 'Etat',
-        weight: 1
+        weight: 5,
+        minWidth: 180
       }];
       (columns || []).forEach((name) => {
         list.push({ field: name, headerText: name, weight: 2 });
