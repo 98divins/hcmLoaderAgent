@@ -8,7 +8,7 @@
           + ($variables.summaryText ? ' · ' + $variables.summaryText : '')
         : 'Nouveau dossier' ]]"></oj-bind-text>
     </span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 17</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 18</span>
     <oj-bind-if test="[[ $variables.hierarchy ]]">
       <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                    chroming="borderless" size="sm" button-type="button"
@@ -23,7 +23,7 @@
        les colonnes attendues, les feuilles possibles et les operations permises,
        et l'operation vaut pour tout le dossier : HDL ne connait que MERGE et
        DELETE, et un fichier ne melange pas les deux. -->
-  <oj-bind-if test="[[ !$variables.hierarchy ]]">
+  <oj-bind-if test="[[ !$variables.sheets.length ]]">
     <div class="hdl-entry oj-sm-padding-6x">
 
       <h1 class="oj-typography-heading-sm oj-text-color-primary oj-sm-margin-0 oj-sm-margin-2x-bottom">Quel
@@ -223,7 +223,7 @@
 
         <!-- Validation explicite : c'est ce geste, et lui seul, qui declenche un
              envoi vers Oracle. L'assistant n'a aucun moyen de le provoquer. -->
-        <oj-bind-if test="[[ !$variables.countIssues && $variables.step !== 'result' ]]">
+        <oj-bind-if test="[[ $variables.step === 'submit' && !$variables.countIssues ]]">
           <div class="hdl-ready oj-sm-padding-3x oj-sm-margin-3x-bottom">
             <div class="oj-typography-body-sm oj-typography-semi-bold">Le dossier est pret</div>
             <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-bottom"><oj-bind-text

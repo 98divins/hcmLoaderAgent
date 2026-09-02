@@ -17,7 +17,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   const TENANT = {
     Location: {
       endpoint: 'site_hcm_extension:hcmRestLocations/getall_locationsV2',
-      matchOn: 'LocationCode'
+      matchOn: 'LocationCode',   // colonne de la feuille
+      field: 'LocationCode'      // champ de la ressource REST, a confirmer au premier essai
     }
   };
 
@@ -52,10 +53,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
    * une reference vers un autre objet se fournit par la cle utilisateur de cet
    * objet. SetId est obligatoire, mais SetCode le renseigne.
    */
-  function requiredMissing(spec, columns, row) {
+  function requiredMissing(spec, columns, row, operation) {
     const missing = [];
     (spec.attributes || []).forEach((attribute) => {
       if (attribute.required === 'no' || isSystemKey(attribute)) { return; }
+      // Une suppression n'a besoin que de quoi identifier l'enregistrement :
+      // exiger les attributs d'une creation signalerait de fausses anomalies.
+      if (operation === 'DELETE' && attribute.required !== 'always') { return; }
 
       const substitutes = attribute.foreignUserKey || [];
       const candidates = [attribute.name].concat(substitutes);
@@ -130,7 +134,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
    * que le moteur, qui applique des valeurs par defaut. Bloquer sur cette base
    * refuserait des fichiers que le pod accepte.
    */
-  function checkRow(spec, columns, row, byName) {
+  function checkRow(spec, columns, row, byName, operation) {
     const errors = [];
     const warnings = [];
 
@@ -141,7 +145,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       }
     });
 
-    requiredMissing(spec, columns, row).forEach((entry) => {
+    requiredMissing(spec, columns, row, operation).forEach((entry) => {
       if ((spec.userKey || []).indexOf(entry.name) !== -1) { return; }
       const text = `${entry.label} absent ou vide`;
       if (entry.level === 'always') { errors.push(text); } else { warnings.push(text); }
@@ -155,7 +159,10 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       }
     });
 
-    const conditional = conditionalIssues(spec, columns, row);
+    // Les regles conditionnelles decrivent ce qu'une creation doit porter.
+    const conditional = operation === 'DELETE'
+      ? { errors: [], warnings: [] }
+      : conditionalIssues(spec, columns, row);
     return {
       errors: errors.concat(conditional.errors),
       warnings: warnings.concat(conditional.warnings)
@@ -249,6 +256,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     async run(context, { event, ask } = {}) {
       const { $variables } = context;
       const catalog = $variables.objectCatalog || {};
+      const operation = $variables.operation || 'MERGE';
       const all = $variables.sheets || [];
       if (!all.some((sheet) => (sheet.rows || []).length)) { return; }
 
@@ -278,7 +286,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         let issues = 0;
         let warns = 0;
         const checked = rows.map((row) => {
-          const { errors, warnings } = checkRow(spec, columns, row, byName);
+          const { errors, warnings } = checkRow(spec, columns, row, byName, operation);
           if (dup.keyColumns.length && dup.duplicated[signature(row, dup.keyColumns)]) {
             errors.push('cle utilisateur en double : une autre ligne porte la meme '
               + `${dup.keyColumns.join(' + ')} et l'ecraserait`);
@@ -360,14 +368,25 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
           if (tenantCache[wanted] === undefined) {
             try {
+              // uriParams : la seule forme de parametrage verifiee en execution
+              // reelle sur ce backend. Un filtre place ailleurs est ignore, et la
+              // ressource repond alors son premier enregistrement, quel qu'il soit.
               const answer = await Actions.callRest(context, {
                 endpoint: lookup.endpoint,
-                requestTransformOptions: {
-                  query: { q: `${matchOn}='${wanted.replace(/'/g, '')}'`, limit: 1 }
+                uriParams: {
+                  q: `${lookup.field}='${wanted.replace(/'/g, '')}'`,
+                  onlyData: true,
+                  limit: 5
                 }
               });
               const body = (answer && answer.body) || {};
-              tenantCache[wanted] = Array.isArray(body.items) && body.items.length > 0;
+              const items = Array.isArray(body.items) ? body.items : [];
+              // On ne croit pas la reponse sur parole : l'enregistrement rendu
+              // doit porter la valeur demandee. Un filtre ignore renverrait un
+              // autre site, et chaque ligne passerait pour une mise a jour.
+              const match = items.some((item) => String(item[lookup.field] || '')
+                .trim().toUpperCase() === wanted.toUpperCase());
+              tenantCache[wanted] = match ? true : (items.length ? null : false);
             } catch (err) {
               // Ni valide ni invalide : on ne sait pas, et on le dit.
               tenantCache[wanted] = null;
@@ -376,7 +395,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
           const found = tenantCache[wanted];
           if (found === null) {
-            row.matchLabel = "non verifie : le tenant n'a pas repondu";
+            row.matchLabel = "non verifie : reponse du tenant absente ou hors filtre";
           } else if (found) {
             row.matchLabel = parent ? 'parent deja present dans le tenant' : 'mise a jour';
           } else if (parent) {

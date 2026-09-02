@@ -36,7 +36,6 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // on applique a la feuille selectionnee, qui est celle que l'utilisateur
       // regarde au moment ou il clique.
       const sheets = ($variables.sheets || []).slice();
-      const current = $variables.activeSheet || 0;
       let applied = 0;
       let skipped = 0;
 
@@ -53,10 +52,16 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           && Array.isArray(asIssues)) {
         // Une correction par feuille, indexee par ligne.
         const perSheet = {};
+        // Sans numero de feuille, une correction n'est applicable sans risque
+        // que si une seule feuille porte des donnees : sinon un rowKey designe
+        // potentiellement une ligne dans chacune, et on ne devine pas laquelle.
+        const filled = sheets.map((sheet, i) => ((sheet.rows || []).length ? i : -1))
+          .filter((i) => i !== -1);
+        const fallback = filled.length === 1 ? filled[0] : -1;
         asIssues.forEach((item) => {
           if (!item || !item.rowRef || !item.field) { skipped += 1; return; }
           const index = (item.sheet === undefined || item.sheet === null)
-            ? current : Number(item.sheet);
+            ? fallback : Number(item.sheet);
           const sheet = sheets[index];
           if (!sheet || (sheet.columns || []).indexOf(item.field) === -1) {
             skipped += 1;
@@ -91,7 +96,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         // Un renommage de colonne porte sur une feuille : celle que designe la
         // proposition, sinon celle qui est affichee.
         const index = (proposal.sheet === undefined || proposal.sheet === null)
-          ? current : Number(proposal.sheet);
+          ? ($variables.activeSheet || 0) : Number(proposal.sheet);
         const sheet = sheets[index];
         if (!sheet) {
           $variables.errorText = 'Cette proposition designe une feuille absente du dossier.';

@@ -76,10 +76,18 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const dates = dateColumns(spec);
       const parent = spec.parent;
 
+      // Le rattachement par cle source n'est ecrit que si chaque ligne de la
+      // feuille designe un parent cree dans ce meme dossier : une cle source qui
+      // n'existe pas encore dans le tenant ne se resout pas, et la ligne serait
+      // rejetee. Dans tous les autres cas, les colonnes de cle du parent, deja
+      // presentes sur l'enfant, suffisent : HDL traite les parents d'abord.
+      const bySource = Boolean(linked && parent
+        && (sheet.rows || []).every((row) => row.matchLabel === 'parent cree dans ce dossier'));
+
       const header = columns.slice();
       if (linked) {
         header.push('SourceSystemOwner', 'SourceSystemId');
-        if (parent) { header.push(`${parent.column}(SourceSystemId)`); }
+        if (bySource) { header.push(`${parent.column}(SourceSystemId)`); }
       }
       lines.push(['METADATA', sheet.object].concat(header).join('|'));
 
@@ -91,7 +99,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         }
         if (linked) {
           cells.push(owner, sourceIdFor(sheet.object, spec.userKey || [], row));
-          if (parent) {
+          if (bySource) {
             cells.push(sourceIdFor(parent.object, parent.userKey || [], row));
           }
         }
@@ -120,10 +128,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       if (!sheets.length) { return; }
 
       // Meme exigence que pour le chargement : un fichier telecharge est un
-      // fichier qui sera charge, il ne doit pas porter d'anomalie connue.
-      if ($variables.countIssues) {
-        $variables.errorText = 'Le dossier porte encore des anomalies. Corrigez-les '
-          + 'avant de produire le fichier.';
+      // fichier qui sera charge. Il faut un controle complet et sans anomalie,
+      // pas seulement l'absence d'anomalie connue : avant le premier controle,
+      // le dossier n'en connait aucune.
+      if ($variables.step !== 'submit' || $variables.countIssues) {
+        $variables.errorText = $variables.countIssues
+          ? 'Le dossier porte encore des anomalies. Corrigez-les avant de produire le fichier.'
+          : 'Controlez le dossier avant de produire le fichier.';
         return;
       }
 
