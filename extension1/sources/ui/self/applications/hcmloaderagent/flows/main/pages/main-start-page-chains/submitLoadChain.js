@@ -327,7 +327,16 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const sheets = ($variables.sheets || []).filter((sheet) => (sheet.rows || []).length);
       const rowCount = sheets.reduce((total, sheet) => total + sheet.rows.length, 0);
 
-      if (!rowCount || $variables.isLoading) { return; }
+      if (!rowCount || $variables.isLoading || $variables.isChecking) { return; }
+
+      // Un chargement reel ne part que sur une confirmation explicite, donnee
+      // apres avoir lu l'operation et le volume. Le bouton s'arme d'abord, puis
+      // confirme ; toute autre action entre les deux le desarme.
+      if ($variables.armedAction !== 'load') {
+        $variables.errorText = 'Confirmez le chargement avant de soumettre.';
+        return;
+      }
+      $variables.armedAction = '';
 
       // Deux refus avant tout envoi : rien ne part avec des anomalies connues,
       // rien ne part au-dela de la taille couverte.

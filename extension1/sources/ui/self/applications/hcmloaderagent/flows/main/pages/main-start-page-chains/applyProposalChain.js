@@ -35,6 +35,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // multi-feuilles, un rowKey seul est ambigu. Sans indication de feuille,
       // on applique a la feuille selectionnee, qui est celle que l'utilisateur
       // regarde au moment ou il clique.
+      $variables.armedAction = '';
       const sheets = ($variables.sheets || []).slice();
       let applied = 0;
       let skipped = 0;
@@ -84,6 +85,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
             next[item.field] = item.suggestedValue === undefined
               ? '' : String(item.suggestedValue);
             next.statusLabel = 'a controler';
+            next.statusDetail = '';
             return next;
           });
           // Une reference de ligne qui ne correspond a rien doit etre comptee :
@@ -119,6 +121,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
               delete next[pair.source];
             });
             next.statusLabel = 'a controler';
+            next.statusDetail = '';
             return next;
           })
         });
@@ -141,7 +144,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // Le controle qui suit reecrit le resume : la note transite par sa propre
       // variable pour ne pas etre perdue en route.
       $variables.appliedNote = `${applied} modification${mark} appliquee${mark}`
-        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du plan` : '');
+        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du dossier` : '');
       $variables.summaryText = $variables.appliedNote;
     }
   }

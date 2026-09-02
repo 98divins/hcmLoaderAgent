@@ -173,6 +173,8 @@
           "Location": {
             "top": "Location",
             "file": "Location.dat",
+            "title": "Site",
+            "description": "Sites et adresses de l'entreprise.",
             "children": [
               "LocationOtherAddress",
               "LocationLegislative",
@@ -182,6 +184,8 @@
           "Organization": {
             "top": "Organization",
             "file": "Organization.dat",
+            "title": "Organisation, departement",
+            "description": "Departements, unites legales, entites declaratives.",
             "children": [
               "OrgUnitClassification",
               "OrgInformation"
@@ -1520,6 +1524,22 @@
           }
         }
       }
+    },
+    "isChecking": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "armedAction": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "checkSummary": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "lookupValues": {
+      "type": "object",
+      "defaultValue": {}
     }
   },
   "metadata": {},
@@ -1674,39 +1694,6 @@
         }
       ]
     },
-    "onAutoCheckLoad": {
-      "chains": [
-        {
-          "chain": "checkLoadStatusChain",
-          "parameters": {
-            "auto": true
-          }
-        },
-        {
-          "chain": "askAgentChain"
-        }
-      ]
-    },
-    "onPickLocation": {
-      "chains": [
-        {
-          "chain": "pickHierarchyChain",
-          "parameters": {
-            "hierarchy": "Location"
-          }
-        }
-      ]
-    },
-    "onPickOrganization": {
-      "chains": [
-        {
-          "chain": "pickHierarchyChain",
-          "parameters": {
-            "hierarchy": "Organization"
-          }
-        }
-      ]
-    },
     "onPickMerge": {
       "chains": [
         {
@@ -1731,6 +1718,9 @@
       "chains": [
         {
           "chain": "startDossierChain"
+        },
+        {
+          "chain": "loadLookupsChain"
         }
       ]
     },
@@ -1751,6 +1741,43 @@
           "parameters": {
             "event": "[[ $event ]]"
           }
+        }
+      ]
+    },
+    "onPickHierarchy": {
+      "chains": [
+        {
+          "chain": "pickHierarchyChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onArmLoad": {
+      "chains": [
+        {
+          "chain": "armChain",
+          "parameters": {
+            "action": "load"
+          }
+        }
+      ]
+    },
+    "onDisarm": {
+      "chains": [
+        {
+          "chain": "armChain",
+          "parameters": {
+            "action": ""
+          }
+        }
+      ]
+    },
+    "onRemoveSheet": {
+      "chains": [
+        {
+          "chain": "removeSheetChain"
         }
       ]
     }

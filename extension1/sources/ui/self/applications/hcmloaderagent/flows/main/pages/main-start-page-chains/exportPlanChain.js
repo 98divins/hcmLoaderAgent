@@ -3,7 +3,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
   // Colonne d'anomalie ajoutee a l'export : elle permet de corriger dans Excel
   // en voyant le probleme. L'import la reconnait et l'ecarte, de sorte que
-  // l'aller-retour ne pollue pas le plan.
+  // l'aller-retour ne pollue pas le dossier.
   const ISSUE_COLUMN = 'Anomalie';
   const SEPARATOR = ';';
 
@@ -29,7 +29,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     const lines = [headers.map(escapeCsv).join(SEPARATOR)];
     rows.forEach((row) => {
       const values = columns.map((name) => escapeCsv(row[name]));
-      const status = row.statusLabel === 'ok' ? '' : (row.statusLabel || '');
+      const status = row.statusDetail || '';
       values.push(escapeCsv(status));
       lines.push(values.join(SEPARATOR));
     });

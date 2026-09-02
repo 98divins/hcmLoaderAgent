@@ -195,11 +195,15 @@ HIERARCHIES = {
     'Location': {
         'top': 'Location',
         'file': 'Location.dat',
+        'title': 'Site',
+        'description': "Sites et adresses de l'entreprise.",
         'children': ['LocationOtherAddress', 'LocationLegislative', 'LocationExtraInfo'],
     },
     'Organization': {
         'top': 'Organization',
         'file': 'Organization.dat',
+        'title': 'Organisation, departement',
+        'description': 'Departements, unites legales, entites declaratives.',
         'children': ['OrgUnitClassification', 'OrgInformation'],
     },
 }

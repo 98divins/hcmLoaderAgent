@@ -49,6 +49,9 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.turns = [];
       $variables.hasAutoFix = false;
       $variables.hasProposal = false;
+      $variables.armedAction = '';
+      $variables.checkSummary = {};
+      $variables.lookupValues = {};
     }
   }
 

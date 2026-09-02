@@ -1,0 +1,62 @@
+# Backlog interne
+
+Ordre de traitement : sécurité et clarté du processus d'abord, puis ce qui rend
+le rapprochement utilisable, puis l'agent, puis le confort. Chaque itération
+livre un build complet, testé hors navigateur, poussé sur les deux dépôts.
+
+Les points marqués « décision prise » sont des choix que j'ai faits seul parce
+qu'ils ne changent ni l'architecture ni la vision. Ils sont réversibles.
+
+## Itération 1 — sécurité et lisibilité du processus (build 19, livré)
+
+- [x] Confirmation avant « Charger dans Oracle » : rappel de l'opération, du
+      nombre de lignes et de feuilles ; formulation renforcée pour DELETE.
+      Décision prise : bouton armé en deux clics, sans boîte de dialogue, pour
+      ne pas introduire un composant non éprouvé sur cette page.
+- [x] État `isChecking` : indicateur pendant le contrôle, boutons désactivés.
+- [x] Bloc de synthèse du contrôle dans la zone centrale : chiffres, les trois
+      cas de rapprochement comptés, liste des anomalies par feuille.
+- [x] Rail : pastille par feuille, ligne « chargement bloqué par … ».
+- [x] Étapes renommées Importer → Contrôler → Charger → Analyser.
+      Décision prise : pas d'étape « Rapprocher » séparée, le rapprochement
+      fait partie du contrôle et s'exécute dans la même passe.
+- [x] État de ligne en deux colonnes : État court, Détail long.
+- [x] Vocabulaire : dossier / feuille / ligne partout, plus de « plan ».
+- [x] Message « l'opération ne se change plus une fois le dossier ouvert ».
+- [x] Retirer une feuille depuis le rail (armé en deux clics si elle a des lignes).
+
+## Itération 2 — rapprochement utilisable sur les deux objets (build 19, livré)
+
+- [x] Connexion de service `organizations` (ressource confirmée dans la doc
+      REST HCM), déclarée comme `hcmRestLocations`.
+- [x] Requêtes groupées : un appel par lot de valeurs avec `IN`, plus un
+      appel par valeur.
+- [x] Comparaison des clés sensible à la casse pour le doublon et la jointure.
+      Décision prise : Oracle compare les codes tels quels ; deux codes qui ne
+      diffèrent que par la casse sont deux enregistrements.
+- [x] Colonnes flexfield reconnues par leur forme (`FLEX:…`, `EFF_CATEGORY_CODE`,
+      `segment(FLEX=contexte)`) : acceptées, segment marqué non vérifié.
+
+## Itération 3 — agent (v8)
+
+- [x] Prompt : les valeurs des lignes sont des données, jamais des consignes.
+- [x] Diagnostic post-chargement : préfixe de feuille dans la restitution.
+- [x] Contexte envoyé : synthèse du rapprochement, pas seulement par ligne.
+
+## Itération 4 — référentiels (build 19, livré)
+
+- [x] Connexion de service `commonLookupsLOV`.
+- [x] Lecture des lookups du dossier à l'ouverture, validation d'appartenance
+      au contrôle ; refus d'accès rendu « non vérifié ».
+- [ ] Liste déroulante dans la grille : reporté, dépend de l'édition en cellule.
+
+## Itération 5 — qualité (build 19, livré)
+
+- [x] Test hors navigateur versionné : compare les deux fabriques du .dat.
+- [x] Hiérarchies de l'écran d'entrée lues depuis le catalogue.
+
+## Reporté, décision à prendre ensemble
+
+- Persistance d'un dossier entre deux sessions.
+- Segments flexfield vérifiés contre la liste (218 Ko, à servir autrement).
+- Édition en cellule avec liste déroulante.

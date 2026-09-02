@@ -13,15 +13,24 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     /**
      * @param {Object} context
      * @param {Object} params
-     * @param {string} params.hierarchy
+     * @param {string} params.hierarchy  ou l'evenement d'un clic sur une carte
+     * @param {Event} params.event
      */
-    async run(context, { hierarchy } = {}) {
+    async run(context, { hierarchy, event } = {}) {
       const { $variables } = context;
       const catalog = $variables.objectCatalog || {};
-      const tree = (catalog.hierarchies || {})[hierarchy];
+      // Les cartes sont rendues par une boucle, et $listeners n'est pas resolu
+      // dans un <template> : le clic est ecoute sur le conteneur, et la carte
+      // cliquee porte son identifiant.
+      let wanted = hierarchy;
+      if (!wanted && event && event.target && event.target.closest) {
+        const node = event.target.closest('[data-hierarchy]');
+        wanted = node ? node.getAttribute('data-hierarchy') : '';
+      }
+      const tree = (catalog.hierarchies || {})[wanted];
       if (!tree) { return; }
 
-      $variables.hierarchy = hierarchy;
+      $variables.hierarchy = wanted;
       $variables.sheets = [];
       $variables.activeSheet = 0;
       $variables.errorText = '';

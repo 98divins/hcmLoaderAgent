@@ -29,6 +29,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       if (!spec || !belongs) { return; }
       if ((spec.validOperations || []).indexOf($variables.operation) === -1) { return; }
 
+      $variables.armedAction = '';
       const sheets = ($variables.sheets || []).slice();
       if (sheets.some((sheet) => sheet.object === name)) {
         $variables.activeSheet = sheets.map((s) => s.object).indexOf(name);

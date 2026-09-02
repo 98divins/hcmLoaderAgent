@@ -101,7 +101,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // Un fichier reimporte apres export porte les colonnes de service de la
       // page. Les garder les ferait passer pour des attributs de l'objet metier
       // et le chargement les rejetterait.
-      const META_COLUMNS = ['Etat', 'Anomalie', 'Rapprochement', 'rowKey', 'statusLabel', 'matchLabel'];
+      const META_COLUMNS = ['Etat', 'Detail', 'Anomalie', 'Rapprochement', 'rowKey',
+        'statusLabel', 'statusDetail', 'matchLabel'];
       const allHeaders = parseCsvLine(lines[0], separator);
       const keptIndexes = [];
       const headers = [];
@@ -114,7 +115,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const rows = [];
       for (let i = 1; i < lines.length; i += 1) {
         const values = parseCsvLine(lines[i], separator);
-        const row = { rowKey: `L${i}`, statusLabel: 'a controler' };
+        const row = { rowKey: `L${i}`, statusLabel: 'a controler', statusDetail: '', matchLabel: '' };
         headers.forEach((header, position) => {
           const value = values[keptIndexes[position]];
           row[header] = value === undefined ? '' : value;
@@ -141,6 +142,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         statusLabel: `${rows.length} ligne${plural} - a controler`
       });
       $variables.sheets = sheets;
+      $variables.armedAction = '';
+      $variables.checkSummary = {};
 
       const total = sheets.reduce((sum, sheet) => sum + (sheet.rows || []).length, 0);
       $variables.countTotal = total;

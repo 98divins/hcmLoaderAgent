@@ -8,21 +8,23 @@
           + ($variables.summaryText ? ' · ' + $variables.summaryText : '')
         : 'Nouveau dossier' ]]"></oj-bind-text>
     </span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 18</span>
-    <oj-bind-if test="[[ $variables.hierarchy ]]">
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 19</span>
+    <oj-bind-if test="[[ $variables.sheets.length ]]">
       <oj-c-button label="[[ $variables.assistOpen ? 'Masquer' : 'Assistant' ]]"
                    chroming="borderless" size="sm" button-type="button"
                    on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
     </oj-bind-if>
     <oj-c-button label="Nouveau dossier" chroming="borderless" size="sm" button-type="button"
-                 disabled="[[ $variables.isThinking ]]"
+                 disabled="[[ $variables.isThinking || $variables.isChecking || $variables.isLoading ]]"
                  on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
   </div>
 
   <!-- Point d'entree : l'objet est choisi avant tout import. C'est lui qui fixe
        les colonnes attendues, les feuilles possibles et les operations permises,
        et l'operation vaut pour tout le dossier : HDL ne connait que MERGE et
-       DELETE, et un fichier ne melange pas les deux. -->
+       DELETE, et un fichier ne melange pas les deux. Les cartes viennent du
+       catalogue ; le clic est ecoute sur le conteneur, $listeners n'etant pas
+       resolu dans un <template>. -->
   <oj-bind-if test="[[ !$variables.sheets.length ]]">
     <div class="hdl-entry oj-sm-padding-6x">
 
@@ -32,74 +34,42 @@
         determine les colonnes attendues, les feuilles que le dossier peut contenir et les
         operations reellement permises sur chacune.</p>
 
-      <div class="hdl-cards oj-flex">
+      <div class="hdl-cards oj-flex" on-click="[[ $listeners.onPickHierarchy ]]">
+        <oj-bind-for-each data="[[ $page.functions.getHierarchies($variables.objectCatalog, $variables.hierarchy) ]]">
+          <template>
+            <div :class="[[ $current.data.cls ]]" :data-hierarchy="[[ $current.data.id ]]">
+              <div class="oj-flex oj-sm-align-items-baseline">
+                <span class="oj-typography-body-lg oj-typography-semi-bold oj-text-color-primary"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+                <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $current.data.title ]]"></oj-bind-text></span>
+              </div>
+              <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-bottom"><oj-bind-text value="[[ $current.data.description ]]"></oj-bind-text></div>
 
-        <div class="hdl-card oj-sm-padding-4x">
-          <div class="oj-typography-body-lg oj-typography-semi-bold oj-text-color-primary">Location</div>
-          <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-bottom">Sites
-            et adresses de l'entreprise.</div>
-
-          <div class="hdl-matrix oj-sm-margin-3x-bottom">
-            <div class="hdl-matrix-row hdl-matrix-head">
-              <span class="oj-typography-body-xs">Objet</span>
-              <span class="oj-typography-body-xs">Creer</span>
-              <span class="oj-typography-body-xs">M. a jour</span>
-              <span class="oj-typography-body-xs">Suppr.</span>
-            </div>
-            <oj-bind-for-each data="[[ $page.functions.getObjectMatrix($variables.objectCatalog, 'Location') ]]">
-              <template>
-                <div class="hdl-matrix-row">
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.creer === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.majour === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.supprimer === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
+              <div class="hdl-matrix oj-sm-margin-3x-bottom">
+                <div class="hdl-matrix-row hdl-matrix-head">
+                  <span class="oj-typography-body-xs">Objet</span>
+                  <span class="oj-typography-body-xs">Creer</span>
+                  <span class="oj-typography-body-xs">M. a jour</span>
+                  <span class="oj-typography-body-xs">Suppr.</span>
                 </div>
-              </template>
-            </oj-bind-for-each>
-          </div>
+                <oj-bind-for-each data="[[ $page.functions.getObjectMatrix($variables.objectCatalog, $current.data.id) ]]">
+                  <template>
+                    <div class="hdl-matrix-row">
+                      <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+                      <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.creer ]]"></oj-bind-text></span>
+                      <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.majour ]]"></oj-bind-text></span>
+                      <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.supprimer ]]"></oj-bind-text></span>
+                    </div>
+                  </template>
+                </oj-bind-for-each>
+              </div>
 
-          <div class="oj-typography-body-xs oj-text-color-secondary">Reference unique du parent</div>
-          <div class="oj-typography-body-sm oj-sm-margin-3x-bottom"><oj-bind-text
-            value="[[ $page.functions.getHierarchyKey($variables.objectCatalog, 'Location') ]]"></oj-bind-text></div>
+              <div class="oj-typography-body-xs oj-text-color-secondary">Reference unique du parent</div>
+              <div class="oj-typography-body-sm oj-sm-margin-3x-bottom"><oj-bind-text value="[[ $current.data.userKey ]]"></oj-bind-text></div>
 
-          <oj-c-button label="Choisir Location" button-type="button" size="sm"
-                       chroming="[[ $variables.hierarchy === 'Location' ? 'callToAction' : 'outlined' ]]"
-                       on-oj-action="[[ $listeners.onPickLocation ]]"></oj-c-button>
-        </div>
-
-        <div class="hdl-card oj-sm-padding-4x">
-          <div class="oj-typography-body-lg oj-typography-semi-bold oj-text-color-primary">Organization</div>
-          <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-bottom">Departements,
-            unites legales, entites declaratives.</div>
-
-          <div class="hdl-matrix oj-sm-margin-3x-bottom">
-            <div class="hdl-matrix-row hdl-matrix-head">
-              <span class="oj-typography-body-xs">Objet</span>
-              <span class="oj-typography-body-xs">Creer</span>
-              <span class="oj-typography-body-xs">M. a jour</span>
-              <span class="oj-typography-body-xs">Suppr.</span>
+              <div class="hdl-card-action oj-typography-body-sm oj-typography-semi-bold"><oj-bind-text value="[[ $current.data.action ]]"></oj-bind-text></div>
             </div>
-            <oj-bind-for-each data="[[ $page.functions.getObjectMatrix($variables.objectCatalog, 'Organization') ]]">
-              <template>
-                <div class="hdl-matrix-row">
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.creer === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.majour === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
-                  <span class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.supprimer === 'oui' ? 'oui' : '—' ]]"></oj-bind-text></span>
-                </div>
-              </template>
-            </oj-bind-for-each>
-          </div>
-
-          <div class="oj-typography-body-xs oj-text-color-secondary">Reference unique du parent</div>
-          <div class="oj-typography-body-sm oj-sm-margin-3x-bottom"><oj-bind-text
-            value="[[ $page.functions.getHierarchyKey($variables.objectCatalog, 'Organization') ]]"></oj-bind-text></div>
-
-          <oj-c-button label="Choisir Organization" button-type="button" size="sm"
-                       chroming="[[ $variables.hierarchy === 'Organization' ? 'callToAction' : 'outlined' ]]"
-                       on-oj-action="[[ $listeners.onPickOrganization ]]"></oj-c-button>
-        </div>
-
+          </template>
+        </oj-bind-for-each>
       </div>
 
       <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-5x-top">Les
@@ -116,7 +86,8 @@
       <div class="oj-typography-body-md oj-typography-semi-bold oj-sm-margin-1x-bottom">Operation
         du dossier</div>
       <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-bottom">Un
-        dossier porte une seule operation, pour toutes ses feuilles.</div>
+        dossier porte une seule operation, pour toutes ses feuilles. Elle ne se change plus
+        une fois le dossier ouvert.</div>
 
       <div class="oj-flex oj-sm-align-items-center">
         <oj-c-button label="Creer et mettre a jour" button-type="button" size="sm"
@@ -151,21 +122,31 @@
       <div class="oj-typography-body-xs oj-text-color-secondary">Dossier</div>
       <div class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary"><oj-bind-text
         value="[[ $variables.hierarchy ]]"></oj-bind-text></div>
-      <div class="hdl-chip oj-typography-body-xs oj-sm-margin-3x-bottom"><oj-bind-text
+      <div class="hdl-chip oj-typography-body-xs"><oj-bind-text
         value="[[ $page.functions.operationLabel($variables.operation) ]]"></oj-bind-text></div>
+      <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-bottom">Operation
+        fixee a l'ouverture du dossier.</div>
 
       <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-bottom">Feuilles</div>
       <div class="hdl-sheets" on-click="[[ $listeners.onSelectSheet ]]">
         <oj-bind-for-each data="[[ $page.functions.getSheets($variables.sheets, $variables.activeSheet) ]]">
           <template>
             <div :class="[[ $current.data.cls ]]" :data-sheet="[[ $current.data.index ]]">
-              <div class="oj-typography-body-sm"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></div>
-              <div class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+              <div class="oj-flex oj-sm-align-items-center">
+                <span :class="[[ $current.data.dot ]]"></span>
+                <span class="oj-typography-body-sm oj-sm-margin-2x-start"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+              </div>
+              <div class="oj-typography-body-xs oj-text-color-secondary hdl-sheet-detail"><oj-bind-text
                 value="[[ $current.data.detail ]]"></oj-bind-text></div>
             </div>
           </template>
         </oj-bind-for-each>
       </div>
+
+      <oj-bind-if test="[[ $variables.countIssues ]]">
+        <div class="hdl-blocked oj-typography-body-xs oj-sm-margin-2x-top"><oj-bind-text
+          value="[[ $page.functions.getBlockingSheets($variables.sheets) ]]"></oj-bind-text></div>
+      </oj-bind-if>
 
       <div class="hdl-adds oj-sm-margin-2x-top" on-click="[[ $listeners.onAddSheet ]]">
         <oj-bind-for-each data="[[ $page.functions.getAddableObjects($variables.objectCatalog,
@@ -177,6 +158,19 @@
           </template>
         </oj-bind-for-each>
       </div>
+
+      <oj-bind-if test="[[ $variables.sheets.length > 1 ]]">
+        <div class="oj-sm-margin-2x-top">
+          <oj-c-button label="[[ $variables.armedAction === 'removeSheet' ? 'Confirmer le retrait' : 'Retirer la feuille' ]]"
+                       button-type="button" size="sm" chroming="borderless"
+                       disabled="[[ $variables.isChecking || $variables.isLoading ]]"
+                       on-oj-action="[[ $listeners.onRemoveSheet ]]"></oj-c-button>
+          <oj-bind-if test="[[ $variables.armedAction === 'removeSheet' ]]">
+            <div class="oj-typography-body-xs oj-text-color-secondary">La feuille porte des
+              lignes : elles seront ecartees du dossier.</div>
+          </oj-bind-if>
+        </div>
+      </oj-bind-if>
 
       <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-4x-top oj-sm-margin-1x-bottom">Avancement</div>
       <oj-bind-for-each data="[[ $page.functions.getSteps($variables.step) ]]">
@@ -216,28 +210,103 @@
           <oj-c-button label="Exporter" button-type="button" size="sm" chroming="outlined"
                        class="oj-sm-margin-2x-end"
                        on-oj-action="[[ $listeners.onExport ]]"></oj-c-button>
+          <oj-bind-if test="[[ $variables.isChecking ]]">
+            <oj-c-progress-circle value="-1" size="sm" class="oj-sm-margin-2x-end"></oj-c-progress-circle>
+            <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-end">Controle en cours...</span>
+          </oj-bind-if>
           <oj-c-button label="Controler le dossier" button-type="button" size="sm"
-                       disabled="[[ $variables.isThinking ]]"
+                       disabled="[[ $variables.isThinking || $variables.isChecking || $variables.isLoading ]]"
                        on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
         </div>
 
+        <!-- Synthese du controle : ce que le code a etabli, en un coup d'oeil.
+             Les trois cas de rapprochement sont comptes a part, parce que c'est
+             le seul controle qu'un fichier seul ne peut pas faire. -->
+        <oj-bind-if test="[[ $variables.checkSummary.match && $variables.step !== 'result' ]]">
+          <div class="hdl-summary oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-flex oj-sm-align-items-baseline oj-sm-margin-2x-bottom">
+              <span class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary">Resultat du controle</span>
+              <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start"><oj-bind-text
+                value="[[ $variables.checkSummary.clean + ' saine' + ($variables.checkSummary.clean > 1 ? 's' : '')
+                  + ' · ' + $variables.checkSummary.issues + ' a corriger · '
+                  + $variables.checkSummary.warnings + ' a verifier' ]]"></oj-bind-text></span>
+            </div>
+
+            <div class="hdl-matches oj-flex oj-sm-margin-2x-bottom">
+              <oj-bind-for-each data="[[ $page.functions.getMatchCards($variables.checkSummary) ]]">
+                <template>
+                  <div :class="[[ $current.data.cls ]]">
+                    <span class="oj-typography-body-md oj-typography-semi-bold"><oj-bind-text value="[[ $current.data.count ]]"></oj-bind-text></span>
+                    <span class="oj-typography-body-xs oj-sm-margin-1x-start"><oj-bind-text value="[[ $current.data.text ]]"></oj-bind-text></span>
+                  </div>
+                </template>
+              </oj-bind-for-each>
+            </div>
+
+            <oj-bind-for-each data="[[ $variables.checkSummary.sheets ]]">
+              <template>
+                <div class="oj-sm-margin-2x-top">
+                  <div class="oj-typography-body-sm oj-typography-semi-bold"><oj-bind-text
+                    value="[[ $current.data.label + ' · ' + $current.data.issues + ' a corriger · ' + $current.data.warnings + ' a verifier' ]]"></oj-bind-text></div>
+                  <oj-bind-for-each data="[[ $current.data.notes ]]">
+                    <template>
+                      <div class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $current.data ]]"></oj-bind-text></div>
+                    </template>
+                  </oj-bind-for-each>
+                  <oj-bind-for-each data="[[ $current.data.items ]]">
+                    <template>
+                      <div :class="[[ $page.functions.itemClass($current.data.state) ]]">
+                        <span class="oj-typography-body-xs oj-typography-semi-bold hdl-item-key"><oj-bind-text value="[[ $current.data.rowKey ]]"></oj-bind-text></span>
+                        <span class="oj-typography-body-xs"><oj-bind-text value="[[ $current.data.text ]]"></oj-bind-text></span>
+                      </div>
+                    </template>
+                  </oj-bind-for-each>
+                  <oj-bind-if test="[[ $current.data.more ]]">
+                    <div class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+                      value="[[ '... et ' + $current.data.more + ' autre' + ($current.data.more > 1 ? 's' : '') + ', dans la grille' ]]"></oj-bind-text></div>
+                  </oj-bind-if>
+                </div>
+              </template>
+            </oj-bind-for-each>
+          </div>
+        </oj-bind-if>
+
         <!-- Validation explicite : c'est ce geste, et lui seul, qui declenche un
-             envoi vers Oracle. L'assistant n'a aucun moyen de le provoquer. -->
+             envoi vers Oracle. Le bouton s'arme, puis confirme : entre les deux,
+             l'utilisateur lit ce qui va partir. L'assistant n'a aucun moyen de
+             le provoquer. -->
         <oj-bind-if test="[[ $variables.step === 'submit' && !$variables.countIssues ]]">
           <div class="hdl-ready oj-sm-padding-3x oj-sm-margin-3x-bottom">
-            <div class="oj-typography-body-sm oj-typography-semi-bold">Le dossier est pret</div>
-            <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-bottom"><oj-bind-text
-              value="[[ $variables.countTotal + ' ligne' + ($variables.countTotal > 1 ? 's' : '')
-                + ' sur ' + $variables.sheets.length + ' feuille' + ($variables.sheets.length > 1 ? 's' : '')
-                + ', operation ' + $variables.operation + ', hierarchie ' + $variables.hierarchy + '.' ]]"></oj-bind-text></div>
-            <div class="oj-flex oj-sm-margin-2x-top">
-              <oj-c-button label="Charger dans Oracle" button-type="button" size="sm"
-                           disabled="[[ $variables.isLoading ]]"
-                           on-oj-action="[[ $listeners.onSubmitLoad ]]"></oj-c-button>
-              <oj-c-button label="Telecharger le .dat" button-type="button" size="sm"
-                           chroming="outlined" class="oj-sm-margin-2x-start"
-                           on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
-            </div>
+            <oj-bind-if test="[[ $variables.armedAction !== 'load' ]]">
+              <div class="oj-typography-body-sm oj-typography-semi-bold">Le dossier est pret</div>
+              <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-bottom"><oj-bind-text
+                value="[[ $variables.countTotal + ' ligne' + ($variables.countTotal > 1 ? 's' : '')
+                  + ' sur ' + $variables.sheets.length + ' feuille' + ($variables.sheets.length > 1 ? 's' : '')
+                  + ', ' + $page.functions.operationLabel($variables.operation).toLowerCase()
+                  + ', hierarchie ' + $variables.hierarchy + '.' ]]"></oj-bind-text></div>
+              <div class="oj-flex oj-sm-margin-2x-top">
+                <oj-c-button label="Charger dans Oracle" button-type="button" size="sm"
+                             disabled="[[ $variables.isLoading || $variables.isChecking ]]"
+                             on-oj-action="[[ $listeners.onArmLoad ]]"></oj-c-button>
+                <oj-c-button label="Telecharger le .dat" button-type="button" size="sm"
+                             chroming="outlined" class="oj-sm-margin-2x-start"
+                             on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
+              </div>
+            </oj-bind-if>
+            <oj-bind-if test="[[ $variables.armedAction === 'load' ]]">
+              <div class="oj-typography-body-sm oj-typography-semi-bold">Confirmer le chargement</div>
+              <div class="oj-typography-body-sm oj-sm-margin-1x-bottom hdl-confirm"><oj-bind-text
+                value="[[ $page.functions.confirmText($variables.hierarchy, $variables.operation, $variables.countTotal, $variables.sheets) ]]"></oj-bind-text></div>
+              <div class="oj-flex oj-sm-margin-2x-top">
+                <oj-c-button label="[[ $variables.operation === 'DELETE' ? 'Confirmer la suppression' : 'Confirmer le chargement' ]]"
+                             button-type="button" size="sm" chroming="callToAction"
+                             disabled="[[ $variables.isLoading ]]"
+                             on-oj-action="[[ $listeners.onSubmitLoad ]]"></oj-c-button>
+                <oj-c-button label="Annuler" button-type="button" size="sm"
+                             chroming="outlined" class="oj-sm-margin-2x-start"
+                             on-oj-action="[[ $listeners.onDisarm ]]"></oj-c-button>
+              </div>
+            </oj-bind-if>
           </div>
         </oj-bind-if>
 
@@ -323,6 +392,7 @@
             <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $variables.autoFixText ]]"></oj-bind-text></div>
             <div class="oj-flex oj-sm-margin-2x-top">
               <oj-c-button label="Appliquer" button-type="button" size="sm"
+                           disabled="[[ $variables.isChecking ]]"
                            on-oj-action="[[ $listeners.onApplyAutoFix ]]"></oj-c-button>
               <oj-c-button label="Ignorer" button-type="button" size="sm" chroming="outlined"
                            class="oj-sm-margin-2x-start"
@@ -337,6 +407,7 @@
             <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $variables.proposalText ]]"></oj-bind-text></div>
             <div class="oj-flex oj-sm-margin-2x-top">
               <oj-c-button label="Appliquer" button-type="button" size="sm"
+                           disabled="[[ $variables.isChecking ]]"
                            on-oj-action="[[ $listeners.onApplyProposal ]]"></oj-c-button>
               <oj-c-button label="Ignorer" button-type="button" size="sm" chroming="outlined"
                            class="oj-sm-margin-2x-start"
@@ -395,6 +466,12 @@
   </div>
   </oj-bind-if>
 
+  <!-- Le message d'erreur est aussi visible quand l'assistant est replie :
+       une erreur muette ferait croire que le clic n'a rien fait. -->
+  <oj-bind-if test="[[ $variables.errorText && !$variables.assistOpen ]]">
+    <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-2x"><oj-bind-text value="[[ $variables.errorText ]]"></oj-bind-text></div>
+  </oj-bind-if>
+
   <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-2x-horizontal oj-sm-padding-2x-bottom">Aucun
     chargement n'est declenche sans validation explicite de votre part.</div>
 
@@ -434,8 +511,23 @@
     min-inline-size: 18rem;
     display: flex;
     flex-direction: column;
+    padding: 1rem;
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-lg);
+    cursor: pointer;
+  }
+
+  .hdl-card:hover {
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+
+  .hdl-card-choisie {
+    border: 2px solid var(--oj-core-text-color-primary);
+  }
+
+  .hdl-card-action {
+    margin-top: auto;
+    color: var(--oj-core-text-color-primary);
   }
 
   /* Une matrice objet x operation : les trois colonnes de droite sont etroites
@@ -496,6 +588,29 @@
     border-inline-start: 3px solid var(--oj-core-text-color-primary);
   }
 
+  .hdl-sheet-detail {
+    padding-inline-start: 1.125rem;
+  }
+
+  /* Pastille d'etat d'une feuille : vert conforme, rouge anomalie, gris vide.
+     Les couleurs sont celles des jetons Redwood, pas des valeurs posees ici. */
+  .hdl-dot {
+    display: inline-block;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--oj-core-divider-color);
+    flex: none;
+  }
+
+  .hdl-dot-ok { background-color: var(--oj-core-success-3, #197a56); }
+  .hdl-dot-anomalie { background-color: var(--oj-core-danger-3, #c74634); }
+
+  .hdl-blocked {
+    color: var(--oj-core-danger-3, #c74634);
+    padding-inline: 0.5rem;
+  }
+
   .hdl-add {
     padding: 0.25rem 0.5rem;
     color: var(--oj-core-text-color-secondary);
@@ -543,6 +658,7 @@
     min-inline-size: 0;
     min-height: 0;
     overflow: hidden;
+    overflow-y: auto;
   }
 
   /* La zone de depot du reimport tient dans la barre d'outils : compacte, elle
@@ -561,15 +677,52 @@
     block-size: 9rem;
   }
 
-  .hdl-ready {
+  .hdl-ready,
+  .hdl-summary {
     background-color: var(--oj-core-bg-color-subtle);
     border: 1px solid var(--oj-core-divider-color);
     border-radius: var(--oj-core-border-radius-md);
+    flex: none;
   }
+
+  .hdl-confirm {
+    color: var(--oj-core-text-color-primary);
+  }
+
+  .hdl-matches {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hdl-match {
+    display: inline-flex;
+    align-items: baseline;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--oj-core-border-radius-md);
+    background-color: var(--oj-core-bg-color-content);
+    border: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-match-ok { border-color: var(--oj-core-success-3, #197a56); }
+  .hdl-match-ko { border-color: var(--oj-core-danger-3, #c74634); }
+  .hdl-match-info { border-color: var(--oj-core-brand-3, #0572ce); }
+
+  .hdl-item {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.125rem 0;
+  }
+
+  .hdl-item-key {
+    min-inline-size: 2.5rem;
+  }
+
+  .hdl-item-ko .hdl-item-key { color: var(--oj-core-danger-3, #c74634); }
+  .hdl-item-warn .hdl-item-key { color: var(--oj-core-warning-3, #a15c00); }
 
   .hdl-table-scroll {
     flex: 1 1 auto;
-    min-height: 0;
+    min-height: 12rem;
     inline-size: 100%;
     max-inline-size: 100%;
     overflow-x: auto;

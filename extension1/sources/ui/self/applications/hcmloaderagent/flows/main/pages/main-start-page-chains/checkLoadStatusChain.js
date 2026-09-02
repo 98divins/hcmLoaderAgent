@@ -149,7 +149,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
             $variables.question = messages.length
               ? 'Le chargement HDL est termine et a renvoye les messages suivants. '
                 + 'Explique chaque rejet a partir du message exact d\'Oracle, et propose '
-                + 'les corrections applicables sur les lignes du plan : '
+                + 'les corrections applicables sur les lignes du dossier : '
                 + JSON.stringify(messages).slice(0, 3000)
               : '';
             break;

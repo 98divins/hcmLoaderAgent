@@ -35,7 +35,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
    * rend ses propositions applicables telles quelles.
    */
   function isFaulty(row) {
-    return row.statusLabel && row.statusLabel !== 'ok' && row.statusLabel !== 'a controler';
+    return row.statusLabel === 'erreur' || row.statusLabel === 'a verifier';
   }
 
   /** rowKey accompagne chaque ligne : c'est la seule reference commune entre
@@ -125,7 +125,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // corrections que sur les premieres.
       const faulty = rows.filter(isFaulty).slice(0, ROW_LIMIT)
         .map((row) => Object.assign(withValues(row, columns), {
-          probleme: row.statusLabel,
+          probleme: row.statusDetail || row.statusLabel,
           rapprochement: row.matchLabel || ''
         }));
       const clean = rows.filter((row) => !isFaulty(row)).slice(0, CLEAN_SAMPLE)
@@ -140,6 +140,12 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           + JSON.stringify(clean));
       }
     });
+
+    const summary = $variables.checkSummary || {};
+    if (summary.match) {
+      lines.push('');
+      lines.push(`Synthese du rapprochement : ${JSON.stringify(summary.match)}`);
+    }
 
     if ($variables.countIssues) {
       lines.push('');
@@ -185,7 +191,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     if (data.display === 'diagnosis' && Array.isArray(data.rows)) {
       return data.rows
         .filter((r) => r.suggestedFix && r.suggestedFix.field)
-        .map((r) => `${r.rowRef} · ${r.suggestedFix.field} = "${r.suggestedFix.value}"`
+        .map((r) => `${r.sheet !== undefined ? `F${r.sheet} - ` : ''}${r.rowRef} - `
+          + `${r.suggestedFix.field} = "${r.suggestedFix.value}"`
           + (r.explanation ? `\n    ${r.explanation}` : ''))
         .join('\n');
     }

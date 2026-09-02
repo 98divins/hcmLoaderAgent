@@ -1,14 +1,22 @@
 define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
   'use strict';
 
-  // Libelles des etapes du dossier. Le rail les affiche dans cet ordre ;
-  // l'etape courante est une donnee du dossier, pas un compteur.
+  // Etapes du dossier, dans l'ordre ou l'utilisateur les traverse. Le
+  // rapprochement n'est pas une etape a part : il fait partie du controle et
+  // s'execute dans la meme passe.
   const STEPS = [
-    { id: 'data', label: 'Donnees' },
-    { id: 'review', label: 'Controle' },
-    { id: 'submit', label: 'Chargement' },
-    { id: 'result', label: 'Resultat' }
+    { id: 'data', label: 'Importer' },
+    { id: 'review', label: 'Controler' },
+    { id: 'submit', label: 'Charger' },
+    { id: 'result', label: 'Analyser' }
   ];
+
+  const STATE_LABELS = {
+    ok: 'OK',
+    erreur: 'Erreur',
+    'a verifier': 'A verifier',
+    'a controler': 'A controler'
+  };
 
   function activeSheet(sheets, index) {
     return (sheets || [])[index || 0] || { columns: [], rows: [] };
@@ -21,20 +29,23 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * "Invalid data type". La cle est portee par la ligne elle-meme.
      */
     getRowsDP(sheets, index) {
-      return new ArrayDataProvider(activeSheet(sheets, index).rows || [],
-        { keyAttributes: 'rowKey' });
+      const rows = (activeSheet(sheets, index).rows || []).map((row) => Object.assign({}, row, {
+        etat: STATE_LABELS[row.statusLabel] || row.statusLabel || ''
+      }));
+      return new ArrayDataProvider(rows, { keyAttributes: 'rowKey' });
     }
 
     /**
      * Les colonnes sont construites a l'execution a partir de celles de la
-     * feuille : rien n'est fige pour un objet metier donne.
+     * feuille : rien n'est fige pour un objet metier donne. L'etat est court,
+     * le detail porte le message : un texte long dans une cellule etroite ne
+     * se lit pas.
      */
     getTableColumns(sheets, index) {
-      // L'etat porte un message, pas un code : il lui faut plus de place qu'une
-      // colonne de donnee, sinon il est tronque a quelques lettres.
       const list = [
-        { field: 'statusLabel', headerText: 'Etat', weight: 4, minWidth: 150 },
-        { field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 130 }
+        { field: 'etat', headerText: 'Etat', weight: 1, minWidth: 90 },
+        { field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 220 },
+        { field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 160 }
       ];
       (activeSheet(sheets, index).columns || []).forEach((name) => {
         list.push({ field: name, headerText: name, weight: 2 });
@@ -55,7 +66,7 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       ];
     }
 
-    /** Meme mecanique que le plan, pour les messages rendus par le moteur HDL. */
+    /** Meme mecanique que le dossier, pour les messages rendus par le moteur HDL. */
     getLoadRowsDP(rows) {
       return new ArrayDataProvider(rows || [], { keyAttributes: 'rowKey' });
     }
@@ -86,14 +97,45 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * $listeners n'etant pas resolu a l'interieur d'un <template>.
      */
     getSheets(sheets, index) {
-      return (sheets || []).map((sheet, position) => ({
-        index: position,
-        object: sheet.object,
-        label: sheet.label,
-        detail: sheet.statusLabel || 'aucune donnee',
-        cls: position === (index || 0) ? 'hdl-sheet hdl-sheet-courante' : 'hdl-sheet',
-        etat: sheet.countIssues ? 'anomalie' : ((sheet.rows || []).length ? 'ok' : 'vide')
-      }));
+      return (sheets || []).map((sheet, position) => {
+        const count = (sheet.rows || []).length;
+        const etat = sheet.countIssues ? 'anomalie' : (count ? 'ok' : 'vide');
+        return {
+          index: position,
+          object: sheet.object,
+          label: sheet.label,
+          detail: sheet.statusLabel || 'aucune donnee',
+          cls: position === (index || 0) ? 'hdl-sheet hdl-sheet-courante' : 'hdl-sheet',
+          dot: `hdl-dot hdl-dot-${etat}`
+        };
+      });
+    }
+
+    /** Feuilles qui bloquent le chargement, nommees pour le rail. */
+    getBlockingSheets(sheets) {
+      const names = (sheets || []).filter((sheet) => sheet.countIssues).map((s) => s.label);
+      if (!names.length) { return ''; }
+      return `Chargement bloque par ${names.join(', ')}`;
+    }
+
+    /**
+     * Hierarchies proposees a l'entree, lues dans le catalogue : ajouter un
+     * objet metier revient a completer une donnee, pas a modifier l'ecran.
+     */
+    getHierarchies(catalog, selected) {
+      const tree = (catalog || {}).hierarchies || {};
+      return Object.keys(tree).map((id) => {
+        const top = ((catalog || {}).objects || {})[tree[id].top] || {};
+        return {
+          id,
+          label: id,
+          title: tree[id].title || '',
+          description: tree[id].description || '',
+          userKey: (top.userKey || []).join(' + '),
+          cls: id === selected ? 'hdl-card hdl-card-choisie' : 'hdl-card',
+          action: id === selected ? 'Retenu' : 'Choisir'
+        };
+      });
     }
 
     /**
@@ -130,19 +172,11 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
           name,
           label: spec.uiName || name,
           parent: spec.level === 'top',
-          creer: merge ? 'oui' : 'non',
-          majour: merge ? 'oui' : 'non',
-          supprimer: ops.indexOf('DELETE') !== -1 ? 'oui' : 'non'
+          creer: merge ? 'oui' : '—',
+          majour: merge ? 'oui' : '—',
+          supprimer: ops.indexOf('DELETE') !== -1 ? 'oui' : '—'
         };
       });
-    }
-
-    /** Cle utilisateur du parent d'une hierarchie, affichee sur la carte. */
-    getHierarchyKey(catalog, hierarchy) {
-      const tree = ((catalog || {}).hierarchies || {})[hierarchy];
-      if (!tree) { return ''; }
-      const spec = ((catalog || {}).objects || {})[tree.top] || {};
-      return (spec.userKey || []).join(' + ');
     }
 
     /**
@@ -161,6 +195,44 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
     /** Libelle de l'operation, tel qu'on en parle plutot que tel que HDL l'ecrit. */
     operationLabel(operation) {
       return operation === 'DELETE' ? 'Supprimer' : 'Creer et mettre a jour';
+    }
+
+    /**
+     * Texte de confirmation avant un chargement reel : ce qui part, en clair.
+     * Une suppression est nommee comme telle.
+     */
+    confirmText(hierarchy, operation, countTotal, sheets) {
+      const n = countTotal || 0;
+      const s = (sheets || []).filter((sheet) => (sheet.rows || []).length).length;
+      const lines = n === 1 ? '1 ligne' : `${n} lignes`;
+      const feuilles = s === 1 ? '1 feuille' : `${s} feuilles`;
+      if (operation === 'DELETE') {
+        return `Vous allez demander a Oracle la SUPPRESSION de ${lines} (${feuilles}, `
+          + `hierarchie ${hierarchy}). Les enregistrements designes seront supprimes. `
+          + 'Cette action est irreversible.';
+      }
+      return `Vous allez soumettre a Oracle un chargement de ${lines} (${feuilles}, `
+        + `hierarchie ${hierarchy}) : creation des enregistrements absents, mise a jour `
+        + 'des existants. Le traitement demarre immediatement.';
+    }
+
+    /** Synthese du controle, prete a afficher : les trois cas de rapprochement comptes. */
+    getMatchCards(summary) {
+      const m = (summary && summary.match) || null;
+      if (!m) { return []; }
+      const cards = [];
+      if (m.dossier) { cards.push({ cls: 'hdl-match hdl-match-ok', count: m.dossier, text: 'parent cree dans ce dossier' }); }
+      if (m.tenant) { cards.push({ cls: 'hdl-match hdl-match-info', count: m.tenant, text: 'parent deja present dans le tenant' }); }
+      if (m.missing) { cards.push({ cls: 'hdl-match hdl-match-ko', count: m.missing, text: 'parent introuvable : ligne rejetee' }); }
+      if (m.create) { cards.push({ cls: 'hdl-match hdl-match-ok', count: m.create, text: 'creation' }); }
+      if (m.update) { cards.push({ cls: 'hdl-match hdl-match-info', count: m.update, text: 'mise a jour' }); }
+      if (m.unverified) { cards.push({ cls: 'hdl-match hdl-match-na', count: m.unverified, text: 'non verifie' }); }
+      return cards;
+    }
+
+    /** Etat d'une ligne de la synthese, sous forme de classe. */
+    itemClass(state) {
+      return state === 'erreur' ? 'hdl-item hdl-item-ko' : 'hdl-item hdl-item-warn';
     }
   }
 

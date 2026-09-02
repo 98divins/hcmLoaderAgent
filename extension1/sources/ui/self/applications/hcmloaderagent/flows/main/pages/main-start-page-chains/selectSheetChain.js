@@ -25,6 +25,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
       const index = parseInt(node.getAttribute('data-sheet'), 10);
       if (isNaN(index) || index < 0 || index >= ($variables.sheets || []).length) { return; }
+      $variables.armedAction = '';
       $variables.activeSheet = index;
     }
   }

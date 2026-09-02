@@ -1,83 +1,143 @@
 {
-    "backends": {
-        "fusionAi": {
-            "headers": {},
-            "servers": [
-                {
-                    "url": "vb-catalog://backends/base:fa",
-                    "description": "Default Server",
-                    "x-vb": {
-                        "authentication": {
-                            "authenticated": {
-                                "type": "oauth2_user_assertion",
-                                "scope": "urn:opc:resource:fusion:eqjz:fusion-ai/"
-                            }
-                        }
-                    }
-                }
-            ]
-        }
-    },
-    "services": {
-        "hcmRestLocations": {
-            "openapi": "3.0.0",
-            "info": {
-                "x-vb": {
-                    "serviceType": "adf-rest"
-                }
-            },
-            "servers": [
-                {
-                    "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
-                    "variables": {
-                        "REST-Framework-Version": {
-                            "default": "9"
-                        }
-                    }
-                }
-            ],
-            "paths": {
-                "/describe.openapi": {
-                    "get": {
-                        "x-vb": {
-                            "queryParameters": {
-                                "metadataMode": "minimal",
-                                "resources": "locationsV2"
-                            }
-                        }
-                    }
-                }
+  "backends": {
+    "fusionAi": {
+      "headers": {},
+      "servers": [
+        {
+          "url": "vb-catalog://backends/base:fa",
+          "description": "Default Server",
+          "x-vb": {
+            "authentication": {
+              "authenticated": {
+                "type": "oauth2_user_assertion",
+                "scope": "urn:opc:resource:fusion:eqjz:fusion-ai/"
+              }
             }
-        },
-        "hcmRestLoader": {
-            "openapi": "3.0.0",
-            "info": {
-                "x-vb": {
-                    "serviceType": "adf-rest"
-                }
-            },
-            "servers": [
-                {
-                    "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
-                    "variables": {
-                        "REST-Framework-Version": {
-                            "default": "9"
-                        }
-                    }
-                }
-            ],
-            "paths": {
-                "/describe.openapi": {
-                    "get": {
-                        "x-vb": {
-                            "queryParameters": {
-                                "metadataMode": "minimal",
-                                "resources": "dataLoadDataSets"
-                            }
-                        }
-                    }
-                }
-            }
+          }
         }
+      ]
     }
+  },
+  "services": {
+    "hcmRestLocations": {
+      "openapi": "3.0.0",
+      "info": {
+        "x-vb": {
+          "serviceType": "adf-rest"
+        }
+      },
+      "servers": [
+        {
+          "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
+          "variables": {
+            "REST-Framework-Version": {
+              "default": "9"
+            }
+          }
+        }
+      ],
+      "paths": {
+        "/describe.openapi": {
+          "get": {
+            "x-vb": {
+              "queryParameters": {
+                "metadataMode": "minimal",
+                "resources": "locationsV2"
+              }
+            }
+          }
+        }
+      }
+    },
+    "hcmRestLoader": {
+      "openapi": "3.0.0",
+      "info": {
+        "x-vb": {
+          "serviceType": "adf-rest"
+        }
+      },
+      "servers": [
+        {
+          "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
+          "variables": {
+            "REST-Framework-Version": {
+              "default": "9"
+            }
+          }
+        }
+      ],
+      "paths": {
+        "/describe.openapi": {
+          "get": {
+            "x-vb": {
+              "queryParameters": {
+                "metadataMode": "minimal",
+                "resources": "dataLoadDataSets"
+              }
+            }
+          }
+        }
+      }
+    },
+    "hcmRestOrganizations": {
+      "openapi": "3.0.0",
+      "info": {
+        "x-vb": {
+          "serviceType": "adf-rest"
+        }
+      },
+      "servers": [
+        {
+          "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
+          "variables": {
+            "REST-Framework-Version": {
+              "default": "9"
+            }
+          }
+        }
+      ],
+      "paths": {
+        "/describe.openapi": {
+          "get": {
+            "x-vb": {
+              "queryParameters": {
+                "metadataMode": "minimal",
+                "resources": "organizations"
+              }
+            }
+          }
+        }
+      }
+    },
+    "hcmRestLookups": {
+      "openapi": "3.0.0",
+      "info": {
+        "x-vb": {
+          "serviceType": "adf-rest"
+        }
+      },
+      "servers": [
+        {
+          "url": "vb-catalog://backends/base:hcmRest/11.13.18.05:{REST-Framework-Version}",
+          "variables": {
+            "REST-Framework-Version": {
+              "default": "9"
+            }
+          }
+        }
+      ],
+      "paths": {
+        "/describe.openapi": {
+          "get": {
+            "x-vb": {
+              "queryParameters": {
+                "metadataMode": "minimal",
+                "resources": "commonLookupsLOV"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
