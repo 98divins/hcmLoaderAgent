@@ -1,0 +1,2680 @@
+{
+  "source": "My Client Groups > Data Exchange > View Business Objects (pod eqjz)",
+  "note": "La liste des objets vient de l'export de cet ecran. Les attributs d'un objet viennent de sa page de detail, onglet Attribute, bouton de telechargement. Un objet sans attributs ici est connu mais pas encore documente : la page le dit plutot que de deviner ses regles.",
+  "keyResolutionOrder": [
+    "guid",
+    "sourceKey",
+    "userKey"
+  ],
+  "keyResolutionNote": "Quand plusieurs cles sont fournies, HDL les utilise dans cet ordre sans controle croise : un GUID present rend la source key ignoree.",
+  "objects": [
+    {
+      "name": "Absence Accrual Balance Component",
+      "file": "PersonAccrualDetail.dat",
+      "area": "Absence Management",
+      "loadOrder": 125000,
+      "description": "The details that contribute to a plan balance. Some detail types can be loaded."
+    },
+    {
+      "name": "Absence Accrual Plan Enrollment",
+      "file": "PersonAccrualPlanEnrollment.dat",
+      "area": "Absence Management",
+      "loadOrder": 124000,
+      "description": "The record of a workers enrollment in an absence plan, including the enrollment dates, any waiting periods and the associated assignment."
+    },
+    {
+      "name": "Absence Case",
+      "file": "AbsenceCase.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 100900,
+      "description": "A way to group absences related to a similar cause. For example, if an employee takes two periods of sick leave due to a back injury sustained at work, you can create an absence case, and associate the two absences with the case."
+    },
+    {
+      "name": "Absence Category",
+      "file": "AbsenceCategory.dat",
+      "area": "Absence Management",
+      "loadOrder": 9500,
+      "description": "An absence component which is used for grouping absences types for reporting and analysis. For example, you can create an absence category called family leave and associate with it absence types, such as maternity, paternity and child care."
+    },
+    {
+      "name": "Absence Category Translation",
+      "file": "AbsenceCategoryTranslation.dat",
+      "area": "Absence Management",
+      "loadOrder": 9510,
+      "description": "Translation records for absences categories."
+    },
+    {
+      "name": "Absence Certification",
+      "file": "AbsenceCertification.dat",
+      "area": "Absence Management",
+      "loadOrder": 7100,
+      "description": "An administrative record of document types or other information that workers provide to receive entitlement for an absence, which is subject to certification requirements. For example, medical certificates to support a medical leave absence."
+    },
+    {
+      "name": "Absence Certification Translation",
+      "file": "AbsenceCertificationTranslation.dat",
+      "area": "Absence Management",
+      "loadOrder": 7110,
+      "description": "Translation records for absence certifications which require documentation to support them."
+    },
+    {
+      "name": "Absence Entry",
+      "file": "PersonAbsenceEntry.dat",
+      "area": "Absence Management",
+      "loadOrder": 125200,
+      "description": "An absence record comprising the type, start and end dates, and optional attributes like absence reason."
+    },
+    {
+      "name": "Absence Qualification Plan Entitlement",
+      "file": "PersonEntitlementDetail.dat",
+      "area": "Absence Management",
+      "loadOrder": 125100,
+      "description": "The details of how a qualification plan is providing entitlement, either as payment or job protection, during an absence."
+    },
+    {
+      "name": "Absence Reason",
+      "file": "AbsenceReason.dat",
+      "area": "Absence Management",
+      "loadOrder": 7000,
+      "description": "An optional attribute of an absence where you can specify the actual reason why the absence was taken. For example, a worker can specify the reason for a sickness absence as viral fever."
+    },
+    {
+      "name": "Absence Reason Translation",
+      "file": "AbsenceReasonTranslation.dat",
+      "area": "Absence Management",
+      "loadOrder": 7010,
+      "description": "Translation records for absence reasons which specify the exact cause of the absence."
+    },
+    {
+      "name": "Action Reasons",
+      "file": "ActionReasons.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2100,
+      "description": "The reason for an action. The action reason is an optional entry on a change to employment terms or assignment information. For example, the reason for promoting a worker may be good performance or seniority."
+    },
+    {
+      "name": "Action Reasons Translation",
+      "file": "ActionReasonsTranslation.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2110,
+      "description": "Translation records for the action reasons."
+    },
+    {
+      "name": "Actions",
+      "file": "Actions.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2200,
+      "description": "The action that was performed on an object, such as promotion or termination."
+    },
+    {
+      "name": "Actions Translation",
+      "file": "ActionsTranslation.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2210,
+      "description": "Translation records for the action which was performed on an object, such as promotion or termination."
+    },
+    {
+      "name": "Affordable Care Act Override",
+      "file": "ACAOverride.dat",
+      "area": "Benefits",
+      "loadOrder": 160700,
+      "description": "You can override the codes in the Affordable Care Act, also known as ACA, reports with relevant override reasons. You typically change the reported codes in bulk when you migrate from a legacy application during a merger or acquisition, or during the middle of a year."
+    },
+    {
+      "name": "Agent",
+      "file": "Agent.dat",
+      "area": "Recruiting",
+      "loadOrder": 90100,
+      "description": "An agent is associated with an agency, which is a third party entity. Recruiters can invite agents to submit candidates to agency-enabled requisitions. Agents have access to an agency portal where they can perform several tasks such as view talent, submit candidates for requisitions that they were invited to, create candidate profiles, view referrals they made, view job applications of candidates the agency represents."
+    },
+    {
+      "name": "Allocated Checklist",
+      "file": "AllocateChecklist.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 101100,
+      "description": "An allocated checklist is a specific instance of the checklist template that has been assigned or allocated to one or more persons and contains tasks that the person needs to perform based on the eligibility criteria."
+    },
+    {
+      "name": "Allocated Checklist Task Translation",
+      "file": "AllocateChecklistTaskTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 101102,
+      "description": "Translation records for a task that is a part of the allocated checklist and allocated to one or more performers."
+    },
+    {
+      "name": "Allocated Checklist Translation",
+      "file": "AllocateChecklistTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 101101,
+      "description": "Translation records for a checklist template that has been allocated to one or more persons, and contains only those tasks relevant to the allocated persons."
+    },
+    {
+      "name": "Answer Translation",
+      "file": "AnswerTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10422,
+      "description": "Translations for question answers."
+    },
+    {
+      "name": "Areas of Responsibility",
+      "file": "AreasOfResponsibility.dat",
+      "area": "Global HR - Areas of Responsibility",
+      "loadOrder": 170010,
+      "description": "Defines the area of responsibility a person has as part of his or her job and the subset of the enterprise that the responsibility covers. For example, an employee may be the human resources representative for a group of organizations or the benefits representative for workers in a specific location. Identify who the area of responsibility is for, and specify those attributes that define the scope of the responsibility."
+    },
+    {
+      "name": "Areas of Responsibility Templates",
+      "file": "AORTemplate.dat",
+      "area": "Global HR - Areas of Responsibility",
+      "loadOrder": 170000,
+      "description": "Defines the template for an area of responsibility which can be assigned to a representative."
+    },
+    {
+      "name": "Assigned Payroll",
+      "file": "AssignedPayroll.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 104900,
+      "description": "The payroll frequency details for an assignment, such as weekly payroll, and the related start and end dates. You can also define an overtime period, such as a US FLSA period, and the time card required status for the assigned payroll."
+    },
+    {
+      "name": "Balance Adjustment Header",
+      "file": "BalanceAdjustmentHeader.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 170820,
+      "description": "The header for the batch process that is used when adjusting balances in bulk. Balance adjustment is the process by which one or more balances can be adjusted by creating calculation results on an element directly, without any payroll calculation."
+    },
+    {
+      "name": "Balance Adjustment Line",
+      "file": "BalanceAdjustmentLine.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 170821,
+      "description": "Contains individual adjustment lines for the balance adjustment group. Each line corresponds to a specific adjustment element entry for a worker and the associated contexts for the adjustment run result."
+    },
+    {
+      "name": "Balance Attribute Definition",
+      "file": "BalanceAttributeDefinition.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140100,
+      "description": "A balance attribute definition defines a set of balance definitions to be included in a balance group. It also identifies the criteria on which balance definitions can be included."
+    },
+    {
+      "name": "Balance Attribute Definition Translation",
+      "file": "BalanceAttributeDefinitionTranslation.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140110,
+      "description": "Translation records for balance attribute definitions."
+    },
+    {
+      "name": "Balance Group",
+      "file": "BalanceGroup.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140200,
+      "description": "A balance group is a collection of payroll balance definitions. The balance group can contain balance definitions at either employee level or group level."
+    },
+    {
+      "name": "Balance Group Translation",
+      "file": "BalanceGroupTranslation.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140210,
+      "description": "Translation records for balance groups."
+    },
+    {
+      "name": "Balance Group Usage",
+      "file": "BalanceGroupUsage.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140500,
+      "description": "A balance group usage identifies which reports, pages, and processes use the balance group to display or process balance information."
+    },
+    {
+      "name": "Balance Group Usage Translation",
+      "file": "BalanceGroupUsageTranslation.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 140510,
+      "description": "Translation records for balance group usages."
+    },
+    {
+      "name": "Balance Initialization Batch",
+      "file": "InitializeBalanceBatchHeader.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 170810,
+      "description": "Balance Initialization is used to import initial balance values, which were calculated in a legacy system, into Cloud Payroll. This is done before the employee is processed in the first payroll so that the balances are accurate for the entire year and not just for the period they were paid within Cloud Payroll. Enter information for the batch header to be processed by Balance Initialization."
+    },
+    {
+      "name": "Balance Initialization Batch Line",
+      "file": "InitializeBalanceBatchLine.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 170811,
+      "description": "Details of the balance values to be initialized by the Balance Initialization process. Each line contains the balance type and associated contexts for a specific initial balance value."
+    },
+    {
+      "name": "Bank",
+      "file": "Bank.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 8700,
+      "description": "A financial institution. A bank can have one or more bank branches. We recommend you use source keys to uniquely identify your bank records. The validation of bank data is legislation specific and a bank number may not be unique. Any attempt to update bank details using the bank number usually results in a new bank being created.This object creates record with the bank institution type. You can only maintain banks with an institution type of bank using this object."
+    },
+    {
+      "name": "Bank Branch",
+      "file": "BankBranch.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 8750,
+      "description": "A branch of a bank. Required to define bank accounts at that branch. We recommend that you use source keys to uniquely identify your bank branch records. The validation of bank data is legislation specific and a bank branch number may not be unique. Any attempt to update a bank branch using the branch number usually results in a new bank branch being created. This object creates records with the bank branch institution type. You can only maintain branches with an institution type of bank branch."
+    },
+    {
+      "name": "Beneficiary Enrollment",
+      "file": "BeneficiaryEnrollment.dat",
+      "area": "Benefits",
+      "loadOrder": 160300,
+      "description": "You typically designate beneficiaries in benefit plans that have payouts due to death or accident. You can bulk load beneficiaries that accompany participant enrollments. You can load beneficiary designations for conversion from a legacy system, mergers and acquisitions, or midplan year modifications."
+    },
+    {
+      "name": "Benefits Standard Rate",
+      "file": "BenefitsStandardRate.dat",
+      "area": "Benefits",
+      "loadOrder": 160750,
+      "description": "Rates determine costs for purchasing benefit coverage, such as life or health insurance. Rates usually determine an amount of monetary contributions paid by the employee, employer or a combination of both. Rates can also determine amounts distributed from the employer to the employee, such as for tution reimbursements."
+    },
+    {
+      "name": "Bill Payment",
+      "file": "BenefitBillPayment.dat",
+      "area": "Benefits",
+      "loadOrder": 160950,
+      "description": "Upload payment bills generated through Benefits."
+    },
+    {
+      "name": "Brand Skill",
+      "file": "BrandSkill.dat",
+      "area": "Personal Brand",
+      "loadOrder": 4900,
+      "description": "Skills associated to an employee in the Personal Brand application. The skills reflect the employee's personal brand in the organization. There are two types of skills; a specialized skill is a domain or technology-specific skill, an interpersonal skill encompasses social skills. This object is required to load skill data for employees in the Personal Brand application."
+    },
+    {
+      "name": "Brand Skill Translation",
+      "file": "BrandSkillTranslation.dat",
+      "area": "Personal Brand",
+      "loadOrder": 4910,
+      "description": "Translation records for Brand Skill"
+    },
+    {
+      "name": "Calculation Card",
+      "file": "CalculationCard.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 103000,
+      "description": "A calculation card which is used to capture data needed for payroll processing that cannot be captured in global fields."
+    },
+    {
+      "name": "Calendar Event",
+      "file": "CalendarEvent.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2300,
+      "description": "Defines dates for public holidays like New Years day, Christmas and other important events such as a company-wide day off."
+    },
+    {
+      "name": "Calendar Event Translation",
+      "file": "CalendarEventTranslation.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2310,
+      "description": "Translation records for calendar event which defines dates for public holidays like New Years day, Christmas and other important events such as a company-wide day off."
+    },
+    {
+      "name": "Candidate",
+      "file": "Candidate.dat",
+      "area": "Recruiting",
+      "loadOrder": 90250,
+      "description": "Person who applied or may apply for a job. There are two types of candidates. An internal candidate is a current worker or employee. An external candidate is a person who expressed an interest in a job, applied to a job, or is being considered for a job and is currently not employed by a company."
+    },
+    {
+      "name": "Candidate Job Application",
+      "file": "CandidateJobApplication.dat",
+      "area": "Recruiting",
+      "loadOrder": 90500,
+      "description": "Record containing information provided by a candidate  during the application process and information on the candidate's progress through the selection and hiring process."
+    },
+    {
+      "name": "Candidate Pool",
+      "file": "CandidatePool.dat",
+      "area": "Recruiting",
+      "loadOrder": 90270,
+      "description": "A candidate pool is a central location where recruiters and hiring managers can put candidates and manage candidate pools and sourcing activities for either a job position that they are currently recruiting for or a future job position that they will potentially need to fill. A candidate pool must have at least one owner. If there are multiple owners, specify them using the Candidate Pool Owner component. If the pool is a talent community pool, you must provide talent community pool parameters. A talent community pool is auto populated with pool members based on the external candidate preferences."
+    },
+    {
+      "name": "Candidate Pool Translation",
+      "file": "CandidatePoolTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90275,
+      "description": "Translation for candidate pool. For example, pool name and description."
+    },
+    {
+      "name": "Celebration",
+      "file": "Celebration.dat",
+      "area": "Celebrate",
+      "loadOrder": 222000,
+      "description": "A structured record of acknowledgments within an organization, designed to capture both peer-to-peer recognitions and awards from management. It serves as a comprehensive repository for tracking and managing all forms of employee recognition, fostering a culture of appreciation and motivation."
+    },
+    {
+      "name": "Check-in Document",
+      "file": "CheckInDocument.dat",
+      "area": "Talent Management",
+      "loadOrder": 200000,
+      "description": "Check-in documents record an employee and manager discussion. They can be captured in the form of notes in discussion topics or questionnaires."
+    },
+    {
+      "name": "Checklist Content Details",
+      "file": "ChecklistContentDetails.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5050,
+      "description": "A content item can be a standard note or meeting note. It can include other items such as news and announcements."
+    },
+    {
+      "name": "Checklist Content Details Translation",
+      "file": "ChecklistContentDetailsTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5051,
+      "description": "Translation records for checklist content details."
+    },
+    {
+      "name": "Checklist Mass Allocation",
+      "file": "ChecklistMassAllocation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 101110,
+      "description": "A configuration that initiates mass assignment of journeys."
+    },
+    {
+      "name": "Checklist Mass Allocation Translation",
+      "file": "ChecklistMassAllocationTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 101120,
+      "description": "The checklist mass allocation ID of the record to translate."
+    },
+    {
+      "name": "Checklist Task Translation",
+      "file": "ChecklistTaskTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5120,
+      "description": "Translation records for checklist task, that is part of the checklist template which can be allocated to one or more persons."
+    },
+    {
+      "name": "Checklist Template",
+      "file": "Checklist.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5100,
+      "description": "A template created for actions that require the completion of standard tasks, such as onboarding new hires or off boarding employees. A checklist template can be used to create and maintain tasks for different categories and can also be specific based on eligibility profiles. Checklist templates can be automatically allocated depending on the action or be manually allocated."
+    },
+    {
+      "name": "Checklist Translation",
+      "file": "ChecklistTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5110,
+      "description": "Translation records for a checklist template which can be allocated to persons either manually, or automatically when persons experience the action associated with the checklist template."
+    },
+    {
+      "name": "Classroom Resource",
+      "file": "ClassroomResource.dat",
+      "area": "Learning",
+      "loadOrder": 106030,
+      "description": "A classroom is the location of where an on-site instructor led activity will take place."
+    },
+    {
+      "name": "Classroom Resource Translation",
+      "file": "ClassroomResourceTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106031,
+      "description": "Translations for classroom resources."
+    },
+    {
+      "name": "Close Enrollment Certification Action Items",
+      "file": "CloseEnrollmentCertification.dat",
+      "area": "Benefits",
+      "loadOrder": 160850,
+      "description": "Administrators can update, for each certificate, the received or denied date."
+    },
+    {
+      "name": "Collective Agreements",
+      "file": "CollectiveAgreements.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3050,
+      "description": "A collective agreement is a written agreement between the employer and the union/bargaining unit that contains terms and conditions of employment for the represented employees. Generally the agreement is for a defined term, subject to renegotiation at the end of the term. Also called a 'collective bargaining agreement' or 'contract', it is a legally enforceable, binding contract between the stakeholders."
+    },
+    {
+      "name": "Collective Agreements Translation",
+      "file": "CollectiveAgreementsTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3060,
+      "description": "Translation records for the collective agreements which can be associated to the workers."
+    },
+    {
+      "name": "Common Note",
+      "file": "CommonNote.dat",
+      "area": "Talent Management",
+      "loadOrder": 200500,
+      "description": "Notes are used to capture feedback or comments about people and objects. You can delete a person or object note, or update the note text, visibility code, or hidden status. To delete or update a note, you need to provide the application-generated surrogate ID value for the note. You can also create a person note by providing the NoteCode, WorkerPersonNumber, and AuthorPersonNumber."
+    },
+    {
+      "name": "Community Relation",
+      "file": "CommunityRelation.dat",
+      "area": "Learning",
+      "loadOrder": 106095,
+      "description": "Associate catalog learning items with your community."
+    },
+    {
+      "name": "Content Item",
+      "file": "ContentItem.dat",
+      "area": "Talent Management",
+      "loadOrder": 10700,
+      "description": "The individual skills, qualities, and qualifications within a content type. For example, within the Competencies content type, Communication is a content item."
+    },
+    {
+      "name": "Content Item Rating Description Translation",
+      "file": "RatingDescriptionTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10720,
+      "description": "Translation records for content item rating descriptions."
+    },
+    {
+      "name": "Content Item Synonym",
+      "file": "ContentItemSynonym.dat",
+      "area": "Talent Management",
+      "loadOrder": 10750,
+      "description": "The synonym details to relate to a content item"
+    },
+    {
+      "name": "Content Item Translation",
+      "file": "ContentItemTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10710,
+      "description": "Translation records for content items."
+    },
+    {
+      "name": "Content Items Relationship",
+      "file": "ContentItemRelationship.dat",
+      "area": "Talent Management",
+      "loadOrder": 10900,
+      "description": "Defines the relationship between content items. For example, the Action Oriented content item within the Competencies content type is a parent of the Takes Initiative content item within the Behaviors content type."
+    },
+    {
+      "name": "Content Library",
+      "file": "ContentLibrary.dat",
+      "area": "Recruiting",
+      "loadOrder": 90000,
+      "description": "Library containing items used for job requisitions and job offers. For example, employer descriptions, department descriptions, diversity statements, legal disclaimers."
+    },
+    {
+      "name": "Content Library Translation",
+      "file": "ContentLibraryTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90005,
+      "description": "Translation of library items. For example, translation of a job requisition description."
+    },
+    {
+      "name": "Content Library Version Translation",
+      "file": "ContentLibraryVersionTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90010,
+      "description": "Translation of library item versions."
+    },
+    {
+      "name": "Contractual and Other Availability",
+      "file": "AvailabilityPatterns.dat",
+      "area": "Absence Management",
+      "loadOrder": 100950,
+      "description": "A repeatable pattern of shifts, breaks, and non-work events that constitute contractual or other availability patterns for a person."
+    },
+    {
+      "name": "Cost Account Combination",
+      "file": "CostAccountCombination.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192340,
+      "description": "Cost Account Combination"
+    },
+    {
+      "name": "Cost Allocation",
+      "file": "CostAllocationV3.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192311,
+      "description": "The effective dates of the payroll costing information for each of the costing levels, such as payroll, job, position, and payment source."
+    },
+    {
+      "name": "Cost Allocation - Decommissioned",
+      "file": "CostAllocation.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192310,
+      "description": "Decommissioned. A new Cost Allocation object replaces this."
+    },
+    {
+      "name": "Cost Allocation Account",
+      "file": "CostAllocationAccountV3.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192321,
+      "description": "The payroll cost source type, source subtype, and segment information for each of the costing levels, such as payroll, job, position, and payment source."
+    },
+    {
+      "name": "Cost Allocation Account - Decommissioned",
+      "file": "CostAllocationAccount.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192320,
+      "description": "Decommissioned. A new Cost Allocation Account object replaces this."
+    },
+    {
+      "name": "Cost Cross Validation Rule",
+      "file": "CostKffValidationRule.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192330,
+      "description": "Cost Cross Validatoin Rule."
+    },
+    {
+      "name": "Cost Information - Decommissioned",
+      "file": "CostInfo.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192300,
+      "description": "Decommissioned. Use the Costing Options object instead."
+    },
+    {
+      "name": "Costing Options",
+      "file": "CostInfoV3.dat",
+      "area": "Global Payroll - Costing",
+      "loadOrder": 192301,
+      "description": "The payroll costing information, such as cost type, costed indicator, eligibility input value, and distribution group for element eligibility and payment source costing levels."
+    },
+    {
+      "name": "Country Security Profile",
+      "file": "CountrySecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4400,
+      "description": "The country security profile identifies country names to appear in secured lists of countries."
+    },
+    {
+      "name": "Course",
+      "file": "Course.dat",
+      "area": "Learning",
+      "loadOrder": 106060,
+      "description": "A course is teaching on an individual subject that has specific outcomes. A course will have an offering or list of offerings that can be taken by the learner to achieve the course outcomes."
+    },
+    {
+      "name": "Course Offering Pricing Defaults",
+      "file": "CourseOfferingPricingDefaults.dat",
+      "area": "Learning",
+      "loadOrder": 106070,
+      "description": "Pricing rule defaults for offerings, set at the course level."
+    },
+    {
+      "name": "Course Translation",
+      "file": "CourseTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106061,
+      "description": "Translations for courses."
+    },
+    {
+      "name": "Course V3",
+      "file": "CourseV3.dat",
+      "area": "Learning",
+      "loadOrder": 106060,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. A course is teaching on an individual subject that has specific outcomes. A course will have an offering or list of offerings that can be taken by the learner to achieve the course outcomes."
+    },
+    {
+      "name": "Course V3 Translation",
+      "file": "CourseV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106061,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for courses."
+    },
+    {
+      "name": "Criteria Details Translation",
+      "file": "CriteriaTranslation.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 105220,
+      "description": "Translation records for Criteria Details."
+    },
+    {
+      "name": "Delegated Role",
+      "file": "DelegatedRole.dat",
+      "area": "Global HR - Users",
+      "loadOrder": 130000,
+      "description": "Delegated role enables the delegation of business duties from one person to another by way of a role request."
+    },
+    {
+      "name": "Department Tree",
+      "file": "DepartmentTree.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3200,
+      "description": "A hierarchy of departments, implemented using the core application trees functionality."
+    },
+    {
+      "name": "Department Tree Node",
+      "file": "DepartmentTreeNode.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3250,
+      "description": "In the department tree, organizations of the classification type Department can be added as nodes."
+    },
+    {
+      "name": "Dependent Enrollment",
+      "file": "DependentEnrollment.dat",
+      "area": "Benefits",
+      "loadOrder": 160200,
+      "description": "You can designate dependents of participants in bulk after you complete the participant enrollment through the standard application pages. The designate dependent object is used to load dependents that can be designated through an enrollment. Typically, you load data in bulk when converting from a legacy system during a merger or acquisition. You might also want to bulk load data when you need to move dependents en masse from one plan to another."
+    },
+    {
+      "name": "Document Record",
+      "file": "DocumentsOfRecord.dat",
+      "area": "Global HR - Document Records",
+      "loadOrder": 101200,
+      "description": "Stores information about person documents such as visas, licenses, and medical certificates, and can include electronic versions of the documents as attachments."
+    },
+    {
+      "name": "Document Record Archive",
+      "file": "DocumentsOfRecordArchive.dat",
+      "area": "Global HR - Document Records",
+      "loadOrder": 101310,
+      "description": "Stores information about archived document records."
+    },
+    {
+      "name": "Document Record Delivery Preference",
+      "file": "DocumentDeliveryPreference.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 101300,
+      "description": "Delivery preferences typically defined for document records that are delivered periodically from employers to workers, for example, payslips, or year end tax statements."
+    },
+    {
+      "name": "Document Type",
+      "file": "DocumentType.dat",
+      "area": "Global HR - Document Records",
+      "loadOrder": 3800,
+      "description": "A categorization of person documents that provides a set of options to control what document information to retain, who can access the documents, whether the documents require approval, and whether the documents are subject to expiry. A document type exists for a combination of document category and subcategory."
+    },
+    {
+      "name": "Document Type Security Profile",
+      "file": "DocumentTypeSecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4600,
+      "description": "The document type security profile defines criteria for securing access to administrator-defined document types."
+    },
+    {
+      "name": "Document Type Translation",
+      "file": "DocumentTypeTranslation.dat",
+      "area": "Global HR - Document Records",
+      "loadOrder": 3810,
+      "description": "Translation records for document type."
+    },
+    {
+      "name": "Education Establishment",
+      "file": "EducationEstablishment.dat",
+      "area": "Talent Management",
+      "loadOrder": 10500,
+      "description": "A list of educational establishments that workers might have attended, including high schools, colleges, universities, and professional schools."
+    },
+    {
+      "name": "Education Establishment Translation",
+      "file": "EducationEstablishmentTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10510,
+      "description": "Translation records for education establishments."
+    },
+    {
+      "name": "Electronic Income Withholding Orders",
+      "file": "ElectronicIncomeWithholdingOrders.dat",
+      "area": "Global Payroll - Interface",
+      "loadOrder": 127100,
+      "description": "Summary information from E-IWO file such as file control number,batch control number,case identifier."
+    },
+    {
+      "name": "Element Duration Date",
+      "file": "ElementDurationDate.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 104901,
+      "description": "The element duration dates control when element entries for an employee start or end. These are captured for an employee at the assignment level, such as at the last standard process date and where appropriate are automatically populated on the employee payroll relationship record."
+    },
+    {
+      "name": "Element Entry",
+      "file": "ElementEntry.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 105000,
+      "description": "An element entry holds the actual payroll element and benefits granted to a worker. These may be ongoing recurring entries, for example, salary, or single period nonrecurring entries such as a bonus."
+    },
+    {
+      "name": "Element Entry with Costing",
+      "file": "ElementEntryWithCosting.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 105100,
+      "description": "An element entry holds the actual payroll element and benefits granted to a worker. The costing of an element entry refers to the costing segment information entered for an element entry and is used in payroll processing to create the costing results. You can't upload date-effective history using this object, use the Element Entry object instead."
+    },
+    {
+      "name": "Employment Action",
+      "file": "EmploymentAction.dat",
+      "area": "Global HR - Worker",
+      "loadOrder": 100450,
+      "description": "An Employment Action is used to cancel work relationships and to record additional information about that action in extensible flexfields. Supply the SourceSystemOwner and SourceSystemId attributes to uniquely identify each record to be created."
+    },
+    {
+      "name": "Enhanced Talent Profile",
+      "file": "TalentProfileHeader.dat",
+      "area": "Talent Management",
+      "loadOrder": 101600,
+      "description": "Individual instance of a profile, either person or model profile, based on a specific profile type."
+    },
+    {
+      "name": "Enhanced Talent Profile",
+      "file": "EnhancedTalentProfile.dat",
+      "area": "Talent Management",
+      "loadOrder": 101600,
+      "description": "Individual instance of a profile, either person or model profile, based on a specific profile type."
+    },
+    {
+      "name": "Enhanced Talent Profile Translation",
+      "file": "EnhancedTalentProfileTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 101610,
+      "description": "Translation records for enhanced talent profile."
+    },
+    {
+      "name": "Enterprise Shift Translation",
+      "file": "EnterpriseShiftTranslation.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151110,
+      "description": "Translations for Enterprise Shifts."
+    },
+    {
+      "name": "Enterprise Shifts",
+      "file": "EnterpriseShift.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151100,
+      "description": "A shift is a block of time that determines a work period in an organization."
+    },
+    {
+      "name": "Evaluation Activity V3 Translation",
+      "file": "EvaluationActivityV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106066,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for evaluation activity."
+    },
+    {
+      "name": "Event Action",
+      "file": "EventAction.dat",
+      "area": "Global Payroll - HCM Events",
+      "loadOrder": 8300,
+      "description": "Defines how to react to an event, for example, whether to calculate retroactive payroll or recalculate time cards."
+    },
+    {
+      "name": "Event Action Translation",
+      "file": "EventActionTranslation.dat",
+      "area": "Global Payroll - HCM Events",
+      "loadOrder": 8310,
+      "description": "Translated action and description."
+    },
+    {
+      "name": "Event Group",
+      "file": "EventGroup.dat",
+      "area": "Global Payroll - HCM Events",
+      "loadOrder": 8320,
+      "description": "Group of related events, such as changes to a employee's assignment, being monitored for features such as the retroactive recalculation of payroll and time cards, or the generation of HCM rates."
+    },
+    {
+      "name": "Event Group Translation",
+      "file": "EventGroupTranslation.dat",
+      "area": "Global Payroll - HCM Events",
+      "loadOrder": 8330,
+      "description": "Translation records for the event group."
+    },
+    {
+      "name": "Example Object",
+      "file": "ExampleObject.dat",
+      "area": "HCM Data Loader",
+      "loadOrder": 1000,
+      "description": "An example object that can be used to test the end-to-end process flow and connections."
+    },
+    {
+      "name": "Example Object Translation",
+      "file": "ExampleObjectTranslation.dat",
+      "area": "HCM Data Loader",
+      "loadOrder": 1001,
+      "description": "The translation component of the object used for testing the end-to-end process flow and connections."
+    },
+    {
+      "name": "Exclusion Rule",
+      "file": "ExclusionRule.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4650,
+      "description": "The criteria, such as department or grade, that identify data instances to exclude from a security profile data instance set. You include just the detail record for the selected exclusion type. For example, to exclude by business unit list include the Business Unit List component and populate one or more rows. You can bulk load exclusion rules based on all object lists and hierarchies but not those based on attribute type."
+    },
+    {
+      "name": "Extended Lookup",
+      "file": "ExtendedLookupCode.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 1500,
+      "description": "Extended lookup codes can be used to subcategorize the FND lookup codes."
+    },
+    {
+      "name": "Extended Lookup Translation",
+      "file": "ExtendedLookupCodeTranslation.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 1510,
+      "description": "Translation records for extended lookup codes which can be used to subcategorize the FND lookup codes."
+    },
+    {
+      "name": "External Bank Account",
+      "file": "ExternalBankAccount.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 102000,
+      "description": "A bank account is used by a payment method to make payments to a worker,third-party person, or third-party organization. A bank account is defined for a specific bank and bank branch."
+    },
+    {
+      "name": "External Data",
+      "file": "ExternalWorkerData.dat",
+      "area": "Compensation",
+      "loadOrder": 110500,
+      "description": "External compensation data used to complete Total Compensation Statements, and to view in Workforce Compensation."
+    },
+    {
+      "name": "Fast Formula",
+      "file": "FastFormula.dat",
+      "area": "Global Payroll - Fast Formula",
+      "loadOrder": 8500,
+      "description": "The business rules that perform calculations and validations in the Human Capital Management products. These predefined rules perform calculations, such as a legislative specific tax or social insurance calculations in Global Payroll. Users can define business rules, such as validations for entered data."
+    },
+    {
+      "name": "Fast Formula Global",
+      "file": "FastFormulaGlobal.dat",
+      "area": "Global Payroll - Fast Formula",
+      "loadOrder": 8400,
+      "description": "The global values that can be used in multiple formulas to support the Human Capital Management business rules. For example, the global value could hold tax relief percentages, bonus percentage or overtime rates."
+    },
+    {
+      "name": "Fast Formula Global Translation",
+      "file": "FastFormulaGlobalTranslation.dat",
+      "area": "Global Payroll - Fast Formula",
+      "loadOrder": 8410,
+      "description": "The translation data for global values that can be used in multiple formulas to support the Human Capital Management business rules. For example, the global value could hold tax relief percentages, bonus percentage or overtime rates."
+    },
+    {
+      "name": "Fast Formula Translation",
+      "file": "FastFormulaTranslation.dat",
+      "area": "Global Payroll - Fast Formula",
+      "loadOrder": 8510,
+      "description": "Translation records for Fast Formula."
+    },
+    {
+      "name": "Feedback Request",
+      "file": "FeedbackRequest.dat",
+      "area": "Talent Management",
+      "loadOrder": 201000,
+      "description": "Requested feedback information such as the person who requested, person requested for, and with whom the feedback was shared."
+    },
+    {
+      "name": "Geography Hierarchy",
+      "file": "GeographyHierarchy.dat",
+      "area": "Recruiting",
+      "loadOrder": 90050,
+      "description": "A geography hierarchy represents the set of locations where organizations post jobs and hire candidates. These locations are a subset of what is defined in TCA geographies. Using only the relevant locations makes it easier to select appropriate locations."
+    },
+    {
+      "name": "Global Access Group Relation",
+      "file": "GlobalAccessGroupRelation.dat",
+      "area": "Learning",
+      "loadOrder": 106090,
+      "description": "Associates global access groups with learning items that exist in the catalog."
+    },
+    {
+      "name": "Goal",
+      "file": "Goal.dat",
+      "area": "Talent Management",
+      "loadOrder": 126000,
+      "description": "Worker goals and their goal plans, accessibility, tasks, target outcomes, measurements, and alignment details."
+    },
+    {
+      "name": "Goal Plan",
+      "file": "GoalPlan.dat",
+      "area": "Talent Management",
+      "loadOrder": 130100,
+      "description": "Goal plans and their mass assignments, eligibility profiles, document types, assignment exemption, and individual assignment details."
+    },
+    {
+      "name": "Goal Plan Set",
+      "file": "GoalPlanSet.dat",
+      "area": "Talent Management",
+      "loadOrder": 130200,
+      "description": "Goal plan sets and their mass assignments, eligibility profiles, assignment exemption, and individual assignment details."
+    },
+    {
+      "name": "Goal Plan Set Translation",
+      "file": "GoalPlanSetTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 130210,
+      "description": "Translation records of goal plan sets details."
+    },
+    {
+      "name": "Goal Plan Translation",
+      "file": "GoalPlanTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 130110,
+      "description": "Translation records of goal plans details."
+    },
+    {
+      "name": "Grade",
+      "file": "Grade.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2600,
+      "description": "A grade shows the relative rank, level, or status of a worker in an assignment in an enterprise. For example IC3, M3."
+    },
+    {
+      "name": "Grade Ladder",
+      "file": "GradeLadder.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2700,
+      "description": "A grade ladder is a hierarchy of grades, which is used to order grades and define rates for the grades or the steps attached to the grade. Attributes marked \"Grade Step Progression\" are relevant only for the Progression Grade Ladder object."
+    },
+    {
+      "name": "Grade Ladder Translation",
+      "file": "GradeLadderTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2710,
+      "description": "Translation records for grade ladder that represents a hierarchy of grades, which is used to order grades and define rates for the grades or the steps attached to the grade."
+    },
+    {
+      "name": "Grade Rate",
+      "file": "GradeRate.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2650,
+      "description": "A grade rate is a value or range of values defined as valid for a given grade. Attributes marked \"Grade Step Progression\" are relevant only for the Progression Grade Rate object."
+    },
+    {
+      "name": "Grade Rate Translation",
+      "file": "GradeRateTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2660,
+      "description": "Translation records for grade rate which represents a value or range of values defined as valid for a given grade."
+    },
+    {
+      "name": "Grade Step Translation",
+      "file": "GradeStepTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2620,
+      "description": "Translation records for grade step which represents the incremental point within a grade."
+    },
+    {
+      "name": "Grade Translation",
+      "file": "GradeTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2610,
+      "description": "Translation records for grade which represents the relative rank, level or status of a worker in an assignment within an enterprise."
+    },
+    {
+      "name": "Gross-Up Balance Exclusion",
+      "file": "PayrollNetToGrossBalanceExclusion.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8660,
+      "description": "Controls whether a balance is included in or excluded from the net-to-gross earnings calculation of an element. This object can be used to exclude balances that are included by default from net-to-gross calculation. It can also be used to include balances that are excluded by default."
+    },
+    {
+      "name": "HCM Group",
+      "file": "HCMGroup.dat",
+      "area": "Workforce Management",
+      "loadOrder": 101450,
+      "description": "A group of workers such as employees or contingent workers that comprise an HCM Group"
+    },
+    {
+      "name": "Incident Summary",
+      "file": "IncidentSummary.dat",
+      "area": "Health and Safety",
+      "loadOrder": 210300,
+      "description": "An incident records the basic details of an occurrence that has, or could have resulted in, some form of harm to people, property, or the environment. In the worst case the incident records the death, destruction, or irreparable damage to the person, property, or environment. For example, injury or illness, near miss, fire or explosion, spill or release, property damage, air quality, ergonomic, or vehicle event. In the context of this application, it is also used more broadly to capture observations, such as suggestion for improvement, unsafe act, or unsafe condition, and to record important items requiring some level of follow through such as a health survey, notice of violation, and other issues. After the incident summary is recorded and an incident owner assigned, the incident can be updated by gathering additional details which are captured in the respective event details, or by conducting an investigation and or creating follow-up actions. The Incident Number is system generated and should only be supplied to reference existing incidents. When loading new incidents use source keys."
+    },
+    {
+      "name": "Instructor Led Activity Translation",
+      "file": "InstructorLedActivityTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106064,
+      "description": "Translations for instructor led activities."
+    },
+    {
+      "name": "Instructor Led Activity V3 Translation",
+      "file": "InstructorLedActivityV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106064,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for instructor led activities."
+    },
+    {
+      "name": "Instructor Resource",
+      "file": "InstructorResource.dat",
+      "area": "Learning",
+      "loadOrder": 106032,
+      "description": "An instructor is a person who teaches a group of people how to achieve learning outcomes associated to a course."
+    },
+    {
+      "name": "Job",
+      "file": "Job.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2900,
+      "description": "A job represents one or more roles that may be performed by an individual within an organization."
+    },
+    {
+      "name": "Job Family",
+      "file": "JobFamily.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2800,
+      "description": "Job family enables you to group jobs, facilitating easy reporting across similar jobs. For example, you can group the Trust Analyst and Operations Analyst jobs into a job family named Analyst."
+    },
+    {
+      "name": "Job Family Translation",
+      "file": "JobFamilyTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2810,
+      "description": "Translation records for job family which enables you to group jobs, facilitating easy reporting across similar jobs."
+    },
+    {
+      "name": "Job Offer",
+      "file": "JobOffer.dat",
+      "area": "Recruiting",
+      "loadOrder": 90550,
+      "description": "The details of a job offer made to an applicant. After the job offer is created the offer assignment, salary, payroll and compensation data can be loaded. Recruiters and hiring managers are the primary actors on job offers."
+    },
+    {
+      "name": "Job Offer Letter",
+      "file": "JobOfferLetter.dat",
+      "area": "Recruiting",
+      "loadOrder": 169000,
+      "description": "The details of an offer made to a candidate. This letter is generated based on a template from the content library and contains the expiration date for the offer. This letter is extended to a candidate postapproval of the offer. You can optionally validate for the presence of a payroll and compensation elements. Supply user key attributes to identify the candidate and requisition. Source keys aren't fully supported."
+    },
+    {
+      "name": "Job Requisition",
+      "file": "JobRequisition.dat",
+      "area": "Recruiting",
+      "loadOrder": 90220,
+      "description": "A job requisition details the specific requirements for a job."
+    },
+    {
+      "name": "Job Requisition Media Link Translation",
+      "file": "MediaLinkTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90222,
+      "description": "Translation records for media link information in job requisitions."
+    },
+    {
+      "name": "Job Requisition Security Profile",
+      "file": "JobRequisitionSecurityProfile.dat",
+      "area": "Recruiting - Security",
+      "loadOrder": 4800,
+      "description": "The job requisition security profile defines criteria for securing access to job requisitions."
+    },
+    {
+      "name": "Job Requisition Template",
+      "file": "JobRequisitionTemplate.dat",
+      "area": "Recruiting",
+      "loadOrder": 90210,
+      "description": "A job requisition containing information that will likely be reused for a similar job."
+    },
+    {
+      "name": "Job Requisition Template Media Link Translation",
+      "file": "TemplateMediaLinkTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90219,
+      "description": "Translation records for media link information in job requisition templates."
+    },
+    {
+      "name": "Job Requisition Template Translation",
+      "file": "JobRequisitionTemplateTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90215,
+      "description": "Translation of a job requisition template."
+    },
+    {
+      "name": "Job Requisition Translation",
+      "file": "JobRequisitionTranslation.dat",
+      "area": "Recruiting",
+      "loadOrder": 90221,
+      "description": "Translation of a job requisition."
+    },
+    {
+      "name": "Job Translation",
+      "file": "JobTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2910,
+      "description": "Translation records for job which represents one or more roles that may be performed by an individual within an organization."
+    },
+    {
+      "name": "Learning Record",
+      "file": "LearningRecord.dat",
+      "area": "Learning",
+      "loadOrder": 106100,
+      "description": "Learning Record represents the assignment of a specified learning item made to an individual learner."
+    },
+    {
+      "name": "Learning Record Activity Attempt",
+      "file": "LearningRecordActivityAttempt.dat",
+      "area": "Learning",
+      "loadOrder": 106110,
+      "description": "An activity attempt is an event that occurs on an activity within an offering assignment, such as when a Learner attempts to complete a self-paced activity that is backed by SCORM content."
+    },
+    {
+      "name": "Learning Record Activity Attempt V3",
+      "file": "LearningRecordActivityAttemptV3.dat",
+      "area": "Learning",
+      "loadOrder": 106110,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. An activity attempt is an event that occurs on an activity within an offering assignment, such as when a Learner attempts to complete a self-paced activity that is backed by SCORM content."
+    },
+    {
+      "name": "Legacy Learning Item",
+      "file": "LegacyLearningItem.dat",
+      "area": "Learning",
+      "loadOrder": 106000,
+      "description": "Learning Items that represent legacy courses and classes that will need to appear on a learner learning history, but will not be assigned in the future. These Learning Items are not backed by any content."
+    },
+    {
+      "name": "Legacy Learning Item Translation",
+      "file": "LegacyLearningItemTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106010,
+      "description": "Translations for legacy learning items."
+    },
+    {
+      "name": "Legislative Data Group",
+      "file": "LegislativeDataGroup.dat",
+      "area": "Global Payroll - Setup",
+      "loadOrder": 2000,
+      "description": "Legislative data groups are used to partition payroll data in large organizations with multiple legal entities. A legislative data group has a legislative code associated with it. A LDG can have one or more payroll statutory units associated with it."
+    },
+    {
+      "name": "Legislative Data Group Security Profile",
+      "file": "LdgSecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4100,
+      "description": "The legislative data group security profile identifies one or more legislative data groups to which access is secured."
+    },
+    {
+      "name": "Legislative Data Group Translation",
+      "file": "LegislativeDataGroupTranslation.dat",
+      "area": "Global Payroll - Setup",
+      "loadOrder": 2010,
+      "description": "Translation records for legislative data groups which are used to partition payroll data in large organizations with multiple legal entities."
+    },
+    {
+      "name": "Location",
+      "file": "Location.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2500,
+      "description": "A location records the place, address, or other details associated with an organization. For example, the location Headquarters can be associated with the address TVP, Oracle Parkway, Reading, UK."
+    },
+    {
+      "name": "Location Translation",
+      "file": "LocationTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2510,
+      "description": "Translation records for location which holds the place, address, or other details associated with an organization."
+    },
+    {
+      "name": "Market Data Career Level",
+      "file": "MktCareerLevel.dat",
+      "area": "Compensation",
+      "loadOrder": 9100,
+      "description": "Career level is a concept of growth paths for workers to follow, such as entry level, intermediate, professional, and executive."
+    },
+    {
+      "name": "Market Data Career Level Translation",
+      "file": "MktCareerLevelTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9101,
+      "description": "Translation records for Market Data Career Level."
+    },
+    {
+      "name": "Market Data Career Stream",
+      "file": "MktCareerStream.dat",
+      "area": "Compensation",
+      "loadOrder": 9130,
+      "description": "Career stream is a model of career development, usually defined for a professional field, that provides a range of levels with skills for each level."
+    },
+    {
+      "name": "Market Data Career Stream Translation",
+      "file": "MktCareerStreamTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9131,
+      "description": "Translation records for Market Data Career Stream."
+    },
+    {
+      "name": "Market Data Job Family",
+      "file": "MktJobFamily.dat",
+      "area": "Compensation",
+      "loadOrder": 9110,
+      "description": "Job families provided by a market data supplier. A Job family enables you to group jobs, facilitating easy reporting across similar jobs. For example, you can group the Trust Analyst and Operations Analyst jobs into a job family named Analyst."
+    },
+    {
+      "name": "Market Data Job Family Translation",
+      "file": "MktJobFamilyTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9111,
+      "description": "Translation records for Market Data Job Family."
+    },
+    {
+      "name": "Market Data Job Function",
+      "file": "MktJobFunction.dat",
+      "area": "Compensation",
+      "loadOrder": 9120,
+      "description": "Job function enables you to group jobs into broader categories such asAccounting and Engineering."
+    },
+    {
+      "name": "Market Data Job Function Translation",
+      "file": "MktJobFunctionTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9121,
+      "description": "Translation records for Market Data Job Function."
+    },
+    {
+      "name": "Market Data Job List",
+      "file": "MktJobList.dat",
+      "area": "Compensation",
+      "loadOrder": 9150,
+      "description": "Jobs provided by a market data supplier. A job represents one or more roles that may be performed by an individual within an organization."
+    },
+    {
+      "name": "Market Data Job List Translation",
+      "file": "MktJobListTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9151,
+      "description": "Translation records for Market Data Job List."
+    },
+    {
+      "name": "Market Data Location List",
+      "file": "MktLocationList.dat",
+      "area": "Compensation",
+      "loadOrder": 9160,
+      "description": "A list of locations from compensation market data supplier surveys."
+    },
+    {
+      "name": "Market Data Location List Translation",
+      "file": "MktLocationListTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9161,
+      "description": "Translation records for Market Data Location List."
+    },
+    {
+      "name": "Market Data Other Level",
+      "file": "MktOtherLevel.dat",
+      "area": "Compensation",
+      "loadOrder": 9140,
+      "description": "Other Level can be any other level that is not a career level or career stream."
+    },
+    {
+      "name": "Market Data Other Level Translation",
+      "file": "MktOtherLevelTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9141,
+      "description": "Translation records for Market Data Other Levels."
+    },
+    {
+      "name": "Market Data Segment Translation",
+      "file": "MktSegmentTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9171,
+      "description": "Translation records for Market Data Segment."
+    },
+    {
+      "name": "Market Data Segments",
+      "file": "MktSegment.dat",
+      "area": "Compensation",
+      "loadOrder": 9170,
+      "description": "Market Segments are used to map internal locations to external locations using a unique new name. For example, if the internal HR location is called Redwood Shores, and the closest external composite locations are Foster City and San Bruno, then the Market Segment that maps these together, can be named, San Mateo County."
+    },
+    {
+      "name": "Market Data Survey Composites",
+      "file": "MktComposite.dat",
+      "area": "Compensation",
+      "loadOrder": 9250,
+      "description": "Survey data typically from multiple suppliers, that has been grouped into composites or aggregates."
+    },
+    {
+      "name": "Market Data Survey Data",
+      "file": "MktSurveyData.dat",
+      "area": "Compensation",
+      "loadOrder": 9200,
+      "description": "Raw survey data that may be used to compare external pay practices to internal pay practices."
+    },
+    {
+      "name": "Model Profile Extra Info Translation",
+      "file": "TalentModelProfileExtraInfoTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 101620,
+      "description": "Translations for extra information associated with a model profile, such as description, responsibility and qualifications."
+    },
+    {
+      "name": "Name Format",
+      "file": "NameFormat.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 3900,
+      "description": "Defines by country, how the display name, list name, order name and full name for a person are formatted. For example, for the United States, the list name may be defined as \"Last Name, First Name\", while for Canada it is defined as \"Last Name, First Name, Middle Names\"."
+    },
+    {
+      "name": "Noncatalog Learning Item",
+      "file": "NoncatalogLearningItem.dat",
+      "area": "Learning",
+      "loadOrder": 106015,
+      "description": "Learning Items that represent noncatalog courses that have been taken external to the Oracle Learning Cloud system, that will need to appear on the learner learning history. These noncatalog learning items are not backed by any learning content in the Oracle Leaning Cloud system."
+    },
+    {
+      "name": "Noncatalog Learning Item Translation",
+      "file": "NoncatalogLearningItemTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106016,
+      "description": "Translations for noncatalog Learning Items."
+    },
+    {
+      "name": "Object Group",
+      "file": "ObjectGroup.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 150000,
+      "description": "Object groups are used to define subsets of objects, such as elements and payroll relationships. These groups are used for processing, reporting, and costing distributions."
+    },
+    {
+      "name": "Object Group Inclusions and Exclusions",
+      "file": "ObjectGroupAmend.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 150020,
+      "description": "Specifies the records that are included in and excluded from an object group. For example, the payroll relationships and payroll assignments are included in a payroll relationship object group. Inclusions and exclusions must be defined for static object groups, but they are optional for dynamic object groups."
+    },
+    {
+      "name": "Object Group Store",
+      "file": "ObjectGroupStore.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 150010,
+      "description": "Object groups stores flexfield related information."
+    },
+    {
+      "name": "Offering Activity Section V3 Translation",
+      "file": "OfferingActivitySectionV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106063,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for offering activity sections."
+    },
+    {
+      "name": "Offering Custom Pricing",
+      "file": "OfferingCustomPricing.dat",
+      "area": "Learning",
+      "loadOrder": 106075,
+      "description": "Allows a learning specialist to define the pricing parameters for a particular offering, including what the effective dates and currency are. You must supply at least one offering custom pricing component."
+    },
+    {
+      "name": "Offering Translation",
+      "file": "OfferingTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106062,
+      "description": "Translations for course offerings."
+    },
+    {
+      "name": "Offering V3 Translation",
+      "file": "OfferingV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106062,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for course offerings."
+    },
+    {
+      "name": "Organization",
+      "file": "Organization.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3000,
+      "description": "An organization is a logical group of people working together. It has a classification that determines its type. For example department."
+    },
+    {
+      "name": "Organization Payment Method",
+      "file": "OrganizationPaymentMethod.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 6300,
+      "description": "The payment methods for a legislative data group. Payment methods include details including the type of payment such as cash or magnetic tape and the source bank account."
+    },
+    {
+      "name": "Organization Payment Method Translation",
+      "file": "OrganizationPaymentMethodTranslation.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 6310,
+      "description": "Translation records for organization payment methods."
+    },
+    {
+      "name": "Organization Security Profile",
+      "file": "OrganizationSecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4200,
+      "description": "The organization security profile defines criteria for securing access to organization records."
+    },
+    {
+      "name": "Organization Translation",
+      "file": "OrganizationTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3010,
+      "description": "Translation records for organization which represents a logical group of people working together."
+    },
+    {
+      "name": "Organization Tree",
+      "file": "OrganizationTree.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3400,
+      "description": "A hierarchy of organizations, implemented using the core application trees functionality."
+    },
+    {
+      "name": "Organization Tree Node",
+      "file": "OrganizationTreeNode.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3450,
+      "description": "In the organization tree, organizations of any classification type can be added as nodes."
+    },
+    {
+      "name": "Participant Enrollment",
+      "file": "ParticipantEnrollment.dat",
+      "area": "Benefits",
+      "loadOrder": 160100,
+      "description": "The Participant Enrollment object indicates the participant's enrollment into any benefit offering. You can load the participant enrollment using the default benefits relationship or the unrestricted benefits relationship, but not both simultaneously."
+    },
+    {
+      "name": "Payment Source Translation",
+      "file": "PaymentSourceTranslation.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 6320,
+      "description": "Translation records for organization payment method payment sources."
+    },
+    {
+      "name": "Payroll Absence Record",
+      "file": "PayrollAbsenceRecord.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 103700,
+      "description": "The absence record within the Calculation Information Repository. When absence plan records are imported from Oracle Cloud Absences or a third-party absence product into Cloud Payroll, it is stored within the Calculation Information Repository area for absences. The payroll calculation then processes the absence entries for payment or deduction."
+    },
+    {
+      "name": "Payroll Assignment Details",
+      "file": "PayrollAssignmentDetails.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 104902,
+      "description": "The payroll assignment details for an employee, such as time card required status and overtime period."
+    },
+    {
+      "name": "Payroll Balance Definition",
+      "file": "PayrollBalanceDefinition.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 6800,
+      "description": "Definitions of balances used in calculations and reporting."
+    },
+    {
+      "name": "Payroll Balance Definition Translation",
+      "file": "PayrollBalanceDefinitionTranslation.dat",
+      "area": "Global Payroll - Balances",
+      "loadOrder": 6810,
+      "description": "Translation records for payroll balance definitions."
+    },
+    {
+      "name": "Payroll Bank Account Prenote Status Update",
+      "file": "PayBankAccountPrenote.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 140750,
+      "description": "The prenote process validates bank account information to make sure that the provided employee account information is valid before setting up a direct deposit payroll transfer. This process needs to be performed only once for a bank account. If prenote has already been performed, then you can create a prenote record with a status of skipped for a specific bank account. This stops the revalidation of the bank account."
+    },
+    {
+      "name": "Payroll Consolidation Group",
+      "file": "PayrollConsolidationGroup.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 6700,
+      "description": "A grouping of payroll runs within the same time period for the same payroll, for which you can run reporting, costing, and post-run processing. For example, a group might consolidate payroll runs for different work sites into one group for payments and costing."
+    },
+    {
+      "name": "Payroll Deduction Range Item Override",
+      "file": "RangeItemOverride.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 6420,
+      "description": "Override for Deduction Range Item at Legislative Data Group Level"
+    },
+    {
+      "name": "Payroll Deduction Value Definition",
+      "file": "ValueDefinition.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 6400,
+      "description": "A calculation value definition that defines how a value is calculated in payroll processing using range items, calculation types, and values that can be entered or overridden on calculation cards."
+    },
+    {
+      "name": "Payroll Deduction Value Definition Translation",
+      "file": "ValueDefinitionTranslation.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 6410,
+      "description": "Translation records for Payroll Deduction Value Definition"
+    },
+    {
+      "name": "Payroll Definition",
+      "file": "PayrollDefinition.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 6750,
+      "description": "The definition of payment frequency, processing schedule, and other parameters for a particular payroll."
+    },
+    {
+      "name": "Payroll Element Definition",
+      "file": "PayrollElementDefinition.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8600,
+      "description": "Definitions for payroll, human resources, and benefits elements, such as earnings, deductions and taxation definitions. These definitions provide rules determining how the elements are processed in the payroll run, such as processing order and whether they can be processed more than once in a period."
+    },
+    {
+      "name": "Payroll Element Definition Translation",
+      "file": "PayrollElementDefinitionTranslation.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8610,
+      "description": "Translation records for the payroll element definition."
+    },
+    {
+      "name": "Payroll Element Details",
+      "file": "PayrollElementDetails.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 6780,
+      "description": "Defines elements and their associated configurations, based on your responses to questions. Note that a successful import and load of your data doesn't guarantee the elements are successfully created. The application automatically submits a scheduled process to create the elements."
+    },
+    {
+      "name": "Payroll Element Input Value Translation",
+      "file": "InputValueTranslation.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8620,
+      "description": "Translation data for the payroll input values."
+    },
+    {
+      "name": "Payroll Element Run Type Usage",
+      "file": "PayrollElementRunTypeUsage.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8640,
+      "description": "Identifies how the Element is used with the Run Type."
+    },
+    {
+      "name": "Payroll Event Notification",
+      "file": "PayrollEventNotification.dat",
+      "area": "Global Payroll - HCM Events",
+      "loadOrder": 8420,
+      "description": "Notifications resulting from events indicate when an employee should be included in the recalculate payroll for retroactive changes process, or an event action process such as time card reprocessing. You can create retroactive notifications and these can also be deleted. You can update other types of notifications. Most notifications are automatically generated and do not have an integration key. If you create a notification for retroactive processing of payroll, this will have an integration key."
+    },
+    {
+      "name": "Payroll Interface Inbound Record",
+      "file": "PayrollInterfaceInboundRecord.dat",
+      "area": "Global Payroll - Interface",
+      "loadOrder": 127000,
+      "description": "Summary information from third-party payroll providers, such as the name and payroll period of the processed payroll."
+    },
+    {
+      "name": "Payroll Rate Value",
+      "file": "PayRateValue.dat",
+      "area": "Global Payroll - HCM Rates",
+      "loadOrder": 104000,
+      "description": "Value assigned at Payroll employment level as amount or percentage for given rate definition"
+    },
+    {
+      "name": "Payroll Relationship Details",
+      "file": "PayrollRelationshipDetails.dat",
+      "area": "Global Payroll - Person Information",
+      "loadOrder": 104903,
+      "description": "The payroll relationship details captured for an employee, such as overtime period."
+    },
+    {
+      "name": "Payroll Retro Component Usage",
+      "file": "PayrollRetroComponentUsage.dat",
+      "area": "Global Payroll - Elements",
+      "loadOrder": 8680,
+      "description": "Defines processing rules that define an element's behavior when processed by the retroactive process."
+    },
+    {
+      "name": "Payroll Time Card",
+      "file": "PayrollTimeCard.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 103500,
+      "description": "The time calculation cards within the Calculation Information Repository. When time cards are imported from Time and Labor or a third-party time collection device into Cloud Payroll, it is stored within the Calculation Information Repository area for time cards. Payroll calculation then processes the payroll time cards for payment."
+    },
+    {
+      "name": "Payroll Time Definition",
+      "file": "PayrollTimeDefinition.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 6600,
+      "description": "A time definition defines either a date or a span of time. It can be static periods based on a given date or they can define dates based on dynamic variables. It can be defined using multiple periods, additional adjustments, or both."
+    },
+    {
+      "name": "Payroll Time Period",
+      "file": "PayrollTimePeriod.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 6770,
+      "description": "Holds the payroll definition calendar, which is based on the frequency of the payroll, such as weekly and monthly. Payroll periods are used for regular payroll processing and are limited by predefined legislative calendars."
+    },
+    {
+      "name": "Performance Document",
+      "file": "PerfDocComplete.dat",
+      "area": "Talent Management",
+      "loadOrder": 200100,
+      "description": "Worker performance documents for mass processing using HR Specialist administrative processes."
+    },
+    {
+      "name": "Performance Document Eligibility",
+      "file": "PerformanceDocEligibility.dat",
+      "area": "Talent Management",
+      "loadOrder": 200200,
+      "description": "Assignments that should be considered in eligibility profiles for performance documents, which allows specific assignments to be excluded."
+    },
+    {
+      "name": "Performance Documents and Goals Assignment Transfer",
+      "file": "PerfDocUpdate.dat",
+      "area": "Talent Management",
+      "loadOrder": 200300,
+      "description": "Performance documents and goals associated with a worker's inactive assignment can be transferred to the new active assignment following a legal employer change or rehire. Use this process to simplify a worker and manager's access to a worker's performance documents and goals instead of first selecting an inactive assignment."
+    },
+    {
+      "name": "Person Beneficiary Organization",
+      "file": "PersonBeneficiaryOrganization.dat",
+      "area": "Benefits",
+      "loadOrder": 160650,
+      "description": "You can appoint trusts or beneficiary organizations for participants in bulk after you complete participant enrollment. Typically, you load data in bulk when converting from a legacy application during a merger or acquisition."
+    },
+    {
+      "name": "Person Benefit Balance",
+      "file": "PersonBenefitBalance.dat",
+      "area": "Benefits",
+      "loadOrder": 160500,
+      "description": "You typically use benefits balances to store benefit amounts from an external system, or as a workaround for a calculation to bridge disparate systems. You create a benefit balance and associate it with a person or a formula."
+    },
+    {
+      "name": "Person Benefit Group",
+      "file": "PersonBenefitGroup.dat",
+      "area": "Benefits",
+      "loadOrder": 160400,
+      "description": "You create a benefit group to determine a specific set of people eligible for a benefit object. You create a benefit group and associate it with a person. You can use benefit groups in benefits processes to process specific participant groups."
+    },
+    {
+      "name": "Person Contact",
+      "file": "Contact.dat",
+      "area": "Global HR - Person",
+      "loadOrder": 100600,
+      "description": "The contacts for a person. This includes beneficiaries and emergency contacts."
+    },
+    {
+      "name": "Person Contact Relationship",
+      "file": "ContactRelationship.dat",
+      "area": "Global HR - Person",
+      "loadOrder": 100700,
+      "description": "The contact's relationship with the person. The contact can be a friend, spouse, brother, father, and so on."
+    },
+    {
+      "name": "Person Disability",
+      "file": "PersonDisability.dat",
+      "area": "Global HR - Person",
+      "loadOrder": 100800,
+      "description": "Disability information for a person. Includes details of the person's registration with disability organizations and any work restrictions."
+    },
+    {
+      "name": "Person Habits",
+      "file": "PersonHabits.dat",
+      "area": "Benefits",
+      "loadOrder": 160600,
+      "description": "Details of a person's habits and disability status for use with eligibility processing of rates and enrollment opportunities."
+    },
+    {
+      "name": "Person Public Message",
+      "file": "PersonPublicMessage.dat",
+      "area": "Workforce Directory Management",
+      "loadOrder": 6050,
+      "description": "The message that is displayed on the person's public information page in the person spotlight. The message is typically an out of office message that employees see when viewing another person's public information page."
+    },
+    {
+      "name": "Person Public Message Translation",
+      "file": "PersonPublicMessageTranslation.dat",
+      "area": "Workforce Directory Management",
+      "loadOrder": 6060,
+      "description": "Translation records for person public message"
+    },
+    {
+      "name": "Person Security Profile",
+      "file": "PersonSecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4700,
+      "description": "The person security profile defines criteria for securing access to person records."
+    },
+    {
+      "name": "Person Type",
+      "file": "PersonType.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 4000,
+      "description": "Indicates the type of relationship between the person and the enterprise, such as Employee, Contingent Worker, Contact and so on."
+    },
+    {
+      "name": "Person Type Translation",
+      "file": "PersonTypeTranslation.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 4010,
+      "description": "Translation records for person type which indicates the type of relationship between the person and the enterprise."
+    },
+    {
+      "name": "Personal Payment Method",
+      "file": "PersonalPaymentMethod.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 140700,
+      "description": "The method a worker receives all or part of their compensation payment, such as check or electronic funds transfer to a particular bank account."
+    },
+    {
+      "name": "Position",
+      "file": "Position.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3100,
+      "description": "A position is an instance of a job within an organization. For example, you can create a position HR Manager UK for the Human Resources organization for the Manager job."
+    },
+    {
+      "name": "Position Budget",
+      "file": "PositionBudget.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3080,
+      "description": "Position Budget provides a mechanism to load budget information for positions in the application. Budget can be specified by allocating one or more of FTE, Headcount, or Amount attributes."
+    },
+    {
+      "name": "Position Budget Translation",
+      "file": "PositionBudgetTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3085,
+      "description": "Translation records of position budget which capture the names of the position budgets."
+    },
+    {
+      "name": "Position Hierarchy",
+      "file": "PositionHierarchy.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3120,
+      "description": "Manage Positions which allows you to view and manage your positions within the context of the position hierarchy."
+    },
+    {
+      "name": "Position Security Profile",
+      "file": "PositionSecurityProfile.dat",
+      "area": "Global HR - Security",
+      "loadOrder": 4500,
+      "description": "The position security profile defines criteria for securing access to position records."
+    },
+    {
+      "name": "Position Translation",
+      "file": "PositionTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 3110,
+      "description": "Translation records for position which represents an instance of a job within an organization."
+    },
+    {
+      "name": "Potential Life Event",
+      "file": "PotentialLifeEvents.dat",
+      "area": "Benefits",
+      "loadOrder": 160800,
+      "description": "You can create, update or delete Potential Life Events for Person. User can update the status of an exiting Life Event."
+    },
+    {
+      "name": "Progression Grade Ladder",
+      "file": "ProgressionGradeLadder.dat",
+      "area": "Compensation",
+      "loadOrder": 8800,
+      "description": "A hierarchy of grades along with rates, parameters, and rules for progression."
+    },
+    {
+      "name": "Progression Grade Ladder Translation",
+      "file": "ProgressionGradeLadderTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 8805,
+      "description": "Translation records for grade ladder that represents a hierarchy of grades, which is used to order grades and define rates for the grades or the steps attached to the grade."
+    },
+    {
+      "name": "Progression Grade Rate",
+      "file": "ProgressionGradeRate.dat",
+      "area": "Compensation",
+      "loadOrder": 8810,
+      "description": "Pay rate that is defined for the grades in the progression grade ladder."
+    },
+    {
+      "name": "Progression Grade Rate Translation",
+      "file": "ProgressionGradeRateTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 8815,
+      "description": "Translation records for grade rate which represents a value or range of values defined as valid for a given grade."
+    },
+    {
+      "name": "Progression Rule",
+      "file": "ProgressionRule.dat",
+      "area": "Compensation",
+      "loadOrder": 8820,
+      "description": "Progression eligibility profiles associated with the ladder, grade or step."
+    },
+    {
+      "name": "Progression Step Rate Translation",
+      "file": "ProgressionStepRateTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 8806,
+      "description": "Translation records for step rate which represents a pay rate that is defined for the grade steps."
+    },
+    {
+      "name": "Prospect",
+      "file": "Prospect.dat",
+      "area": "Recruiting",
+      "loadOrder": 90450,
+      "description": "A prospect is a person considered as a potential candidate for a job. Prospects are always associated to a job requisition."
+    },
+    {
+      "name": "Question",
+      "file": "Question.dat",
+      "area": "Talent Management",
+      "loadOrder": 10400,
+      "description": "Questions in the question library."
+    },
+    {
+      "name": "Question Translation",
+      "file": "QuestionTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10421,
+      "description": "Translations for questions."
+    },
+    {
+      "name": "Questionnaire",
+      "file": "Questionnaire.dat",
+      "area": "Talent Management",
+      "loadOrder": 10420,
+      "description": "A set of questions used to gain insight from a person. A questionnaire is created from a questionnaire template. However, when bulk loading questionnaires you must define the sections, questions and answers to include in the questionnaire as they are not copied or defaulted from the questionnaire template."
+    },
+    {
+      "name": "Questionnaire Template",
+      "file": "QuestionnaireTemplate.dat",
+      "area": "Talent Management",
+      "loadOrder": 10410,
+      "description": "A consolidated set of configuration options for different types of questionnaires. For example, Questionnaire template for performance review feedback."
+    },
+    {
+      "name": "Questionnaire Template Translation",
+      "file": "QuestionnaireTemplateTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10423,
+      "description": "Translations for questionnaire templates."
+    },
+    {
+      "name": "Questionnaire Translation",
+      "file": "QuestionnaireTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10424,
+      "description": "Translations for questionnaires."
+    },
+    {
+      "name": "Rate Definition",
+      "file": "RateDefinitionV2.dat",
+      "area": "Global Payroll - HCM Rates",
+      "loadOrder": 6500,
+      "description": "The rules defining rates across HCM, such as payroll overtime rates and absence accrual rates."
+    },
+    {
+      "name": "Rate Definition - Decommissioned",
+      "file": "RateDefinition.dat",
+      "area": "Global Payroll - HCM Rates",
+      "loadOrder": 6500,
+      "description": "This object is decommissioned. Use the Rate Definition object instead."
+    },
+    {
+      "name": "Rate Definition Translation",
+      "file": "RateDefinitionV2Translation.dat",
+      "area": "Global Payroll - HCM Rates",
+      "loadOrder": 6510,
+      "description": "Translation records for rate definitions."
+    },
+    {
+      "name": "Rate Definition Translation - Decommissioned",
+      "file": "RateDefinitionTranslation.dat",
+      "area": "Global Payroll - HCM Rates",
+      "loadOrder": 6510,
+      "description": "This object is decommissioned. Use the Rate Definition Translation object instead."
+    },
+    {
+      "name": "Rating Category Translation",
+      "file": "RatingCategoryTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10620,
+      "description": "Translation records for rating categories."
+    },
+    {
+      "name": "Rating Level Translation",
+      "file": "RatingLevelTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10630,
+      "description": "Translation records for rating levels."
+    },
+    {
+      "name": "Rating Model",
+      "file": "RatingModel.dat",
+      "area": "Talent Management",
+      "loadOrder": 10600,
+      "description": "A scale used to measure the performance and proficiency of workers, risk and impact of loss for workers, or workers' potential. For example, you can rate workers on the performance by using the performance rating model."
+    },
+    {
+      "name": "Rating Model Translation",
+      "file": "RatingModelTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10610,
+      "description": "Translation records for rating models."
+    },
+    {
+      "name": "Referral",
+      "file": "Referral.dat",
+      "area": "Recruiting",
+      "loadOrder": 90400,
+      "description": "A structured program used to find job candidates. A referral can be added by an employee, to refer internal and external candidates. Candidates can also be added via agencies."
+    },
+    {
+      "name": "Report Sort Item",
+      "file": "ReportSortItem.dat",
+      "area": "Global Payroll - Reporting",
+      "loadOrder": 140400,
+      "description": "Defines the order in which balance values in a balance group are displayed."
+    },
+    {
+      "name": "Report Sort Type",
+      "file": "ReportSortType.dat",
+      "area": "Global Payroll - Reporting",
+      "loadOrder": 140300,
+      "description": "A report sort type defines the order in which the balance values in a balance group are displayed."
+    },
+    {
+      "name": "Report Sort Type Translation",
+      "file": "ReportSortTypeTranslation.dat",
+      "area": "Global Payroll - Reporting",
+      "loadOrder": 140310,
+      "description": "Translation records for report sort types."
+    },
+    {
+      "name": "Requisition",
+      "file": "Vacancy.dat",
+      "area": "Workforce Directory Management",
+      "loadOrder": 6000,
+      "description": "Defines vacancies, which are placeholders for future headcount, and Oracle Talent Acquisition Cloud requisitions. Use the Job Requisition object to maintain Oracle Recruiting Cloud requisitions."
+    },
+    {
+      "name": "Requisition Translation",
+      "file": "VacancyTranslation.dat",
+      "area": "Workforce Directory Management",
+      "loadOrder": 6010,
+      "description": "Translation records for Oracle Talent Acquisition Cloud requisitions."
+    },
+    {
+      "name": "Resource Exception",
+      "file": "ResourceException.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 2400,
+      "description": "A specific exception created for a work schedule. For example, if a person has a doctor appointment and is not available, this exception can be created."
+    },
+    {
+      "name": "ResponsivePv",
+      "file": "ResponsivePv.dat",
+      "area": "HCM Data Loader",
+      "loadOrder": 200,
+      "description": "This is a Development Release business object aimed to assist in responsive migration project and is available for a limited time frame."
+    },
+    {
+      "name": "Role Mapping",
+      "file": "RoleMapping.dat",
+      "area": "Global HR - Users",
+      "loadOrder": 5000,
+      "description": "Defines rules for provisioning roles to users either automatically or manually."
+    },
+    {
+      "name": "Salary",
+      "file": "Salary.dat",
+      "area": "Compensation",
+      "loadOrder": 110000,
+      "description": "Holds details of salary proposals for Employee or Contingent worker assignments. While supplying data for a salary component, salary pay rate component, or salary simple component, you need to also supply the parent salary data."
+    },
+    {
+      "name": "Salary Basis",
+      "file": "SalaryBasis.dat",
+      "area": "Compensation",
+      "loadOrder": 9000,
+      "description": "Characterizes a worker's pay. Identifies payroll details used to pay earnings, period of pay, annualization factor, components to itemize pay, and grade rate used for salary validation."
+    },
+    {
+      "name": "Salary Basis Translation",
+      "file": "SalaryBasisTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 9010,
+      "description": "The translation records for salary basis."
+    },
+    {
+      "name": "Salary Range Differential",
+      "file": "SalaryRangeDifferential.dat",
+      "area": "Compensation",
+      "loadOrder": 8900,
+      "description": "Difference in salary range due to relevant factors or criteria such as location."
+    },
+    {
+      "name": "Salary Range Differential Translation",
+      "file": "SalaryRangeDifferentialTranslation.dat",
+      "area": "Compensation",
+      "loadOrder": 8910,
+      "description": "Translated name of the salary range differential."
+    },
+    {
+      "name": "Schedule Assignment",
+      "file": "ScheduleAssignment.dat",
+      "area": "Global HR - Setup",
+      "loadOrder": 101000,
+      "description": "Maintains the relationship between a work schedule and a resource, for example, the Monday to Friday 40 hour work schedule is assigned to all the people in the Support department."
+    },
+    {
+      "name": "Schedule Generation Profile",
+      "file": "ScheduleGenerationProfile.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151450,
+      "description": "Provides information about the Schedule Generation Profiles including Staffing Units and Schedule managers."
+    },
+    {
+      "name": "Schedule Request",
+      "file": "ScheduleRequest.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151000,
+      "description": "The highest level of the schedule hierarchy groups worker schedule data for Time and Labor Scheduling. This object is required whenever you load schedule data."
+    },
+    {
+      "name": "Section Translation",
+      "file": "SectionTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 10425,
+      "description": "Translations for questionnaire sections."
+    },
+    {
+      "name": "Self Paced Activity Translation",
+      "file": "SelfPacedActivityTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106065,
+      "description": "Translations for self paced activities."
+    },
+    {
+      "name": "Self Paced Activity V3 Translation",
+      "file": "SelfPacedActivityV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106065,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for self paced activities."
+    },
+    {
+      "name": "Skills Assignment",
+      "file": "SkillsAssignment.dat",
+      "area": "Talent Management",
+      "loadOrder": 101640,
+      "description": "Assigns core skills to one or many assignees."
+    },
+    {
+      "name": "Source Key",
+      "file": "SourceKey.dat",
+      "area": "HCM Data Loader",
+      "loadOrder": 0,
+      "description": "Updates to source key values for existing records."
+    },
+    {
+      "name": "Specialization",
+      "file": "Specialization.dat",
+      "area": "Learning",
+      "loadOrder": 106080,
+      "description": "A specialization contains multiple courses grouped together as a single entity, to help learners achieve goals that a single course cannot address."
+    },
+    {
+      "name": "Specialization Section Translation",
+      "file": "SpecializationSectionTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106082,
+      "description": "Translations for specialization sections."
+    },
+    {
+      "name": "Specialization Section V3 Translation",
+      "file": "SpecializationSectionV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106082,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for specialization sections."
+    },
+    {
+      "name": "Specialization Translation",
+      "file": "SpecializationTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106081,
+      "description": "Translations for specializations."
+    },
+    {
+      "name": "Specialization V3",
+      "file": "SpecializationV3.dat",
+      "area": "Learning",
+      "loadOrder": 106080,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. A specialization contains multiple courses grouped together as a single entity, to help learners achieve goals that a single course cannot address."
+    },
+    {
+      "name": "Specialization V3 Translation",
+      "file": "SpecializationV3Translation.dat",
+      "area": "Learning",
+      "loadOrder": 106081,
+      "description": "Use this object only if you have enabled the Activity Sequencing feature. Translations for specializations."
+    },
+    {
+      "name": "Staffing Volume",
+      "file": "StaffingVolume.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151400,
+      "description": "Staffing driver volume in a department at a location for a date range."
+    },
+    {
+      "name": "Statutory Deductions",
+      "file": "StatutoryDeductionsIN.dat",
+      "area": "Payroll Localization - India",
+      "loadOrder": 103150,
+      "description": "Statutory Deductions calculation card is used to maintain the data that is required to calculate tax deductions and social insurance contributions including Income Tax, Professional Tax, Provident Fund, Employee Social Insurance, and Labour Welfare Fund. It is also used to manage the investment declaration, proof submission, and approval data for the employee."
+    },
+    {
+      "name": "Step Rate Translation",
+      "file": "StepRateTranslation.dat",
+      "area": "Global HR - Work Structures",
+      "loadOrder": 2720,
+      "description": "Translation records for step rate which represents a pay rate that is defined for the grade steps."
+    },
+    {
+      "name": "Stock",
+      "file": "Stock.dat",
+      "area": "Compensation",
+      "loadOrder": 200900,
+      "description": "Repository of stock grants and shares for employees."
+    },
+    {
+      "name": "Succession Plan",
+      "file": "SuccessionPlan.dat",
+      "area": "Talent Management",
+      "loadOrder": 101700,
+      "description": "A group of workers who are selected as possible candidates to replace key personnel in an organization when a vacancy arises. Succession plans identify workers' level of readiness to move into a vacancy, their risk of loss and impact of loss, and other key data to identify those who are ready now, or can develop the necessary skills, for jobs and positions that are not currently vacant."
+    },
+    {
+      "name": "Succession Plan External Candidate",
+      "file": "SuccessionPlanExternalCandidate.dat",
+      "area": "Talent Management",
+      "loadOrder": 101690,
+      "description": "A person who isn't currently an employee of the company but has been added as a candidate to a succession plan."
+    },
+    {
+      "name": "Talent Bookmark Translation",
+      "file": "TalentBookmarkTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 101630,
+      "description": "Translation records for talent profile bookmarks."
+    },
+    {
+      "name": "Talent Model Profile Extra Information Translation",
+      "file": "ModelProfileExtraInfoTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 101620,
+      "description": "Translation records for model profile extra information."
+    },
+    {
+      "name": "Talent Pool",
+      "file": "TalentPool.dat",
+      "area": "Talent Management",
+      "loadOrder": 130300,
+      "description": "A group of workers who are selected so their development can be tracked and managed for particular purposes, such as promotion to higher or diverse management positions."
+    },
+    {
+      "name": "Talent Pool Security Profile",
+      "file": "TalentPoolSecurityProfile.dat",
+      "area": "Talent Management - Security",
+      "loadOrder": 221200,
+      "description": "A security profile that includes the criteria defined to secure public talent pools."
+    },
+    {
+      "name": "Talent Pool Translation",
+      "file": "TalentPoolTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 130310,
+      "description": "Translation records for talent pools."
+    },
+    {
+      "name": "Talent Profile",
+      "file": "TalentProfile.dat",
+      "area": "Talent Management",
+      "loadOrder": 101600,
+      "description": "Individual instance of a profile, either person or job, based on a specific profile type."
+    },
+    {
+      "name": "Talent Profile Translation",
+      "file": "TalentProfileTranslation.dat",
+      "area": "Talent Management",
+      "loadOrder": 101610,
+      "description": "Translation records for talent profile."
+    },
+    {
+      "name": "Talent Review Meeting",
+      "file": "TalentReviewMeeting.dat",
+      "area": "Talent Management",
+      "loadOrder": 130400,
+      "description": "The details of the talent review meeting configuration. A talent review meeting is generally conducted to assess the strengths and weakness of reviewees and the areas of risk for the organization. Before conducting a meeting, you must specify the meeting configuration details such as the meeting facilitators, the participants, the reviewees who will be assessed in the meeting, and the rating models that will be used to assess the reviewees. You can also specify the talent pools and succession plans that you want to associate with the meeting."
+    },
+    {
+      "name": "Task Library",
+      "file": "TaskLibrary.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5040,
+      "description": "A task library is a repository of tasks that can be used either when defining a checklist in a checklist template or when assigning a task to one or more persons during transactions such as Onboarding. Task library is useful when there are a large number of predefined tasks in an organization and saves time and reduces errors in task definition."
+    },
+    {
+      "name": "Task Library Translation",
+      "file": "TaskLibraryTranslation.dat",
+      "area": "Global HR - Checklists",
+      "loadOrder": 5041,
+      "description": "Translation records for task libraries that are a repository of tasks."
+    },
+    {
+      "name": "Tax Withholding",
+      "file": "TaxWithholding.dat",
+      "area": "Payroll Localization - United States",
+      "loadOrder": 103100,
+      "description": "Tax Withholding calculation cards store tax withholding information for federal, state and local taxes as requested by an employee. Note: Federal taxes are created automatically. States tax rates will default to highest if no tax card component or component is not updated."
+    },
+    {
+      "name": "Taxability Rule",
+      "file": "TaxabilityRule.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 160010,
+      "description": "The wage basis rules determine the earnings that are subjected to a deduction. For example, use wage basis rules to determine that imputed earnings are included in taxable wages for employees in New York, but not for employees in Pennsylvania."
+    },
+    {
+      "name": "Third Party Organization Payment Method",
+      "file": "ThirdPartyOrganizationPaymentMethod.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 140570,
+      "description": "The payment methods for a third-party legislative data group includes details, such as type of payment and the source bank account. You cannot make date-effective updates to third-party payment methods, but can only correct them. When updating an existing payment method, specify the existing effective start date."
+    },
+    {
+      "name": "Third Party Organization Payment Method Translation",
+      "file": "ThirdPartyOrganizationPaymentMethodTranslation.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 140570,
+      "description": "Third Party Organization Payment Method Translation Business Object"
+    },
+    {
+      "name": "Third Party Pay Interface Error",
+      "file": "ThirdPartyPayInterfaceError.dat",
+      "area": "Global Payroll - Interface",
+      "loadOrder": 200600,
+      "description": "Errors reported by third party payroll system processing our HCM Extract feed, for the payroll administrators to take corrective action and submit for reprocessing."
+    },
+    {
+      "name": "Third Party Personal Payment Method",
+      "file": "ThirdPartyPersonalPaymentMethod.dat",
+      "area": "Global Payroll - Payments",
+      "loadOrder": 140720,
+      "description": "The method a third-party receives all or part of their payment, such as check or electronic funds transfer to a particular bank account. You cannot make date-effective updates to third-party payment methods, but can only correct them. When updating an existing payment method, specify the existing effective start date."
+    },
+    {
+      "name": "Time Record Group",
+      "file": "TimeRecordGroup.dat",
+      "area": "Workforce Management",
+      "loadOrder": 140000,
+      "description": "A group of time entries, such as all reported time entries that comprise an approved weekly time card."
+    },
+    {
+      "name": "Training Supplier Resource",
+      "file": "TrainingSupplierResource.dat",
+      "area": "Learning",
+      "loadOrder": 106026,
+      "description": "Agencies that supply classroom and instructor resources for instructor led training."
+    },
+    {
+      "name": "Training Supplier Resource Translation",
+      "file": "TrainingSupplierResourceTranslation.dat",
+      "area": "Learning",
+      "loadOrder": 106027,
+      "description": "Translations for Training Supplier Resources."
+    },
+    {
+      "name": "User",
+      "file": "User.dat",
+      "area": "Global HR - Users",
+      "loadOrder": 160000,
+      "description": "Update requests for the user account for an existing person record."
+    },
+    {
+      "name": "User Table - Deprecated",
+      "file": "UserTable.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140010,
+      "description": "This object has been deprecated and is dropped in future releases. Instead use the User Defined Table object."
+    },
+    {
+      "name": "User Table Column Translation - Deprecated",
+      "file": "UserColumnTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140030,
+      "description": "This object has been deprecated and is dropped in future releases. Instead use the User Defined Table object."
+    },
+    {
+      "name": "User Table Row Translation - Deprecated",
+      "file": "UserRowTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140040,
+      "description": "This object has been deprecated and is dropped in future releases. Instead use the User Defined Table object."
+    },
+    {
+      "name": "User Table Translation - Deprecated",
+      "file": "UserTableTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140020,
+      "description": "This object has been deprecated and is dropped in future releases. Instead use the User Defined Table object."
+    },
+    {
+      "name": "User-Defined Table",
+      "file": "UserDefinedTable.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140050,
+      "description": "A user-defined table structure that consists of rows as well as the columns, like a matrix. For example, a table showing bonus amounts as the column against years of service as the rows."
+    },
+    {
+      "name": "User-Defined Table Column Translation",
+      "file": "UserDefinedTableColumnTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140070,
+      "description": "The translated records for user-defined table columns."
+    },
+    {
+      "name": "User-Defined Table Row Translation",
+      "file": "UserDefinedTableRowTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140080,
+      "description": "The translated records for user-defined table rows."
+    },
+    {
+      "name": "User-Defined Table Translation",
+      "file": "UserDefinedTableTranslation.dat",
+      "area": "Global Payroll - Define",
+      "loadOrder": 140060,
+      "description": "The translated records for user-defined tables."
+    },
+    {
+      "name": "Value Details Translation",
+      "file": "ValueDetailsTranslation.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 105230,
+      "description": "Translation records for Value Details."
+    },
+    {
+      "name": "Values Defined by Criteria",
+      "file": "ValuesDefinedByCriteria.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 105200,
+      "description": "A calculation value defined by criteria that defines how a value is calculated in payroll processing using range items, calculation types, and values that can be entered or overridden on calculation cards."
+    },
+    {
+      "name": "Values Defined by Criteria Translation",
+      "file": "ValuesDefinedByCriteriaTranslation.dat",
+      "area": "Global Payroll - Calculation Information",
+      "loadOrder": 105210,
+      "description": "Translation records for Payroll Values Defined By Criteria."
+    },
+    {
+      "name": "Variable Rate Profile",
+      "file": "VariableRateProfile.dat",
+      "area": "Benefits",
+      "loadOrder": 161100,
+      "description": "Standard Rates for benefit plans and options can vary based on certain factors, such as age, smoking status, and compensation amount. One can vary standard rates with variable rate profiles that specify eligibility criteria, calculation method, and how the calculation affects the associated standard rate. You can create a variable rate profile for each rate amount. You can only attach one eligibility profile to a variable rate profile."
+    },
+    {
+      "name": "Volunteering Organization",
+      "file": "VolunteeringOrganization.dat",
+      "area": "Volunteering",
+      "loadOrder": 30000,
+      "description": "An organization is an entity that benefits from the volunteering project and its activities. An organization, if it's based in the US must have a valid Employer Identification Number or EIN to validate its status as a nonprofit organization with the IRS database. The EIN isn't mandatory for organizations that are based outside of the US."
+    },
+    {
+      "name": "Volunteering Organization Translation",
+      "file": "VolunteeringOrganizationTranslation.dat",
+      "area": "Volunteering",
+      "loadOrder": 30010,
+      "description": "Translation for Volunteering Organization"
+    },
+    {
+      "name": "Volunteering Project",
+      "file": "VolunteeringProject.dat",
+      "area": "Volunteering",
+      "loadOrder": 30100,
+      "description": "A volunteering project can be a one-time effort or span several hours. You can associate an organization with one or more volunteering projects."
+    },
+    {
+      "name": "Volunteering Project Translation",
+      "file": "VolunteeringProjectTranslation.dat",
+      "area": "Volunteering",
+      "loadOrder": 30110,
+      "description": "Translation for Volunteering Project"
+    },
+    {
+      "name": "Web Clock Geofence",
+      "file": "WebClockGeofence.dat",
+      "area": "Workforce Management",
+      "loadOrder": 221300,
+      "description": "Geofence defined for location used with Web Clock."
+    },
+    {
+      "name": "Web Clock Geofence Translation",
+      "file": "WebClockGeofenceTranslation.dat",
+      "area": "Workforce Management",
+      "loadOrder": 221310,
+      "description": "Provides Translations for Geofence defined for location used with Web Clock."
+    },
+    {
+      "name": "Wellness Activity",
+      "file": "WellnessActivity.dat",
+      "area": "Wellness",
+      "loadOrder": 107300,
+      "description": "A wellness activity performed by an employee. You can only bulk-load activities that occurred in the last 10 days."
+    },
+    {
+      "name": "Wellness Competition",
+      "file": "WellnessCompetition.dat",
+      "area": "Wellness",
+      "loadOrder": 107200,
+      "description": "A wellness competition created by the employer in which an employee can participate. For example, an administrator can create a wellness competition with a specific date range based on steps, active time or distance. Multiple rewards can also be associated with a competition."
+    },
+    {
+      "name": "Wellness Goal",
+      "file": "WellnessGoal.dat",
+      "area": "Wellness",
+      "loadOrder": 107010,
+      "description": "A corporate goal in which an employee can participate. For example, administrators can create a Wellness Corporate Goal with a daily target of 8000 Steps starting from a specific date and ending at a specific date with an achievement rate of 80%. A reward can be associated with the corporate goal for anyone reaching the achievement rate. The goal type can be steps, active time or distance."
+    },
+    {
+      "name": "Wellness Task",
+      "file": "WellnessTask.dat",
+      "area": "Wellness",
+      "loadOrder": 107000,
+      "description": "A task for an employee to complete. For example, completing a mandatory training within the task start and end date."
+    },
+    {
+      "name": "Work Life Team",
+      "file": "WorkLifeTeam.dat",
+      "area": "Wellness",
+      "loadOrder": 107100,
+      "description": "A work life team can be created by an employee and it will be available for use in Wellness and Volunteering. Teams are used for goals, to achieve team targets and challenge other teams."
+    },
+    {
+      "name": "Work Pattern",
+      "file": "WorkPattern.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151300,
+      "description": "The work patterns for a given worker assignment, including shifts and breaks that belong to the work pattern."
+    },
+    {
+      "name": "Work Pattern Translation",
+      "file": "WorkPatternTranslation.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151310,
+      "description": "Translations for Work Pattern"
+    },
+    {
+      "name": "Worker",
+      "file": "Worker.dat",
+      "area": "Global HR - Worker",
+      "loadOrder": 100500,
+      "description": "A person who has a work relationship with a legal employer within the enterprise."
+    },
+    {
+      "name": "Workload Plan",
+      "file": "WorkloadPlan.dat",
+      "area": "Workforce Management",
+      "loadOrder": 151200,
+      "description": "Workload demand for a specific Job and skill set in a department at a location for a date range."
+    }
+  ],
+  "details": {
+    "Location": {
+      "name": "Location",
+      "fileDiscriminator": "Location",
+      "supportedActions": [
+        "MERGE"
+      ],
+      "supportedActionsLabel": "Create and update only",
+      "requiredForNewRecords": true,
+      "userKey": [
+        "LocationCode",
+        "SetCode"
+      ],
+      "attributes": [
+        {
+          "name": "LocationId",
+          "type": "Number",
+          "keyType": "surrogateId",
+          "required": "always",
+          "note": "Identifiant interne, disponible seulement en mise a jour. Ne pas fournir en creation."
+        },
+        {
+          "name": "LocationCode",
+          "type": "String",
+          "keyType": "userKey",
+          "required": "newRecords"
+        },
+        {
+          "name": "SetCode",
+          "type": "String",
+          "keyType": "userKey",
+          "required": "no"
+        },
+        {
+          "name": "EffectiveStartDate",
+          "type": "Date",
+          "required": "always"
+        },
+        {
+          "name": "EffectiveEndDate",
+          "type": "Date",
+          "required": "no"
+        },
+        {
+          "name": "LocationName",
+          "type": "String",
+          "required": "newRecords"
+        },
+        {
+          "name": "ActiveStatus",
+          "type": "String",
+          "required": "newRecords",
+          "lookup": "ACTIVE_INACTIVE"
+        },
+        {
+          "name": "Country",
+          "type": "String",
+          "required": "newRecords"
+        },
+        {
+          "name": "SetId",
+          "type": "Number",
+          "keyType": "foreignObjectReference",
+          "required": "newRecords",
+          "referenceUserKey": [
+            "SetCode"
+          ]
+        },
+        {
+          "name": "AddressLine1",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "AddressLine2",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "AddressLine3",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "AddressLine4",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "TownOrCity",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "Region1",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "Region2",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "Region3",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "PostalCode",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "LongPostalCode",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "Description",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "Building",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "FloorNumber",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "EmailAddress",
+          "type": "String",
+          "required": "no"
+        },
+        {
+          "name": "TimezoneName",
+          "type": "String",
+          "keyType": "userKey",
+          "required": "no"
+        },
+        {
+          "name": "Latitude",
+          "type": "Number",
+          "required": "no"
+        },
+        {
+          "name": "Longitude",
+          "type": "Number",
+          "required": "no"
+        },
+        {
+          "name": "SourceSystemId",
+          "type": "String",
+          "keyType": "sourceKey",
+          "required": "no"
+        },
+        {
+          "name": "SourceSystemOwner",
+          "type": "String",
+          "keyType": "sourceKey",
+          "required": "no"
+        },
+        {
+          "name": "GUID",
+          "type": "String",
+          "keyType": "guid",
+          "required": "no",
+          "note": "Disponible seulement pour referencer un enregistrement existant."
+        }
+      ]
+    }
+  }
+}

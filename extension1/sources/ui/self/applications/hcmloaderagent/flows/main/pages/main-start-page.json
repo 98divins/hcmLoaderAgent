@@ -144,6 +144,192 @@
     "loadPhases": {
       "type": "object[]",
       "defaultValue": []
+    },
+    "objectCatalog": {
+      "type": "object",
+      "defaultValue": {
+        "keyResolutionOrder": [
+          "guid",
+          "sourceKey",
+          "userKey"
+        ],
+        "objects": {
+          "Location": {
+            "name": "Location",
+            "fileDiscriminator": "Location",
+            "supportedActions": [
+              "MERGE"
+            ],
+            "supportedActionsLabel": "Create and update only",
+            "requiredForNewRecords": true,
+            "userKey": [
+              "LocationCode",
+              "SetCode"
+            ],
+            "attributes": [
+              {
+                "name": "LocationId",
+                "type": "Number",
+                "keyType": "surrogateId",
+                "required": "always",
+                "note": "Identifiant interne, disponible seulement en mise a jour. Ne pas fournir en creation."
+              },
+              {
+                "name": "LocationCode",
+                "type": "String",
+                "keyType": "userKey",
+                "required": "newRecords"
+              },
+              {
+                "name": "SetCode",
+                "type": "String",
+                "keyType": "userKey",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "Date",
+                "required": "always"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "Date",
+                "required": "no"
+              },
+              {
+                "name": "LocationName",
+                "type": "String",
+                "required": "newRecords"
+              },
+              {
+                "name": "ActiveStatus",
+                "type": "String",
+                "required": "newRecords",
+                "lookup": "ACTIVE_INACTIVE"
+              },
+              {
+                "name": "Country",
+                "type": "String",
+                "required": "newRecords"
+              },
+              {
+                "name": "SetId",
+                "type": "Number",
+                "keyType": "foreignObjectReference",
+                "required": "newRecords",
+                "referenceUserKey": [
+                  "SetCode"
+                ]
+              },
+              {
+                "name": "AddressLine1",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine2",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine3",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine4",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "TownOrCity",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "Region1",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "Region2",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "Region3",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "PostalCode",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "LongPostalCode",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "Description",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "Building",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "FloorNumber",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "EmailAddress",
+                "type": "String",
+                "required": "no"
+              },
+              {
+                "name": "TimezoneName",
+                "type": "String",
+                "keyType": "userKey",
+                "required": "no"
+              },
+              {
+                "name": "Latitude",
+                "type": "Number",
+                "required": "no"
+              },
+              {
+                "name": "Longitude",
+                "type": "Number",
+                "required": "no"
+              },
+              {
+                "name": "SourceSystemId",
+                "type": "String",
+                "keyType": "sourceKey",
+                "required": "no"
+              },
+              {
+                "name": "SourceSystemOwner",
+                "type": "String",
+                "keyType": "sourceKey",
+                "required": "no"
+              },
+              {
+                "name": "GUID",
+                "type": "String",
+                "keyType": "guid",
+                "required": "no",
+                "note": "Disponible seulement pour referencer un enregistrement existant."
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "metadata": {},
