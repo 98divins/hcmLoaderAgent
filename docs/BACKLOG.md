@@ -60,3 +60,24 @@ qu'ils ne changent ni l'architecture ni la vision. Ils sont réversibles.
 - Persistance d'un dossier entre deux sessions.
 - Segments flexfield vérifiés contre la liste (218 Ko, à servir autrement).
 - Édition en cellule avec liste déroulante.
+
+## Itération 6 — retours du test utilisateur (build 20, livré)
+
+- [x] Écran d'entrée : les cartes se lisent comme des boutons, cliquer une
+      opération ouvre le dossier (deux gestes au lieu de trois).
+- [x] Import : une seule zone de dépôt, plusieurs fichiers, l'objet de chaque
+      fichier reconnu à ses colonnes. Plus de feuille à choisir avant d'importer.
+- [x] Un écran par étape : Importer, Contrôler, Charger, Suivre, Terminer.
+      La zone centrale défile seule, la page ne grandit jamais.
+- [x] Résultat du contrôle en phrases, action suivante en une ligne ; l'état de
+      chaque ligne vit dans la grille, sans bloc redondant.
+- [x] L'assistant s'ouvre quand il y a matière ; une demande pendant qu'il
+      travaille n'est plus perdue.
+- [x] Suivi : rafraîchi seul, dernière lecture affichée, rejets en clair
+      rattachés à la ligne du dossier, lignes acceptées marquées et exclues du
+      prochain envoi, fin de dossier explicite.
+- [x] Défaut : SourceSystemOwner HDLAGENT rejeté par le tenant. Les clés source
+      ne s'écrivent que si le propriétaire est enregistré (HRC_SOURCE_SYSTEM_OWNER).
+- [x] Défaut : une valeur de remplacement de l'assistant ("à fournir") était
+      appliquée. Refusée par la page, interdite par le prompt (v9).
+- [x] Agent v9 : parler métier, jamais de JSON ni de rowKey en premier.

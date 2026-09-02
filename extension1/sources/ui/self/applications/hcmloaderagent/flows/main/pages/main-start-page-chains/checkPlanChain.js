@@ -596,6 +596,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         .join('\n');
 
       $variables.errorText = structural.join(' ');
+      if (ask !== false && totalIssues) { $variables.assistOpen = true; }
       $variables.question = (ask !== false && totalIssues)
         ? 'Analyse des anomalies relevees par le controle : quelles lignes posent '
           + 'probleme, et quelles corrections sont applicables ?'

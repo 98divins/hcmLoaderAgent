@@ -39,6 +39,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const sheets = ($variables.sheets || []).slice();
       let applied = 0;
       let skipped = 0;
+      let placeholders = 0;
 
       // Un diagnostic post-chargement porte les memes corrections qu'une
       // anomalie, sous une autre forme : on le ramene a la forme commune.
@@ -59,8 +60,18 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         const filled = sheets.map((sheet, i) => ((sheet.rows || []).length ? i : -1))
           .filter((i) => i !== -1);
         const fallback = filled.length === 1 ? filled[0] : -1;
+        // Une valeur de remplacement n'est pas une valeur : "a fournir" ecrit
+        // tel quel dans Oracle est un chargement faux. La regle vaut pour
+        // l'assistant comme pour toute autre source.
+        const PLACEHOLDER = /^(a fournir|à fournir|valeur[_ ]?existante|valeur|todo|tbd|n\/a|na|xxx+|\?+|\.\.\.|<[^>]*>|\[[^\]]*\])$/i;
         asIssues.forEach((item) => {
           if (!item || !item.rowRef || !item.field) { skipped += 1; return; }
+          const proposed = String(item.suggestedValue === undefined ? '' : item.suggestedValue).trim();
+          if (PLACEHOLDER.test(proposed) || /fournir/i.test(proposed)) {
+            skipped += 1;
+            placeholders += 1;
+            return;
+          }
           const index = (item.sheet === undefined || item.sheet === null)
             ? fallback : Number(item.sheet);
           const sheet = sheets[index];
@@ -144,7 +155,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // Le controle qui suit reecrit le resume : la note transite par sa propre
       // variable pour ne pas etre perdue en route.
       $variables.appliedNote = `${applied} modification${mark} appliquee${mark}`
-        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''} car hors du dossier` : '');
+        + (skipped ? `, ${skipped} ignoree${skipped > 1 ? 's' : ''}` : '')
+        + (placeholders ? ` (${placeholders} valeur${placeholders > 1 ? 's' : ''} de remplacement refusee${placeholders > 1 ? 's' : ''})` : '');
       $variables.summaryText = $variables.appliedNote;
     }
   }

@@ -32,6 +32,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         });
       });
 
+      // Les cles source ne s'ecrivent que si le proprietaire de source est
+      // enregistre dans le tenant : HDL rejette toute valeur absente du lookup
+      // HRC_SOURCE_SYSTEM_OWNER. Une lecture impossible vaut absence.
+      if (types.indexOf('HRC_SOURCE_SYSTEM_OWNER') === -1) { types.push('HRC_SOURCE_SYSTEM_OWNER'); }
+
       const values = {};
       for (let i = 0; i < types.length; i += 1) {
         const type = types[i];
@@ -57,6 +62,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         }
       }
 
+      const owners = values.HRC_SOURCE_SYSTEM_OWNER || {};
+      values._sourceOwner = Boolean(owners.ok && owners.codes.indexOf('HDLAGENT') !== -1);
       $variables.lookupValues = values;
       const readable = Object.keys(values).filter((type) => values[type].ok).length;
       if (types.length) {

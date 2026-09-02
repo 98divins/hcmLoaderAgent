@@ -1,25 +1,31 @@
 define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
   'use strict';
 
-  // Etapes du dossier, dans l'ordre ou l'utilisateur les traverse. Le
-  // rapprochement n'est pas une etape a part : il fait partie du controle et
-  // s'execute dans la meme passe.
+  // Etapes du dossier, dans l'ordre ou l'utilisateur les traverse. Chaque etape
+  // est un ecran : on n'y voit que ce qui compte a ce moment-la.
   const STEPS = [
-    { id: 'data', label: 'Importer' },
-    { id: 'review', label: 'Controler' },
-    { id: 'submit', label: 'Charger' },
-    { id: 'result', label: 'Analyser' }
+    { id: 'data', label: 'Importer', title: 'Apportez vos donnees' },
+    { id: 'review', label: 'Controler', title: 'Controle du dossier' },
+    { id: 'submit', label: 'Charger', title: 'Le dossier est pret a partir' },
+    { id: 'result', label: 'Suivre', title: 'Suivi du chargement' },
+    { id: 'done', label: 'Terminer', title: 'Dossier termine' }
   ];
 
   const STATE_LABELS = {
     ok: 'OK',
     erreur: 'Erreur',
     'a verifier': 'A verifier',
-    'a controler': 'A controler'
+    'a controler': 'A controler',
+    chargee: 'Chargee'
   };
 
   function activeSheet(sheets, index) {
     return (sheets || [])[index || 0] || { columns: [], rows: [] };
+  }
+
+  function plural(n, word, fem) {
+    const e = fem ? 'e' : '';
+    return `${n} ${word}${e}${n > 1 ? 's' : ''}`;
   }
 
   class PageModule {
@@ -37,16 +43,17 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
 
     /**
      * Les colonnes sont construites a l'execution a partir de celles de la
-     * feuille : rien n'est fige pour un objet metier donne. L'etat est court,
-     * le detail porte le message : un texte long dans une cellule etroite ne
-     * se lit pas.
+     * feuille. Avant le controle, la grille ne montre que les donnees : l'etat
+     * et le detail n'ont rien a dire. Apres, ils viennent en tete, et le
+     * rapprochement seulement s'il a ete fait.
      */
-    getTableColumns(sheets, index) {
-      const list = [
-        { field: 'etat', headerText: 'Etat', weight: 1, minWidth: 90 },
-        { field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 220 },
-        { field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 160 }
-      ];
+    getTableColumns(sheets, index, step) {
+      const list = [];
+      if (step !== 'data') {
+        list.push({ field: 'etat', headerText: 'Etat', weight: 1, minWidth: 90 });
+        list.push({ field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 220 });
+        list.push({ field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 160 });
+      }
       (activeSheet(sheets, index).columns || []).forEach((name) => {
         list.push({ field: name, headerText: name, weight: 2 });
       });
@@ -66,15 +73,6 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       ];
     }
 
-    /** Meme mecanique que le dossier, pour les messages rendus par le moteur HDL. */
-    getLoadRowsDP(rows) {
-      return new ArrayDataProvider(rows || [], { keyAttributes: 'rowKey' });
-    }
-
-    getLoadColumns(columns) {
-      return (columns || []).map((name) => ({ field: name, headerText: name, weight: 2 }));
-    }
-
     /** Le rail : chaque etape sait si elle est faite, courante ou a venir. */
     getSteps(step) {
       const current = STEPS.map((s) => s.id).indexOf(step);
@@ -91,31 +89,33 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       });
     }
 
+    /** Titre de l'ecran courant : dit ou l'on est et ce qu'on y fait. */
+    stepTitle(step) {
+      const found = STEPS.filter((s) => s.id === step)[0];
+      return found ? found.title : '';
+    }
+
     /**
-     * Les feuilles du dossier, telles que le rail les affiche. L'index voyage
-     * avec la feuille : c'est lui que la selection relit sur l'element clique,
-     * $listeners n'etant pas resolu a l'interieur d'un <template>.
+     * Les feuilles, presentees en onglets au-dessus de la grille. L'index
+     * voyage avec l'onglet : c'est lui que la selection relit sur l'element
+     * clique, $listeners n'etant pas resolu a l'interieur d'un <template>.
      */
     getSheets(sheets, index) {
       return (sheets || []).map((sheet, position) => {
         const count = (sheet.rows || []).length;
+        const loaded = (sheet.rows || []).filter((r) => r.loaded).length;
         const etat = sheet.countIssues ? 'anomalie' : (count ? 'ok' : 'vide');
         return {
           index: position,
           object: sheet.object,
           label: sheet.label,
-          detail: sheet.statusLabel || 'aucune donnee',
-          cls: position === (index || 0) ? 'hdl-sheet hdl-sheet-courante' : 'hdl-sheet',
+          detail: `${plural(count, 'ligne')}`
+            + (sheet.countIssues ? ` · ${sheet.countIssues} a corriger` : '')
+            + (loaded ? ` · ${loaded} chargee${loaded > 1 ? 's' : ''}` : ''),
+          cls: position === (index || 0) ? 'hdl-tab hdl-tab-courante' : 'hdl-tab',
           dot: `hdl-dot hdl-dot-${etat}`
         };
       });
-    }
-
-    /** Feuilles qui bloquent le chargement, nommees pour le rail. */
-    getBlockingSheets(sheets) {
-      const names = (sheets || []).filter((sheet) => sheet.countIssues).map((s) => s.label);
-      if (!names.length) { return ''; }
-      return `Chargement bloque par ${names.join(', ')}`;
     }
 
     /**
@@ -126,22 +126,24 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       const tree = (catalog || {}).hierarchies || {};
       return Object.keys(tree).map((id) => {
         const top = ((catalog || {}).objects || {})[tree[id].top] || {};
+        const children = (tree[id].children || []).length;
         return {
           id,
           label: id,
           title: tree[id].title || '',
           description: tree[id].description || '',
+          objects: `${1 + children} objet${children ? 's' : ''} : ${top.uiName || id}`
+            + (children ? ` et ${plural(children, 'objet')} enfant${children > 1 ? 's' : ''}` : ''),
           userKey: (top.userKey || []).join(' + '),
           cls: id === selected ? 'hdl-card hdl-card-choisie' : 'hdl-card',
-          action: id === selected ? 'Retenu' : 'Choisir'
+          action: id === selected ? 'Objet retenu' : 'Cliquer pour choisir'
         };
       });
     }
 
     /**
-     * Objets que le dossier peut encore accueillir : ceux de la hierarchie qui
-     * autorisent l'operation en cours et ne sont pas deja une feuille. Le
-     * catalogue tranche, la page n'a rien a deviner.
+     * Objets que le dossier peut encore accueillir. Sert a dire a l'utilisateur
+     * quels fichiers il peut encore deposer, pas a lui faire choisir.
      */
     getAddableObjects(catalog, hierarchy, operation, sheets) {
       const tree = ((catalog || {}).hierarchies || {})[hierarchy];
@@ -153,6 +155,13 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
         .filter((entry) => entry.spec
           && (entry.spec.validOperations || []).indexOf(operation) !== -1)
         .map((entry) => ({ name: entry.name, label: entry.spec.uiName || entry.name }));
+    }
+
+    /** Liste lisible des objets encore attendus. */
+    addableText(catalog, hierarchy, operation, sheets) {
+      const list = this.getAddableObjects(catalog, hierarchy, operation, sheets);
+      if (!list.length) { return 'Tous les objets de la hierarchie sont dans le dossier.'; }
+      return `Vous pouvez encore deposer : ${list.map((e) => e.label).join(', ')}.`;
     }
 
     /**
@@ -171,7 +180,6 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
         return {
           name,
           label: spec.uiName || name,
-          parent: spec.level === 'top',
           creer: merge ? 'oui' : '—',
           majour: merge ? 'oui' : '—',
           supprimer: ops.indexOf('DELETE') !== -1 ? 'oui' : '—'
@@ -198,42 +206,114 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
     }
 
     /**
+     * Le resultat du controle, dit en phrases. Les chiffres sont la, mais c'est
+     * la phrase qui se lit : "3 lignes creeront un enregistrement" plutot qu'un
+     * compteur sous une etiquette technique.
+     */
+    resultSentences(summary, operation) {
+      const s = summary || {};
+      const m = s.match || {};
+      const out = [];
+      if (!s.rows) { return out; }
+      out.push(`${plural(s.rows, 'ligne')} controlee${s.rows > 1 ? 's' : ''} : `
+        + `${plural(s.clean, 'ligne')} sans remarque`
+        + (s.issues ? `, ${s.issues} a corriger avant de charger` : '')
+        + (s.warnings ? `, ${s.warnings} a verifier (le chargement reste possible)` : '')
+        + '.');
+      if (operation === 'DELETE') {
+        out.push('Operation de suppression : les lignes designees seront supprimees.');
+      } else {
+        const parts = [];
+        if (m.create) { parts.push(`${plural(m.create, 'ligne')} creeron${m.create > 1 ? 't' : 'a'} un nouvel enregistrement`); }
+        if (m.update) { parts.push(`${plural(m.update, 'ligne')} mettron${m.update > 1 ? 't' : 'a'} a jour un enregistrement existant`); }
+        if (m.dossier) { parts.push(`${plural(m.dossier, 'ligne')} enfant${m.dossier > 1 ? 's' : ''} se rattache${m.dossier > 1 ? 'nt' : ''} a un parent cree dans ce meme dossier`); }
+        if (m.tenant) { parts.push(`${plural(m.tenant, 'ligne')} enfant${m.tenant > 1 ? 's' : ''} se rattache${m.tenant > 1 ? 'nt' : ''} a un parent deja present dans Oracle`); }
+        if (parts.length) { out.push(`${parts.join(' ; ')}.`); }
+        if (m.missing) {
+          out.push(`${plural(m.missing, 'ligne')} enfant${m.missing > 1 ? 's' : ''} designe${m.missing > 1 ? 'nt' : ''} `
+            + 'un parent qui n\'existe ni dans le dossier ni dans Oracle : corrigez le nom du '
+            + 'parent, ou ajoutez-le a la feuille parent.');
+        }
+        if (m.unverified) {
+          out.push(`${plural(m.unverified, 'ligne')} n'${m.unverified > 1 ? 'ont' : 'a'} pas pu etre `
+            + 'rapprochee' + (m.unverified > 1 ? 's' : '') + ' avec Oracle : ni confirmee'
+            + (m.unverified > 1 ? 's' : '') + ', ni infirmee' + (m.unverified > 1 ? 's' : '') + '.');
+        }
+      }
+      const notes = [];
+      (s.sheets || []).forEach((sheet) => {
+        (sheet.notes || []).forEach((n) => { notes.push(`${sheet.label} : ${n}.`); });
+      });
+      return out.concat(notes);
+    }
+
+    /** Ce qu'il reste a faire, en une phrase, selon l'etat du controle. */
+    nextAction(summary, hasAutoFix, hasProposal) {
+      const s = summary || {};
+      if (!s.rows) { return ''; }
+      if (s.issues) {
+        if (hasAutoFix || hasProposal) {
+          return 'Appliquez les corrections proposees dans le panneau de droite, puis recontrolez.';
+        }
+        return 'Corrigez les lignes en erreur : exportez, modifiez dans Excel, redeposez le '
+          + 'fichier, puis recontrolez. L\'assistant peut vous guider.';
+      }
+      return 'Aucune anomalie bloquante : vous pouvez passer au chargement.';
+    }
+
+    /**
      * Texte de confirmation avant un chargement reel : ce qui part, en clair.
      * Une suppression est nommee comme telle.
      */
-    confirmText(hierarchy, operation, countTotal, sheets) {
-      const n = countTotal || 0;
-      const s = (sheets || []).filter((sheet) => (sheet.rows || []).length).length;
-      const lines = n === 1 ? '1 ligne' : `${n} lignes`;
-      const feuilles = s === 1 ? '1 feuille' : `${s} feuilles`;
+    confirmText(hierarchy, operation, sheets) {
+      const pending = (sheets || []).reduce((sum, sheet) => sum
+        + (sheet.rows || []).filter((r) => !r.loaded).length, 0);
+      const filled = (sheets || []).filter((sheet) => (sheet.rows || []).some((r) => !r.loaded)).length;
+      const lines = plural(pending, 'ligne');
+      const feuilles = plural(filled, 'feuille');
       if (operation === 'DELETE') {
-        return `Vous allez demander a Oracle la SUPPRESSION de ${lines} (${feuilles}, `
-          + `hierarchie ${hierarchy}). Les enregistrements designes seront supprimes. `
+        return `Oracle va supprimer ${lines} (${feuilles}, ${hierarchy}). `
           + 'Cette action est irreversible.';
       }
-      return `Vous allez soumettre a Oracle un chargement de ${lines} (${feuilles}, `
-        + `hierarchie ${hierarchy}) : creation des enregistrements absents, mise a jour `
-        + 'des existants. Le traitement demarre immediatement.';
+      return `Oracle va creer ou mettre a jour ${lines} (${feuilles}, ${hierarchy}). `
+        + 'Le traitement demarre immediatement.';
     }
 
-    /** Synthese du controle, prete a afficher : les trois cas de rapprochement comptes. */
-    getMatchCards(summary) {
-      const m = (summary && summary.match) || null;
-      if (!m) { return []; }
-      const cards = [];
-      if (m.dossier) { cards.push({ cls: 'hdl-match hdl-match-ok', count: m.dossier, text: 'parent cree dans ce dossier' }); }
-      if (m.tenant) { cards.push({ cls: 'hdl-match hdl-match-info', count: m.tenant, text: 'parent deja present dans le tenant' }); }
-      if (m.missing) { cards.push({ cls: 'hdl-match hdl-match-ko', count: m.missing, text: 'parent introuvable : ligne rejetee' }); }
-      if (m.create) { cards.push({ cls: 'hdl-match hdl-match-ok', count: m.create, text: 'creation' }); }
-      if (m.update) { cards.push({ cls: 'hdl-match hdl-match-info', count: m.update, text: 'mise a jour' }); }
-      if (m.unverified) { cards.push({ cls: 'hdl-match hdl-match-na', count: m.unverified, text: 'non verifie' }); }
-      return cards;
+    /** Nombre de lignes qui partiront : celles qui ne sont pas deja chargees. */
+    pendingRows(sheets) {
+      return (sheets || []).reduce((sum, sheet) => sum
+        + (sheet.rows || []).filter((r) => !r.loaded).length, 0);
     }
 
-    /** Etat d'une ligne de la synthese, sous forme de classe. */
-    itemClass(state) {
-      return state === 'erreur' ? 'hdl-item hdl-item-ko' : 'hdl-item hdl-item-warn';
+    /** Le suivi, en une phrase. */
+    loadSentence(summary) {
+      const s = summary || {};
+      if (!s.submitted) { return ''; }
+      if (!s.finished) {
+        return `${plural(s.submitted, 'ligne')} envoyee${s.submitted > 1 ? 's' : ''}. Le traitement est en cours cote Oracle.`;
+      }
+      if (s.accepted === null || s.accepted === undefined) {
+        return `${plural(s.submitted, 'ligne')} envoyee${s.submitted > 1 ? 's' : ''}, ${plural(s.rejected + (s.unmapped || 0), 'message')} `
+          + 'd\'erreur. Certains ne designent aucune ligne : lisez-les ci-dessous.';
+      }
+      if (!s.rejected) {
+        return `Termine : ${plural(s.accepted, 'ligne')} acceptee${s.accepted > 1 ? 's' : ''} par Oracle, aucun rejet.`;
+      }
+      return `Termine : ${plural(s.accepted, 'ligne')} acceptee${s.accepted > 1 ? 's' : ''}, `
+        + `${plural(s.rejected, 'ligne')} rejetee${s.rejected > 1 ? 's' : ''}. Les lignes acceptees ne repartiront pas.`;
     }
+
+    /** Rejets lisibles : feuille, ligne, message d'Oracle. */
+    getRejects(rejects) {
+      return (rejects || []).filter((r) => r.error).map((r, i) => ({
+        key: `R${i}`,
+        where: r.sheet === -1
+          ? `${r.sheetLabel}${r.line ? `, ligne ${r.line} du fichier` : ''}`
+          : `${r.sheetLabel}, ligne "${r.label}"`,
+        text: r.text
+      }));
+    }
+
   }
 
   return PageModule;

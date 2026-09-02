@@ -133,14 +133,6 @@
       "type": "boolean",
       "defaultValue": false
     },
-    "loadRows": {
-      "type": "object[]",
-      "defaultValue": []
-    },
-    "loadColumns": {
-      "type": "string[]",
-      "defaultValue": []
-    },
     "loadPhases": {
       "type": "object[]",
       "defaultValue": []
@@ -1540,6 +1532,22 @@
     "lookupValues": {
       "type": "object",
       "defaultValue": {}
+    },
+    "opened": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadSummary": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "rejects": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "lastRefresh": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "metadata": {},
@@ -1701,6 +1709,12 @@
           "parameters": {
             "operation": "MERGE"
           }
+        },
+        {
+          "chain": "startDossierChain"
+        },
+        {
+          "chain": "loadLookupsChain"
         }
       ]
     },
@@ -1711,11 +1725,7 @@
           "parameters": {
             "operation": "DELETE"
           }
-        }
-      ]
-    },
-    "onStartDossier": {
-      "chains": [
+        },
         {
           "chain": "startDossierChain"
         },
@@ -1728,16 +1738,6 @@
       "chains": [
         {
           "chain": "selectSheetChain",
-          "parameters": {
-            "event": "[[ $event ]]"
-          }
-        }
-      ]
-    },
-    "onAddSheet": {
-      "chains": [
-        {
-          "chain": "addSheetChain",
           "parameters": {
             "event": "[[ $event ]]"
           }
@@ -1778,6 +1778,20 @@
       "chains": [
         {
           "chain": "removeSheetChain"
+        }
+      ]
+    },
+    "onFinish": {
+      "chains": [
+        {
+          "chain": "finishChain"
+        }
+      ]
+    },
+    "onBackToReview": {
+      "chains": [
+        {
+          "chain": "backToPlanChain"
         }
       ]
     }

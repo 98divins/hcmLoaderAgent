@@ -55,6 +55,17 @@ global.setTimeout = (fn) => fn();
 const Check = load('checkPlanChain.js');
 const Download = load('downloadDatChain.js');
 const Start = load('startDossierChain.js');
+const Import = load('importFileChain.js');
+const Status = load('checkLoadStatusChain.js');
+const Submit = load('submitLoadChain.js');
+
+// Un fichier depose, tel que le navigateur le presente : nom et contenu.
+global.FileReader = function FileReader() {
+  this.readAsText = function (file) { this.result = file.text; this.onload(); };
+};
+function fakeFile(name) {
+  return { name, text: fs.readFileSync(path.join(SAMPLES, name), 'utf8') };
+}
 
 function readCsv(file) {
   const text = fs.readFileSync(path.join(SAMPLES, file), 'utf8').replace(/^﻿/, '');
@@ -79,7 +90,7 @@ function sheet(object, file) {
 function vars(hierarchy, operation, sheets) {
   return { objectCatalog: catalog, hierarchy, operation, sheets, activeSheet: 0,
     countIssues: 0, countTotal: 0, step: 'data', lookupValues: {}, checkSummary: {},
-    armedAction: '', isChecking: false };
+    armedAction: '', isChecking: false, opened: true, loadSummary: {}, rejects: [] };
 }
 
 async function main() {
@@ -130,7 +141,7 @@ async function main() {
   const dat = blobs.pop() || '';
   check('un .dat, une METADATA par feuille', (dat.match(/^METADATA\|/gm) || []).length === 2);
   check('feuille mixte : rattachement par cle utilisateur, pas LocationId(SourceSystemId)',
-    dat.indexOf('LocationId(SourceSystemId)') === -1 && /SourceSystemId/.test(dat));
+    dat.indexOf('LocationId(SourceSystemId)') === -1);
 
   // 4. Tous les enfants dans le dossier -> rattachement par cle source.
   v = vars('Location', 'MERGE', [sheet('Location', 'Location.csv'),
@@ -140,8 +151,13 @@ async function main() {
   v.step = 'submit'; v.countIssues = 0;
   await new Download().run({ $variables: v }, {});
   const dat2 = blobs.pop() || '';
-  check('parents tous dans le dossier : LocationId(SourceSystemId) ecrit',
-    /LocationId\(SourceSystemId\)/.test(dat2) && /\|LOCATION_PAR01_COMMON\r\n/.test(dat2));
+  check('sans proprietaire de source enregistre : aucune cle source ecrite',
+    dat2.indexOf('SourceSystemOwner') === -1 && dat2.indexOf('LocationId(SourceSystemId)') === -1);
+  v.lookupValues = { _sourceOwner: true };
+  await new Download().run({ $variables: v }, {});
+  const dat3 = blobs.pop() || '';
+  check('proprietaire HDLAGENT enregistre et parents dans le dossier : LocationId(SourceSystemId) ecrit',
+    /LocationId\(SourceSystemId\)/.test(dat3) && /\|LOCATION_PAR01_COMMON\r\n/.test(dat3));
 
   // 5. Jeu d'essai Organization.
   restStub = async () => { throw new Error('ressource absente'); };
@@ -153,20 +169,62 @@ async function main() {
   check('CategoryCode vide : avertissement', cls[0].statusLabel === 'a verifier');
   check('parent hors dossier, tenant muet : non verifie', /^non verifie/.test(cls[3].matchLabel));
 
-  // 6. Suppression : pas d'exigence de creation.
+  // 6. Import : l'objet de chaque fichier est reconnu a ses colonnes.
+  v = vars('Location', 'MERGE', []);
+  await new Start().run({ $variables: v });
+  check('le dossier s\'ouvre sans feuille', v.opened === true && v.sheets.length === 0);
+  await new Import().run({ $variables: v }, { files: [fakeFile('LocationOtherAddress.csv'), fakeFile('Location.csv')] });
+  check('deux fichiers deposes ensemble, deux feuilles, parent en premier',
+    v.sheets.length === 2 && v.sheets[0].object === 'Location' && v.sheets[1].object === 'LocationOtherAddress');
+  await new Import().run({ $variables: v }, { files: [fakeFile('Organization.csv')] });
+  check('un fichier d\'une autre hierarchie est refuse avec explication',
+    v.sheets.length === 2 && /aucun objet de Location/.test(v.errorText));
+  await new Import().run({ $variables: v }, { files: [fakeFile('Location.csv')] });
+  check('redeposer un fichier remplace la feuille de son objet', v.sheets.length === 2);
+
+  // 7. Suppression : pas d'exigence de creation.
   v = vars('Location', 'DELETE', []);
   await new Start().run({ $variables: v });
-  check('dossier DELETE Location : premiere feuille = adresse', v.sheets[0].object === 'LocationOtherAddress');
-  v.sheets[0] = Object.assign(v.sheets[0], {
+  v.sheets = [{ object: 'LocationOtherAddress', label: 'Location Other Address', level: 2,
     columns: ['AddressUsageType', 'LocationCode', 'LocationSetCode', 'EffectiveStartDate'],
     rows: [{ rowKey: 'L1', AddressUsageType: 'MAIN', LocationCode: 'PAR01', LocationSetCode: 'COMMON',
-      EffectiveStartDate: '2026/01/01' }]
-  });
+      EffectiveStartDate: '2026/01/01' }], countIssues: 0, countWarnings: 0 }];
   await new Check().run({ $variables: v }, { ask: false });
   check('DELETE : ligne complete pour l\'identification, aucune fausse anomalie',
     v.sheets[0].rows[0].statusLabel === 'ok');
 
-  // 7. Lookup : une valeur hors referentiel bloque, un referentiel illisible ne tranche pas.
+  // 8. Suivi : un rejet est rattache a sa ligne, les autres sont marquees chargees.
+  // Les trois endpoints portent "dataLoadDataSets" : le statut se reconnait a
+  // son operation, pas a la ressource.
+  restStub = async (opts) => {
+    if (/getall_dataLoadDataSets/.test(opts.endpoint)) {
+      return { body: { items: [{ DataSetStatusCode: 'ORA_ERROR', DataSetStatusMeaning: 'Error',
+        LoadStatusMeaning: 'Error', ImportStatusMeaning: 'Success',
+        messages: { items: [{ MessageTypeCode: 'ERROR', FileLine: 4, MessageText: 'The value "à fournir" is invalid for CategoryCode.' }] } }] } };
+    }
+    if (/uploadFile/.test(opts.endpoint)) { return { body: { result: { ContentId: 'C1' } } }; }
+    if (/createFileDataSet/.test(opts.endpoint)) { return { body: { result: { RequestId: 42 } } }; }
+    throw new Error('endpoint inattendu ' + opts.endpoint);
+  };
+  v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv')]);
+  v.sheets[0].rows.forEach((r) => { r.EffectiveStartDate = '2026/01/01'; });
+  await new Check().run({ $variables: v }, { ask: false });
+  v.step = 'submit'; v.countIssues = 0; v.armedAction = 'load';
+  await new Submit().run({ $variables: v }, {});
+  check('soumission : RequestId retenu et lignes numerotees', v.requestId === '42' && v.sheets[0].rows[1].datLine === 4, v.errorText);
+  await new Status().run({ $variables: v }, { auto: false });
+  const s0 = v.sheets[0].rows;
+  // COMMENT est la ligne 1, METADATA la 2 : la ligne 4 du fichier est la 2e ligne de donnees.
+  check('rejet rattache a la 2e ligne (ligne 4 du fichier)', s0[1].statusLabel === 'erreur' && /CategoryCode/.test(s0[1].statusDetail));
+  check('les trois autres lignes sont marquees chargees', s0[0].loaded && s0[2].loaded && s0[3].loaded && !s0[1].loaded);
+  check('bilan : 3 acceptees, 1 rejetee', v.loadSummary.accepted === 3 && v.loadSummary.rejected === 1);
+  check('question a l\'agent en termes metier, sans JSON', /Ressources Humaines/.test(v.question) && v.question.indexOf('{') === -1);
+  v.step = 'submit'; v.countIssues = 0;
+  await new Download().run({ $variables: v }, {});
+  const dat4 = blobs.pop() || '';
+  check('nouvel envoi : seule la ligne rejetee repart', (dat4.match(/^MERGE\|/gm) || []).length === 1 && /Ressources Humaines/.test(dat4));
+
+  // 9. Lookup : une valeur hors referentiel bloque, un referentiel illisible ne tranche pas.
   v = vars('Organization', 'MERGE', [sheet('OrgUnitClassification', 'OrgUnitClassification.csv')]);
   v.lookupValues = { ACTIVE_INACTIVE: { ok: true, codes: ['A', 'I'] } };
   v.sheets[0].rows[0].Status = 'ACTIF';

@@ -226,10 +226,20 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       if (event && event.type && event.type.indexOf('key') === 0 && event.key !== 'Enter') {
         return;
       }
-      if ($variables.isThinking) { return; }
-
       const question = String($variables.question || '').trim();
       if (!question) { return; }
+
+      // Une demande qui arrive pendant qu'une autre tourne ne doit pas se
+      // perdre en silence : on interrompt la precedente et on attend qu'elle
+      // rende la main, plutot que d'obliger l'utilisateur a recliquer.
+      if ($variables.isThinking) {
+        $variables.aborted = true;
+        for (let i = 0; i < 30 && $variables.isThinking; i += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await wait(500);
+        }
+        if ($variables.isThinking) { return; }
+      }
 
       $variables.errorText = '';
       // Une proposition appartient au tour qui l'a produite. La garder ferait

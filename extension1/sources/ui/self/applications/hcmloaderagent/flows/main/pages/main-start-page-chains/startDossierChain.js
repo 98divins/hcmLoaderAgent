@@ -29,20 +29,17 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         return;
       }
 
-      const first = allowed[0];
-      const spec = catalog.objects[first];
-      $variables.sheets = [{
-        object: first,
-        label: spec.uiName || first,
-        level: spec.level,
-        fileName: '',
-        columns: [],
-        rows: [],
-        countIssues: 0,
-        countWarnings: 0,
-        statusLabel: 'aucune donnee'
-      }];
+      // Le dossier s'ouvre sans feuille : chaque fichier depose est reconnu a
+      // ses colonnes et cree la feuille de son objet. L'utilisateur n'a pas a
+      // savoir a l'avance combien d'objets son chargement porte.
+      $variables.sheets = [];
       $variables.activeSheet = 0;
+      $variables.opened = true;
+      $variables.loadSummary = {};
+      $variables.rejects = [];
+      $variables.lastRefresh = '';
+      $variables.countTotal = 0;
+      $variables.countIssues = 0;
       $variables.step = 'data';
       $variables.errorText = '';
       $variables.summaryText = '';

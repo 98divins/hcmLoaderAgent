@@ -15,12 +15,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
-      $variables.step = $variables.countIssues ? 'review' : 'submit';
+      // Les lignes que le tenant a acceptees restent marquees chargees : le
+      // prochain envoi ne portera que les autres. Recontroler le dossier reste
+      // necessaire, c'est lui qui rouvre la voie au chargement.
+      $variables.step = 'review';
       $variables.loadStatus = '';
       $variables.loadDetail = '';
       $variables.loadPhases = [];
-      $variables.loadRows = [];
-      $variables.loadColumns = [];
       $variables.errorText = '';
     }
   }

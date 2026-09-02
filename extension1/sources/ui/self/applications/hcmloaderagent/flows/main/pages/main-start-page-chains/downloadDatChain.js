@@ -56,13 +56,24 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
    * Un dossier a une feuille produit le meme fichier qu'avant, celui dont les
    * chargements reels ont valide le format.
    */
-  function buildDossierContent(catalog, hierarchy, operation, sheets) {
-    const used = (sheets || []).filter((sheet) => (sheet.rows || []).length);
-    if (!used.length) { throw new Error('buildDossierContent: aucune feuille a charger.'); }
+  function buildDossierContent(catalog, hierarchy, operation, sheets, options) {
+    const opts = options || {};
+    // Les lignes deja acceptees par le tenant ne repartent pas : apres un
+    // chargement partiel, seul le reste est renvoye.
+    const used = (sheets || [])
+      .map((sheet) => Object.assign({}, sheet, {
+        rows: (sheet.rows || []).filter((row) => !row.loaded)
+      }))
+      .filter((sheet) => sheet.rows.length);
+    if (!used.length) { throw new Error('buildDossierContent: aucune ligne a charger.'); }
 
-    const linked = used.length > 1;
+    // Les cles source ne s'ecrivent que si le proprietaire HDLAGENT est
+    // enregistre dans le tenant : sinon HDL rejette chaque ligne. Sans elles,
+    // les colonnes de cle du parent, presentes sur l'enfant, font le lien.
+    const linked = Boolean(opts.sourceKeys) && used.length > 1;
     const owner = 'HDLAGENT';
     const lines = [`COMMENT Data for Business Object: ${hierarchy}`];
+    const lineIndex = [];
 
     used.forEach((sheet) => {
       const spec = (catalog.objects || {})[sheet.object];
@@ -104,11 +115,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           }
         }
         lines.push([operation, sheet.object].concat(cells).join('|'));
+        // Numero de ligne dans le fichier : c'est ainsi que HDL designe une
+        // ligne rejetee, et c'est ce qui permet de la retrouver dans le dossier.
+        lineIndex.push({ object: sheet.object, rowKey: row.rowKey, line: lines.length });
       });
     });
 
     // HDL lit des fichiers a fins de ligne CRLF, termines par un saut de ligne.
-    return lines.join('\r\n') + '\r\n';
+    return { content: lines.join('\r\n') + '\r\n', lineIndex };
   }
 
   class downloadDatChain extends ActionChain {
@@ -140,11 +154,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
       try {
         const fileName = `${$variables.hierarchy}.dat`;
-        const content = buildDossierContent(
+        const built = buildDossierContent(
           $variables.objectCatalog || {},
           $variables.hierarchy,
           $variables.operation || 'MERGE',
-          sheets);
+          sheets,
+          { sourceKeys: Boolean(($variables.lookupValues || {})._sourceOwner) });
+        const content = built.content;
 
         // UTF-8 explicite : un encodage octet a octet corrompait les accents,
         // ce qui ne se voyait pas tant que les jeux d'essai etaient en ASCII.
