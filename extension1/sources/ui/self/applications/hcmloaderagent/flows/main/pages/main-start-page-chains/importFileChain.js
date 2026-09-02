@@ -101,7 +101,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       // Un fichier reimporte apres export porte les colonnes de service de la
       // page. Les garder les ferait passer pour des attributs de l'objet metier
       // et le chargement les rejetterait.
-      const META_COLUMNS = ['Etat', 'Anomalie', 'rowKey', 'statusLabel'];
+      const META_COLUMNS = ['Etat', 'Anomalie', 'Rapprochement', 'rowKey', 'statusLabel', 'matchLabel'];
       const allHeaders = parseCsvLine(lines[0], separator);
       const keptIndexes = [];
       const headers = [];
@@ -122,17 +122,34 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         rows.push(row);
       }
 
-      $variables.columns = headers;
-      $variables.rows = rows;
+      // Les donnees vont dans la feuille selectionnee : un dossier porte
+      // plusieurs objets, et c'est le rail qui dit lequel on alimente.
+      const sheets = ($variables.sheets || []).slice();
+      const index = $variables.activeSheet || 0;
+      if (!sheets[index]) {
+        $variables.errorText = 'Choisissez d\'abord un objet et ouvrez un dossier.';
+        return;
+      }
+
       const plural = rows.length > 1 ? 's' : '';
-      $variables.fileName = `${file.name} · ${rows.length} ligne${plural} · separateur "${separator}"`;
-      $variables.countTotal = rows.length;
+      sheets[index] = Object.assign({}, sheets[index], {
+        columns: headers,
+        rows,
+        countIssues: 0,
+        countWarnings: 0,
+        fileName: `${file.name} - ${rows.length} ligne${plural} - separateur "${separator}"`,
+        statusLabel: `${rows.length} ligne${plural} - a controler`
+      });
+      $variables.sheets = sheets;
+
+      const total = sheets.reduce((sum, sheet) => sum + (sheet.rows || []).length, 0);
+      $variables.countTotal = total;
       $variables.countIssues = 0;
-      $variables.summaryText = `${rows.length} ligne${plural} importee${plural}`;
-      $variables.errorText = rows.length > ROW_LIMIT
-        ? `${rows.length} lignes importees. Le chargement est limite a ${ROW_LIMIT} lignes `
-          + 'pour le moment : preparez votre dossier, mais decoupez le fichier avant '
-          + 'de charger.'
+      $variables.summaryText = `${sheets[index].label} : ${rows.length} ligne${plural} `
+        + `importee${plural}`;
+      $variables.errorText = total > ROW_LIMIT
+        ? `${total} lignes dans le dossier. Le chargement est limite a ${ROW_LIMIT} lignes `
+          + 'pour le moment : preparez votre dossier, mais decoupez avant de charger.'
         : '';
       $variables.step = 'data';
     }

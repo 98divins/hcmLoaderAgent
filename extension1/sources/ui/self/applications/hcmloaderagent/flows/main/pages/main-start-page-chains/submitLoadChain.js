@@ -184,55 +184,96 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     return String(value).replace(/[|]/g, ' ').replace(/[\r\n]+/g, ' ');
   }
 
-  const DATE_FIELD_PATTERN = /Date$/;
-
-  /**
-   * Génère le contenu .dat à partir d'un plan de chargement.
-   *
-   * @param {Object} plan
-   * @param {string} plan.businessObject  nom de l'objet métier HDL, ex. "Location"
-   * @param {string[]} plan.columns       ordre des colonnes du fichier
-   * @param {Object[]} plan.rows          lignes { instruction, values }
-   * @returns {string} contenu du fichier .dat
-   */
-  function buildHdlContent(plan) {
-    if (!plan || !plan.businessObject) {
-      throw new Error('buildHdlContent: businessObject manquant dans le plan.');
-    }
-    if (!Array.isArray(plan.columns) || plan.columns.length === 0) {
-      throw new Error('buildHdlContent: colonnes manquantes dans le plan.');
-    }
-
-    const object = plan.businessObject;
-    const rows = Array.isArray(plan.rows) ? plan.rows : [];
-
-    const lines = [['METADATA', object].concat(plan.columns).join('|')];
-
-    rows.forEach((row, index) => {
-      const instruction = row.instruction || 'MERGE';
-      const values = row.values || {};
-      const cells = plan.columns.map((column) => {
-        const raw = values[column];
-        return sanitizeValue(DATE_FIELD_PATTERN.test(column) ? toHdlDate(raw) : raw);
-      });
-      if (cells.every((cell) => cell === '')) {
-        throw new Error(`buildHdlContent: la ligne ${index + 1} est entièrement vide.`);
-      }
-      lines.push([instruction, object].concat(cells).join('|'));
-    });
-
-    // HDL lit des fichiers à fins de ligne CRLF, terminés par un saut de ligne.
-    return lines.join('\r\n') + '\r\n';
-  }
-
   /**
    * Chaîne complète : plan → contenu .dat → archive .zip → base64 prêt pour
    * l'action uploadFile de dataLoadDataSets.
    */
-  function buildHdlPackage(plan, options) {
+  /** Une cle source doit survivre a un aller-retour dans un fichier texte. */
+  function slug(text) {
+    return String(text === null || text === undefined ? '' : text)
+      .toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  }
+
+  /**
+   * Identifiant source d'un enregistrement, deduit de sa cle utilisateur.
+   *
+   * Le parent et l'enfant doivent produire la meme chaine pour le meme
+   * enregistrement : ils passent donc la meme liste de colonnes dans le meme
+   * ordre, chacun avec les noms que porte SA feuille. C'est ce que garantit
+   * l'ordre des colonnes declare dans le catalogue, cote parent comme cote
+   * enfant.
+   */
+  function sourceIdFor(objectName, keyColumns, row) {
+    return `${slug(objectName)}_${keyColumns.map((name) => slug(row[name])).join('_')}`;
+  }
+
+  function dateColumns(spec) {
+    const dates = {};
+    (spec.attributes || []).forEach((attribute) => {
+      if (attribute.type === 'date') { dates[attribute.name] = true; }
+    });
+    return dates;
+  }
+
+  /**
+   * Fabrique le .dat du dossier : une ligne METADATA par feuille, puis ses
+   * lignes de donnees. HDL traite les parents avant les enfants d'apres le
+   * niveau hierarchique, l'ordre des blocs n'a donc pas a etre gere ici.
+   *
+   * Les cles source ne sont posees que lorsque le dossier porte plusieurs
+   * feuilles : c'est le seul cas ou l'enfant a besoin de designer son parent.
+   * Un dossier a une feuille produit le meme fichier qu'avant, celui dont les
+   * chargements reels ont valide le format.
+   */
+  function buildDossierContent(catalog, hierarchy, operation, sheets) {
+    const used = (sheets || []).filter((sheet) => (sheet.rows || []).length);
+    if (!used.length) { throw new Error('buildDossierContent: aucune feuille a charger.'); }
+
+    const linked = used.length > 1;
+    const owner = 'HDLAGENT';
+    const lines = [`COMMENT Data for Business Object: ${hierarchy}`];
+
+    used.forEach((sheet) => {
+      const spec = (catalog.objects || {})[sheet.object];
+      if (!spec) {
+        throw new Error(`buildDossierContent: objet ${sheet.object} absent du catalogue.`);
+      }
+      const columns = (sheet.columns || []).slice();
+      if (!columns.length) {
+        throw new Error(`buildDossierContent: la feuille ${sheet.label} n'a pas de colonnes.`);
+      }
+      const dates = dateColumns(spec);
+      const parent = spec.parent;
+
+      const header = columns.slice();
+      if (linked) {
+        header.push('SourceSystemOwner', 'SourceSystemId');
+        if (parent) { header.push(`${parent.column}(SourceSystemId)`); }
+      }
+      lines.push(['METADATA', sheet.object].concat(header).join('|'));
+
+      sheet.rows.forEach((row, index) => {
+        const cells = columns.map((name) => sanitizeValue(
+          dates[name] ? toHdlDate(row[name]) : row[name]));
+        if (cells.every((cell) => cell === '')) {
+          throw new Error(`buildDossierContent: ${sheet.label}, ligne ${index + 1} vide.`);
+        }
+        if (linked) {
+          cells.push(owner, sourceIdFor(sheet.object, spec.userKey || [], row));
+          if (parent) {
+            cells.push(sourceIdFor(parent.object, parent.userKey || [], row));
+          }
+        }
+        lines.push([operation, sheet.object].concat(cells).join('|'));
+      });
+    });
+
+    // HDL lit des fichiers a fins de ligne CRLF, termines par un saut de ligne.
+    return lines.join('\r\n') + '\r\n';
+  }
+
+  function buildHdlPackage(datFileName, content, options) {
     const opts = options || {};
-    const datFileName = opts.datFileName || `${plan.businessObject}.dat`;
-    const content = buildHdlContent(plan);
     const zipBytes = buildZip(datFileName, content, opts.date);
     return {
       datFileName,
@@ -266,19 +307,6 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     return null;
   }
 
-  function toPlan($variables) {
-    const columns = $variables.columns || [];
-    return {
-      businessObject: $variables.businessObject,
-      columns,
-      rows: ($variables.rows || []).map((row) => {
-        const values = {};
-        columns.forEach((name) => { values[name] = row[name]; });
-        return { instruction: 'MERGE', values };
-      })
-    };
-  }
-
   class submitLoadChain extends ActionChain {
 
     /**
@@ -288,9 +316,10 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
-      const rows = $variables.rows || [];
+      const sheets = ($variables.sheets || []).filter((sheet) => (sheet.rows || []).length);
+      const rowCount = sheets.reduce((total, sheet) => total + sheet.rows.length, 0);
 
-      if (!rows.length || $variables.isLoading) { return; }
+      if (!rowCount || $variables.isLoading) { return; }
 
       // Deux refus avant tout envoi : rien ne part avec des anomalies connues,
       // rien ne part au-dela de la taille couverte.
@@ -299,9 +328,9 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           + 'de charger.';
         return;
       }
-      if (rows.length > ROW_LIMIT) {
+      if (rowCount > ROW_LIMIT) {
         $variables.errorText = `Le chargement est limite a ${ROW_LIMIT} lignes pour le `
-          + `moment, le dossier en porte ${rows.length}. Decoupez le fichier.`;
+          + `moment, le dossier en porte ${rowCount}. Decoupez le fichier.`;
         return;
       }
 
@@ -310,12 +339,18 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.loadStatus = 'Generation du fichier HDL...';
 
       try {
-        const pkg = buildHdlPackage(toPlan($variables));
+        const datFileName = `${$variables.hierarchy}.dat`;
+        const content = buildDossierContent(
+          $variables.objectCatalog || {},
+          $variables.hierarchy,
+          $variables.operation || 'MERGE',
+          sheets);
+        const pkg = buildHdlPackage(datFileName, content);
 
         $variables.loadStatus = 'Envoi du fichier vers le serveur de contenu Oracle...';
         const uploaded = await Actions.callRest(context, {
           endpoint: UPLOAD,
-          body: { content: pkg.base64, fileName: `${$variables.businessObject}Load.zip` }
+          body: { content: pkg.base64, fileName: `${$variables.hierarchy}Load.zip` }
         });
         const contentId = extractField(uploaded, 'ContentId');
         if (!contentId) {
@@ -325,7 +360,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
         $variables.loadStatus = 'Soumission du chargement HCM Data Loader...';
         const stamp = new Date().toISOString().replace(/[:.]/g, '');
-        const dataSetName = `${$variables.businessObject}-${stamp}`;
+        const dataSetName = `${$variables.hierarchy}-${stamp}`;
         const submitted = await Actions.callRest(context, {
           endpoint: CREATE,
           body: { contentId, fileAction: 'IMPORT_AND_LOAD', dataSetName }

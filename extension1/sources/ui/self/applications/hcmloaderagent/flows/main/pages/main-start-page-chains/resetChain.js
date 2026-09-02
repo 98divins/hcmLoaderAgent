@@ -11,9 +11,12 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
-      $variables.rows = [];
-      $variables.columns = [];
-      $variables.fileName = '';
+      // Un nouveau dossier repart du choix de l'objet : c'est lui qui fixe
+      // tout le reste, le garder n'aurait pas de sens.
+      $variables.hierarchy = '';
+      $variables.operation = 'MERGE';
+      $variables.sheets = [];
+      $variables.activeSheet = 0;
       $variables.countTotal = 0;
       $variables.countIssues = 0;
       $variables.summaryText = '';

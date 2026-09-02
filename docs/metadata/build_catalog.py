@@ -167,6 +167,30 @@ OBJECTS = {
     },
 }
 
+# Une colonne "Foreign Object Reference" porte un identifiant interne que
+# personne ne saisit ; Oracle accepte a la place la cle utilisateur de l'objet
+# reference. Les couples sont declares ici et confrontes a la section
+# "References to Integration Enabled Foreign Objects" de l'audit report.
+FOREIGN_USER_KEYS = {
+    'Location': {
+        'SetId': ['SetCode'],
+        'ShipToLocationId': ['ShipToLocationCode', 'ShipToLocationSetCode'],
+        'InventoryOrganizationId': ['InventoryOrganizationName'],
+        'GeoHierarchyNodeId': ['GeoHierarchyNodeCode'],
+        'DesignatedReceiverId': ['DesignatedPersonNumber'],
+    },
+    'LocationOtherAddress': {},
+    'LocationLegislative': {'SetId': ['SetCode']},
+    'LocationExtraInfo': {'SetId': ['SetCode']},
+    'Organization': {
+        'LocationId': ['LocationCode', 'LocationSetCode'],
+        'EstablishmentId': ['EstablishmentName'],
+        'ClassificationCode': ['ClassificationName'],
+    },
+    'OrgUnitClassification': {'ClassificationCode': ['ClassificationName']},
+    'OrgInformation': {'ClassificationCode': ['ClassificationName']},
+}
+
 HIERARCHIES = {
     'Location': {
         'top': 'Location',
@@ -257,6 +281,9 @@ def read_attributes(obj):
             attr['references'] = row['Integration Object Name'].strip()
         if (row['Lookup'] or '').strip():
             attr['lookup'] = row['Lookup'].strip()
+        substitutes = FOREIGN_USER_KEYS.get(obj, {}).get(name)
+        if substitutes:
+            attr['foreignUserKey'] = substitutes
         if name in SOFT_REQUIRED.get(obj, []):
             attr['softRequired'] = True
         out.append(attr)
@@ -352,6 +379,17 @@ def check_against_audit(obj, spec):
             sys.exit('%s : user key = %r dans l\'audit, %r declaree ici'
                      % (obj, audit_key, spec['userKey']))
 
+    section = re.search(r'References to Integration Enabled Foreign Objects\n=+\n(.*?)\n\n\n',
+                        text, re.S)
+    if section:
+        for block in re.finditer(r'Attribute Name\s*:\s*(\S+).*?\[0\]\s*(.+?)\s*$',
+                                 section.group(1), re.S | re.M):
+            attr, keys = block.group(1), [c.strip() for c in block.group(2).split(',')]
+            declared = FOREIGN_USER_KEYS.get(obj, {}).get(attr)
+            if declared is not None and sorted(declared) != sorted(keys):
+                sys.exit('%s.%s : cle utilisateur de reference = %r dans l\'audit, %r ici'
+                         % (obj, attr, keys, declared))
+
     if 'parent' in spec:
         m = re.search(r'Parent Surrogate ID Analysis.*?Attribute Name\s*:\s*(\S+).*?'
                       r'\[0\]\s*(.+?)\s*$', text, re.S | re.M)
@@ -431,8 +469,30 @@ def main():
         },
     }
 
+    # La page embarque le catalogue dans une variable : on n'y met que ce dont
+    # le controle et la fabrication du fichier ont besoin. Les libelles Oracle
+    # et l'index des value sets restent dans le catalogue complet.
+    KEEP_OBJ = ('uiName', 'hierarchy', 'level', 'validOperations', 'userKey',
+                'parent', 'flexfield', 'columnOrder', 'conditionalRules')
+    KEEP_ATTR = ('name', 'type', 'required', 'keyType', 'lookup', 'softRequired',
+                 'foreignUserKey')
+    slim = {
+        'keyResolutionOrder': catalogue['keyResolutionOrder'],
+        'tailColumns': TAIL_COLUMNS,
+        'hierarchies': HIERARCHIES,
+        'lookupApi': catalogue['validationSources']['lookups']['api'],
+        'objects': {},
+    }
+    for obj, entry in catalogue['objects'].items():
+        out = {k: entry[k] for k in KEEP_OBJ if k in entry}
+        out['attributes'] = [
+            {k: a[k] for k in KEEP_ATTR if k in a} for a in entry['attributes']
+        ]
+        slim['objects'][obj] = out
+
     for path, payload in (('businessObjects.json', catalogue),
-                          ('flexfields.json', flexfields)):
+                          ('flexfields.json', flexfields),
+                          ('objectCatalog.page.json', slim)):
         with open(os.path.join(HERE, path), 'w', encoding='utf-8') as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=2)
             fh.write('\n')
@@ -441,7 +501,7 @@ def main():
     for obj, n_attr, n_ctx, status in report:
         print('%-*s  %2d attributs  %3d contextes flex  audit: %s'
               % (width, obj, n_attr, n_ctx, status))
-    for path in ('businessObjects.json', 'flexfields.json'):
+    for path in ('businessObjects.json', 'flexfields.json', 'objectCatalog.page.json'):
         size = os.path.getsize(os.path.join(HERE, path))
         print('%-24s %6.1f Ko' % (path, size / 1024.0))
 

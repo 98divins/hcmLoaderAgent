@@ -46,37 +46,106 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     return copy;
   }
 
-  function buildContext($variables) {
-    const columns = $variables.columns || [];
-    const rows = $variables.rows || [];
+  /**
+   * Specification de l'objet, reduite a ce que la feuille porte reellement.
+   *
+   * L'agent ne recoit pas le catalogue entier : il recoit la tranche utile, a
+   * jour, du dossier ouvert. C'est ce qui evite d'embarquer les metadonnees
+   * dans son prompt, ou elles vieilliraient a chaque evolution du catalogue.
+   */
+  function specSlice(catalog, sheet) {
+    const spec = ((catalog || {}).objects || {})[sheet.object];
+    if (!spec) { return null; }
+    const columns = sheet.columns || [];
+    const attributes = (spec.attributes || [])
+      .filter((attribute) => columns.indexOf(attribute.name) !== -1)
+      .map((attribute) => {
+        const entry = { nom: attribute.name, type: attribute.type };
+        if (attribute.required !== 'no') { entry.obligatoire = attribute.required; }
+        if (attribute.keyType) { entry.cle = attribute.keyType; }
+        if (attribute.lookup) { entry.lookup = attribute.lookup; }
+        if (attribute.foreignUserKey) { entry.remplacePar = attribute.foreignUserKey; }
+        return entry;
+      });
+    const slice = {
+      objet: sheet.object,
+      libelle: spec.uiName,
+      cleUtilisateur: spec.userKey,
+      operationsPermises: spec.validOperations,
+      attributs: attributes
+    };
+    if (spec.parent) {
+      slice.parent = {
+        objet: spec.parent.object,
+        colonnesDeReference: spec.parent.userKey
+      };
+    }
+    if (spec.conditionalRules) {
+      slice.reglesConditionnelles = spec.conditionalRules.map((rule) => ({
+        colonne: rule.column,
+        source: rule.source
+      }));
+    }
+    return slice;
+  }
 
-    // Toutes les lignes en anomalie partent, valeurs comprises, dans la limite
-    // du dossier : n'en envoyer qu'une poignee revenait a n'autoriser des
-    // corrections que sur les premieres, ce qui ne tient pas des que le fichier
-    // depasse quelques lignes.
-    const faulty = rows.filter(isFaulty).slice(0, ROW_LIMIT)
-      .map((row) => Object.assign(withValues(row, columns), { probleme: row.statusLabel }));
-    const clean = rows.filter((row) => !isFaulty(row)).slice(0, CLEAN_SAMPLE)
-      .map((row) => withValues(row, columns));
+  function buildContext($variables) {
+    const catalog = $variables.objectCatalog || {};
+    const sheets = ($variables.sheets || []).filter((sheet) => (sheet.rows || []).length);
 
     const lines = [
       'CONTEXTE DU DOSSIER (donnees reelles, ne rien inventer au-dela)',
-      `Objet metier : ${$variables.businessObject}`,
+      `Hierarchie : ${$variables.hierarchy}`,
+      `Operation du dossier : ${$variables.operation} (une seule pour tout le dossier)`,
       `Etape : ${$variables.step}`,
-      `Colonnes du fichier : ${columns.length ? columns.join(', ') : 'aucune'}`,
-      `Lignes : ${rows.length}, dont ${$variables.countIssues || 0} en anomalie`
+      `Feuilles : ${sheets.length}, ${$variables.countTotal || 0} lignes au total, `
+        + `dont ${$variables.countIssues || 0} en anomalie`
     ];
-    if (faulty.length) {
-      lines.push(`Lignes en anomalie (toutes, avec leurs valeurs et le probleme releve) : `
-        + JSON.stringify(faulty));
-    }
-    if (clean.length) {
-      lines.push(`Lignes saines, pour reference (${clean.length} exemples) : `
-        + JSON.stringify(clean));
-    }
-    if (faulty.length) {
+
+    // Chaque feuille part avec sa specification et ses lignes. Une correction
+    // doit designer la feuille ET la ligne : dans un dossier multi-feuilles, un
+    // rowKey seul ne suffit pas a retrouver ce qu'il faut modifier.
+    sheets.forEach((sheet, index) => {
+      const columns = sheet.columns || [];
+      const rows = sheet.rows || [];
+      const slice = specSlice(catalog, sheet);
+
+      lines.push('');
+      lines.push(`FEUILLE ${index} : ${sheet.label} (${rows.length} lignes)`);
+      if (slice) {
+        lines.push(`Specification de l'objet : ${JSON.stringify(slice)}`);
+      } else {
+        lines.push('Metadonnees absentes du catalogue pour cet objet : ne propose '
+          + 'aucun nom de colonne pour cette feuille, demande-les.');
+      }
+      lines.push(`Colonnes du fichier : ${columns.length ? columns.join(', ') : 'aucune'}`);
+
+      // Toutes les lignes en anomalie partent, valeurs comprises, dans la limite
+      // du dossier : n'en envoyer qu'une poignee revenait a n'autoriser des
+      // corrections que sur les premieres.
+      const faulty = rows.filter(isFaulty).slice(0, ROW_LIMIT)
+        .map((row) => Object.assign(withValues(row, columns), {
+          probleme: row.statusLabel,
+          rapprochement: row.matchLabel || ''
+        }));
+      const clean = rows.filter((row) => !isFaulty(row)).slice(0, CLEAN_SAMPLE)
+        .map((row) => withValues(row, columns));
+
+      if (faulty.length) {
+        lines.push(`Lignes en anomalie (avec leurs valeurs et le probleme releve) : `
+          + JSON.stringify(faulty));
+      }
+      if (clean.length) {
+        lines.push(`Lignes saines, pour reference (${clean.length} exemples) : `
+          + JSON.stringify(clean));
+      }
+    });
+
+    if ($variables.countIssues) {
+      lines.push('');
       lines.push('Propose une correction pour chaque ligne en anomalie dont tu peux '
-        + 'etablir la valeur avec certitude, pas seulement pour la premiere.');
+        + 'etablir la valeur avec certitude, pas seulement pour la premiere, et '
+        + 'indique le numero de feuille sur chacune.');
     }
     return lines.join('\n');
   }
@@ -106,7 +175,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     if (!data || !data.display) { return ''; }
     if (data.display === 'issues' && Array.isArray(data.rows)) {
       return truncate(data.rows
-        .map((r) => `${r.rowRef} · ${r.field} = "${r.suggestedValue}"`
+        .map((r) => `${r.sheet !== undefined ? `F${r.sheet} - ` : ''}${r.rowRef} - `
+          + `${r.field} = "${r.suggestedValue}"`
           + (r.rationale ? `\n    ${r.rationale}` : '')));
     }
     if (data.display === 'mapping' && Array.isArray(data.pairs)) {

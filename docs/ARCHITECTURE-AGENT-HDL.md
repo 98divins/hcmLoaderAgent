@@ -308,3 +308,45 @@ comportement de `DELETE` par objet.
 La phase 2 est le vrai changement de nature : on passe d'une conversation à un
 poste de travail. C'est elle qui rend le produit utilisable par quelqu'un qui a
 un fichier et pas de patience.
+
+---
+
+## Revision : le dossier multi-feuilles (build 17)
+
+Ce que les metadonnees des sept objets du MVP ont impose de changer par rapport
+aux sections precedentes, ecrites quand le perimetre se limitait a Location.
+
+**Le dossier a une hierarchie et une operation.** Le choix de l'objet precede
+l'import : il fixe les colonnes attendues, les feuilles possibles et les
+operations permises. HDL ne connaissant que MERGE et DELETE, un dossier porte
+l'une ou l'autre, jamais les deux. "Creer" et "mettre a jour" ne sont pas des
+operations distinctes : MERGE fait les deux, et c'est le rapprochement qui dit,
+ligne par ligne, ce qui se produira.
+
+**Une feuille par objet, pas d'arborescence.** Le lien parent-enfant est porte
+par les donnees : les colonnes de cle du parent sont physiquement presentes sur
+l'enfant. Le controle fait donc une jointure, la grille reste plate.
+
+**Les noms de ces colonnes changent d'un enfant a l'autre**, a l'interieur d'une
+meme hierarchie : LocationOtherAddress designe son parent par
+`LocationCode + LocationSetCode`, LocationLegislative par `LocationCode + SetCode`.
+Ils sont donc stockes par objet dans le catalogue, jamais deduits.
+
+**Le fichier rattache l'enfant au parent par cle source.** Des que le dossier
+porte plus d'une feuille, la page genere un `SourceSystemId` stable par ligne et
+ecrit `<ParentId>(SourceSystemId)` sur l'enfant. Le lien ne depend alors plus du
+nom du parent, ce qui compte pour Organization dont la cle utilisateur est
+`Name + ClassificationName`. Un dossier a une seule feuille produit le fichier
+d'avant, celui que les chargements reels ont valide.
+
+**Trois etats de controle, pas deux.** Valide, invalide, et non verifie quand le
+referentiel n'est pas lisible : le tenant n'est interrogeable que pour les objets
+dont une connexion de service existe (Location aujourd'hui), et une part des
+lookups et value sets est fermee par les habilitations. Une absence de controle
+n'est jamais presentee comme un controle reussi.
+
+**L'agent recoit une tranche, pas le catalogue.** Son prompt porte la methode :
+comment lire une specification d'objet, ce qu'est une cle parent, quand DELETE
+est permis, comment traiter une valeur hors referentiel. Les metadonnees, elles,
+arrivent a chaque tour depuis le catalogue de la page, a jour, sans republication
+de l'agent.

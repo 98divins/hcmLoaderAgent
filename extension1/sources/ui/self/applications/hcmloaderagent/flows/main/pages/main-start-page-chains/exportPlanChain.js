@@ -58,13 +58,16 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      */
     async run(context, { event } = {}) {
       const { $variables } = context;
-      const columns = $variables.columns || [];
-      const rows = $variables.rows || [];
+      // On exporte la feuille affichee : un CSV melangeant plusieurs objets
+      // n'aurait pas de jeu de colonnes commun, et ne se reimporterait pas.
+      const sheet = ($variables.sheets || [])[$variables.activeSheet || 0];
+      const columns = (sheet && sheet.columns) || [];
+      const rows = (sheet && sheet.rows) || [];
       if (!rows.length) { return; }
 
       const stamp = new Date().toISOString().slice(0, 16).replace(/[:T-]/g, '');
       try {
-        download(`${$variables.businessObject}-${stamp}.csv`, buildCsv(columns, rows));
+        download(`${sheet.object}-${stamp}.csv`, buildCsv(columns, rows));
         $variables.summaryText = `${rows.length} ligne${rows.length > 1 ? 's' : ''} exportee`
           + `${rows.length > 1 ? 's' : ''}. Corrigez le fichier, puis reimportez-le.`;
       } catch (error) {

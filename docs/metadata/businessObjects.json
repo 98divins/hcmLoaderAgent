@@ -212,7 +212,10 @@
           "type": "number",
           "required": "no",
           "keyType": "foreignObjectReference",
-          "references": "Person"
+          "references": "Person",
+          "foreignUserKey": [
+            "DesignatedPersonNumber"
+          ]
         },
         {
           "name": "DesignatedPersonNumber",
@@ -276,7 +279,10 @@
           "label": "Geographic Hierarchy Node ID",
           "type": "string",
           "required": "no",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "GeoHierarchyNodeCode"
+          ]
         },
         {
           "name": "LocationImageURL",
@@ -297,7 +303,10 @@
           "type": "number",
           "required": "no",
           "keyType": "foreignObjectReference",
-          "references": "Organization"
+          "references": "Organization",
+          "foreignUserKey": [
+            "InventoryOrganizationName"
+          ]
         },
         {
           "name": "Latitude",
@@ -432,7 +441,10 @@
           "label": "Set ID",
           "type": "number",
           "required": "forNewRecords",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "SetCode"
+          ]
         },
         {
           "name": "ShipToLocationCode",
@@ -447,7 +459,11 @@
           "type": "number",
           "required": "no",
           "keyType": "foreignObjectReference",
-          "references": "Location"
+          "references": "Location",
+          "foreignUserKey": [
+            "ShipToLocationCode",
+            "ShipToLocationSetCode"
+          ]
         },
         {
           "name": "ShipToLocationSetCode",
@@ -931,7 +947,10 @@
           "label": "Set ID",
           "type": "string",
           "required": "no",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "SetCode"
+          ]
         }
       ],
       "columnOrder": [
@@ -1068,7 +1087,10 @@
           "label": "Set ID",
           "type": "string",
           "required": "no",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "SetCode"
+          ]
         }
       ],
       "columnOrder": [
@@ -1162,7 +1184,10 @@
           "label": "Classification Code",
           "type": "string",
           "required": "forNewRecords",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "ClassificationName"
+          ]
         },
         {
           "name": "EstablishmentId",
@@ -1170,7 +1195,10 @@
           "type": "number",
           "required": "no",
           "keyType": "foreignObjectReference",
-          "references": "Establishment"
+          "references": "Establishment",
+          "foreignUserKey": [
+            "EstablishmentName"
+          ]
         },
         {
           "name": "EstablishmentName",
@@ -1198,7 +1226,11 @@
           "type": "number",
           "required": "no",
           "keyType": "foreignObjectReference",
-          "references": "Location"
+          "references": "Location",
+          "foreignUserKey": [
+            "LocationCode",
+            "LocationSetCode"
+          ]
         },
         {
           "name": "LocationSetCode",
@@ -1322,7 +1354,10 @@
           "label": "Classification Code",
           "type": "string",
           "required": "forNewRecords",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "ClassificationName"
+          ]
         },
         {
           "name": "LegislationCode",
@@ -1482,7 +1517,10 @@
           "label": "Classification Code",
           "type": "string",
           "required": "no",
-          "keyType": "foreignObjectReference"
+          "keyType": "foreignObjectReference",
+          "foreignUserKey": [
+            "ClassificationName"
+          ]
         },
         {
           "name": "LegislationCode",
