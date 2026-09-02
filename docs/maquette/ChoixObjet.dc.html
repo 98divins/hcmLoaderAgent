@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: 'Oracle Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0572ce; } a:hover { color: #04549a; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; height: 900px; background-color: #f4f3f2; box-sizing: border-box; padding: 24px">
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px; overflow: hidden">
+
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #d9d6d3">
+      <span style="font-size: 14px; font-weight: 600; color: #161513">Chargement en masse HCM</span>
+      <span style="flex-grow: 1; font-size: 13px; color: #605d5a">Nouveau dossier</span>
+      <span style="font-size: 12px; color: #8a8683">build 17</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; padding: 32px">
+
+      <h1 style="margin: 0 0 8px; font-size: 20px; font-weight: 600; color: #161513">Quel objet voulez-vous charger&nbsp;?</h1>
+      <p style="margin: 0 0 28px; max-width: 560px; text-align: center; font-size: 14px; line-height: 1.5; color: #605d5a; text-wrap: pretty">L'objet
+        détermine les colonnes attendues, les feuilles que le dossier peut contenir et les
+        opérations réellement permises sur chacune.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; max-width: 1040px">
+
+        <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; background-color: #ffffff; border: 2px solid #0572ce; border-radius: 12px">
+
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <div style="display: flex; align-items: baseline; gap: 8px">
+              <span style="font-size: 16px; font-weight: 600; color: #161513">Location</span>
+              <span style="font-size: 13px; color: #8a8683">Site</span>
+            </div>
+            <span style="font-size: 13px; color: #605d5a">Sites et adresses de l'entreprise.</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 56px 56px 56px; align-items: center; row-gap: 2px">
+
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; padding: 0 0 6px">OBJET</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">CRÉER</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">M. À JOUR</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">SUPPR.</span>
+
+            <span style="font-size: 12px; font-weight: 600; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Location</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="font-size: 13px; color: #b8b4b0; text-align: center; padding: 6px 0; border-top: 1px solid #ebe9e6">—</span>
+
+            <span style="font-size: 12px; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Location Other Address</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+
+            <span style="font-size: 12px; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Location Legislative Extra Information</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+
+            <span style="font-size: 12px; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Location Extra Information</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background-color: #f7f6f4; border: 1px solid #e6e4e1; border-radius: 6px">
+            <span style="font-size: 12px; color: #605d5a">Référence unique du parent</span>
+            <span style="font-size: 13px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: #161513">LocationCode + SetCode</span>
+          </div>
+
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; padding: 21px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px">
+
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <div style="display: flex; align-items: baseline; gap: 8px">
+              <span style="font-size: 16px; font-weight: 600; color: #161513">Organization</span>
+              <span style="font-size: 13px; color: #8a8683">Organisation, département</span>
+            </div>
+            <span style="font-size: 13px; color: #605d5a">Départements, unités légales, entités déclaratives.</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 56px 56px 56px; align-items: center; row-gap: 2px">
+
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; padding: 0 0 6px">OBJET</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">CRÉER</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">M. À JOUR</span>
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; text-align: center; padding: 0 0 6px">SUPPR.</span>
+
+            <span style="font-size: 12px; font-weight: 600; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Organization</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="font-size: 13px; color: #b8b4b0; text-align: center; padding: 6px 0; border-top: 1px solid #ebe9e6">—</span>
+
+            <span style="font-size: 12px; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Organization Classification</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="font-size: 13px; color: #b8b4b0; text-align: center; padding: 6px 0; border-top: 1px solid #ebe9e6">—</span>
+
+            <span style="font-size: 12px; color: #161513; padding: 6px 0; border-top: 1px solid #ebe9e6">Organization Extra Information</span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+            <span style="display: flex; justify-content: center; padding: 6px 0; border-top: 1px solid #ebe9e6"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="#0d5c40" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 7.8 2.6 2.6 5.4-6"></path></svg></span>
+
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background-color: #f7f6f4; border: 1px solid #e6e4e1; border-radius: 6px">
+            <span style="font-size: 12px; color: #605d5a">Référence unique du parent</span>
+            <span style="font-size: 13px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: #161513">Name + ClassificationName</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 1040px; margin-top: 24px; padding: 20px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px">
+
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 14px; font-weight: 600; color: #161513">Opération du dossier</span>
+          <span style="font-size: 13px; color: #605d5a">Un dossier porte une seule opération, pour toutes ses feuilles.</span>
+        </div>
+
+        <div style="display: flex; gap: 12px">
+
+          <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; padding: 12px 14px; background-color: #eaf3fb; border: 2px solid #0572ce; border-radius: 6px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0572ce" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><circle cx="8" cy="8" r="6"></circle><circle cx="8" cy="8" r="2.6" fill="#0572ce" stroke="none"></circle></svg>
+              <span style="font-size: 13px; font-weight: 600; color: #161513">Créer et mettre à jour</span>
+              <span style="font-size: 12px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: #04549a">MERGE</span>
+            </div>
+            <span style="font-size: 12px; line-height: 1.5; color: #605d5a; padding-left: 24px; text-wrap: pretty">Les quatre feuilles sont disponibles. Le contrôle dira, ligne par ligne, laquelle sera créée et laquelle sera mise à jour.</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; padding: 12px 14px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 6px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9b9793" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none"><circle cx="8" cy="8" r="6"></circle></svg>
+              <span style="font-size: 13px; font-weight: 600; color: #161513">Supprimer</span>
+              <span style="font-size: 12px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; color: #605d5a">DELETE</span>
+            </div>
+            <span style="font-size: 12px; line-height: 1.5; color: #605d5a; padding-left: 24px; text-wrap: pretty">Seules les trois feuilles enfants sont disponibles&nbsp;: Location n'autorise pas la suppression.</span>
+          </div>
+
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px">
+          <button style="font: inherit; font-size: 13px; font-weight: 600; color: #ffffff; background-color: #0572ce; border: none; border-radius: 6px; padding: 0 16px; height: 32px; cursor: pointer">Ouvrir le dossier</button>
+          <span style="font-size: 12px; color: #8a8683">Location · Créer et mettre à jour</span>
+        </div>
+
+      </div>
+
+      <p style="margin: 20px 0 0; max-width: 720px; text-align: center; font-size: 13px; line-height: 1.5; color: #605d5a; text-wrap: pretty">Les
+        opérations affichées sont celles qu'Oracle déclare pour chaque objet. Aucune n'est
+        proposée si l'objet ne l'autorise pas.</p>
+
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: 'Oracle Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0572ce; } a:hover { color: #04549a; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; gap: 20px; height: 900px; box-sizing: border-box; padding: 24px; background-color: #f4f3f2">
+
+  <div style="display: flex; flex-direction: column; gap: 20px; padding: 20px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px">
+
+    <div style="display: flex; align-items: baseline; gap: 12px">
+      <span style="font-size: 16px; font-weight: 600; color: #161513">Résultat du contrôle</span>
+      <span style="flex-grow: 1; font-size: 13px; color: #605d5a">Dossier Organization · 2 feuilles · 24 lignes</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background-color: #e7f4ee; border-radius: 6px">
+        <span style="font-size: 22px; font-weight: 600; color: #0d5c40">21</span>
+        <span style="font-size: 13px; color: #0d5c40">lignes saines</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background-color: #fdeceb; border-radius: 6px">
+        <span style="font-size: 22px; font-weight: 600; color: #7a3a30">2</span>
+        <span style="font-size: 13px; color: #7a3a30">à corriger</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; background-color: #fbf6ec; border-radius: 6px">
+        <span style="font-size: 22px; font-weight: 600; color: #7a4a00">1</span>
+        <span style="font-size: 13px; color: #7a4a00">à vérifier</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; background-color: #ffffff; border: 1px solid #0572ce; border-radius: 12px">
+
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 15px; font-weight: 600; color: #161513">Rapprochement parent → enfant</span>
+      <span style="font-size: 13px; line-height: 1.5; color: #605d5a; text-wrap: pretty">Chaque
+        ligne de la feuille Organization Classification est confrontée à la feuille parent
+        du dossier, puis au tenant.</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #e7f4ee; border-radius: 6px">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#0d5c40" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="9" cy="9" r="6.75"></circle><path d="m6.2 9.2 1.9 1.9 3.7-4.2"></path></svg>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; font-weight: 600; color: #0d5c40">Parent créé dans ce même dossier</span>
+          <span style="font-size: 13px; color: #1c1b19">18 lignes · exemple <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Ventes France</span></span>
+        </div>
+        <span style="font-size: 12px; color: #0d5c40">chargé ensemble</span>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #eaf3fb; border-radius: 6px">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#04549a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="9" cy="9" r="6.75"></circle><path d="M9 8.2v4M9 5.9v.2"></path></svg>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; font-weight: 600; color: #04549a">Parent déjà présent dans le tenant</span>
+          <span style="font-size: 13px; color: #1c1b19">5 lignes · exemple <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Ressources Humaines</span></span>
+        </div>
+        <span style="font-size: 12px; color: #04549a">mise à jour</span>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #fdeceb; border-radius: 6px">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#7a3a30" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><circle cx="9" cy="9" r="6.75"></circle><path d="M6.8 6.8l4.4 4.4M11.2 6.8l-4.4 4.4"></path></svg>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; font-weight: 600; color: #7a3a30">Parent introuvable</span>
+          <span style="font-size: 13px; color: #1c1b19">1 ligne · <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Logistique Nord</span> n'existe ni dans le dossier ni dans le tenant</span>
+        </div>
+        <span style="font-size: 12px; color: #7a3a30">serait rejetée</span>
+      </div>
+
+    </div>
+
+    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #f7f6f4; border: 1px solid #e6e4e1; border-radius: 6px">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#605d5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 2px"><path d="M6.5 9.5a2.5 2.5 0 0 0 3.5 0l2-2a2.5 2.5 0 0 0-3.5-3.5l-.6.6"></path><path d="M9.5 6.5a2.5 2.5 0 0 0-3.5 0l-2 2a2.5 2.5 0 0 0 3.5 3.5l.6-.6"></path></svg>
+      <span style="font-size: 13px; line-height: 1.5; color: #161513; text-wrap: pretty">Le lien est
+        écrit dans le fichier par <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">OrganizationId(SourceSystemId)</span>,
+        pas par le nom du parent — renommer un département plus tard ne casse rien.</span>
+    </div>
+
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px; flex-grow: 1">
+
+    <span style="font-size: 15px; font-weight: 600; color: #161513">Autres anomalies</span>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ebe9e6">
+        <span style="font-size: 12px; color: #7a3a30; background-color: #f9d9d6; border-radius: 4px; padding: 2px 8px; flex: none">Erreur</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; color: #161513"><span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">SetCode</span> est obligatoire pour une classification DEPARTMENT.</span>
+          <span style="font-size: 12px; color: #605d5a">Feuille Organization, ligne 2 · règle déclarée par Oracle sur l'attribut</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #ebe9e6">
+        <span style="font-size: 12px; color: #7a4a00; background-color: #f6e6c8; border-radius: 4px; padding: 2px 8px; flex: none">À vérifier</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; color: #161513"><span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">CategoryCode</span> est absent sur 12 lignes.</span>
+          <span style="font-size: 12px; color: #605d5a">Feuille Organization Classification · déclaré obligatoire à la création, mais accepté vide lors de nos chargements</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0">
+        <span style="font-size: 12px; color: #605d5a; background-color: #f0efed; border-radius: 4px; padding: 2px 8px; flex: none">Non vérifié</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+          <span style="font-size: 13px; color: #161513">Les valeurs de <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">LegislationCode</span> n'ont pas pu être confrontées au référentiel.</span>
+          <span style="font-size: 12px; color: #605d5a">Le value set n'est pas lisible avec vos habilitations — ni validé, ni invalidé</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

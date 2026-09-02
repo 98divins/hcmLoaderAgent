@@ -1,0 +1,69 @@
+{
+  "artboards": [
+    {
+      "file": "ChoixObjet.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 900,
+      "title": "1 · Point d'entrée"
+    },
+    {
+      "file": "Main.dc.html",
+      "x": 1400,
+      "y": 0,
+      "w": 1440,
+      "h": 880,
+      "title": "2 · Dossier multi-feuilles"
+    },
+    {
+      "file": "Controle.dc.html",
+      "x": 0,
+      "y": 1000,
+      "w": 900,
+      "h": 900,
+      "title": "3 · Contrôle et rapprochement"
+    },
+    {
+      "file": "FichierProduit.dc.html",
+      "x": 1020,
+      "y": 1000,
+      "w": 1180,
+      "h": 700,
+      "title": "4 · Fichier produit"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "note-entree",
+      "x": 0,
+      "y": -150,
+      "w": 420,
+      "text": "Le choix de l'objet vient AVANT l'import.\nIl fixe les colonnes attendues, les feuilles possibles, et l'opération — une seule par dossier, pour toutes ses feuilles."
+    },
+    {
+      "id": "note-feuilles",
+      "x": 1400,
+      "y": -150,
+      "w": 460,
+      "text": "Un dossier = une hiérarchie, plusieurs feuilles.\nPas d'arborescence dans la grille : le lien parent-enfant est porté par les données, donc le contrôle fait la jointure."
+    },
+    {
+      "id": "note-lookup",
+      "x": 1920,
+      "y": -150,
+      "w": 420,
+      "text": "ClassificationCode en liste déroulante.\nLes valeurs viennent du tenant, pas du code. La mauvaise saisie devient impossible au lieu d'être détectée après coup."
+    },
+    {
+      "id": "note-troisieme-etat",
+      "x": 0,
+      "y": 1950,
+      "w": 460,
+      "text": "Trois états, pas deux : valide, invalide, et NON VÉRIFIÉ quand le référentiel n'est pas lisible.\nOn ne fait jamais passer une absence de contrôle pour un contrôle réussi."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

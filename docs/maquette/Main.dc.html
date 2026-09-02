@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: 'Oracle Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0572ce; } a:hover { color: #04549a; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; height: 880px; background-color: #f4f3f2; box-sizing: border-box; padding: 20px">
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 12px; overflow: hidden">
+
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid #d9d6d3">
+      <span style="font-size: 14px; font-weight: 600; color: #161513">Chargement en masse HCM</span>
+      <span style="flex-grow: 1; font-size: 13px; color: #605d5a">Organization · Créer et mettre à jour · 24 lignes · 2 à corriger</span>
+      <span style="font-size: 12px; color: #8a8683">build 17</span>
+      <button style="font: inherit; font-size: 13px; color: #0572ce; background: none; border: none; cursor: pointer">Masquer</button>
+      <button style="font: inherit; font-size: 13px; color: #0572ce; background: none; border: none; cursor: pointer">Nouveau dossier</button>
+    </div>
+
+    <div style="display: flex; flex-grow: 1; min-height: 0; flex-wrap: nowrap; align-items: stretch">
+
+      <div style="display: flex; flex-direction: column; flex: 0 0 260px; border-right: 1px solid #d9d6d3; min-height: 0">
+
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 16px 16px 12px">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683">DOSSIER</span>
+          <span style="font-size: 14px; font-weight: 600; color: #161513">Organization</span>
+          <span style="align-self: flex-start; margin-top: 4px; font-size: 12px; color: #04549a; background-color: #eaf3fb; border-radius: 4px; padding: 2px 8px">Créer et mettre à jour</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px; padding: 4px 8px; flex-grow: 1">
+
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; padding: 8px 8px 4px">FEUILLES</span>
+
+          <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px; background-color: #eaf3fb; border-left: 3px solid #0572ce; border-radius: 0 6px 6px 0">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+              <span style="font-size: 13px; font-weight: 600; color: #161513">Organization</span>
+              <span style="font-size: 12px; color: #605d5a">12 lignes · 2 anomalies</span>
+            </div>
+            <span style="width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background-color: #c74634; flex: none"></span>
+          </div>
+
+          <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 8px 8px 11px; border-radius: 6px">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+              <span style="font-size: 13px; color: #161513">Organization Classification</span>
+              <span style="font-size: 12px; color: #605d5a">12 lignes · conforme</span>
+            </div>
+            <span style="width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background-color: #197a56; flex: none"></span>
+          </div>
+
+          <div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 8px 8px 11px; border-radius: 6px">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+              <span style="font-size: 13px; color: #8a8683">Organization Extra Information</span>
+              <span style="font-size: 12px; color: #8a8683">non utilisée</span>
+            </div>
+          </div>
+
+          <button style="display: flex; align-items: center; gap: 8px; margin: 4px 0 0; padding: 8px 11px; font: inherit; font-size: 13px; color: #0572ce; background: none; border: none; border-radius: 6px; cursor: pointer; text-align: left">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0572ce" stroke-width="1.5" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"></path></svg>
+            Ajouter une feuille
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 16px; border-top: 1px solid #d9d6d3">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683; padding-bottom: 6px">AVANCEMENT</span>
+
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background-color: #f0efed; border: 1px solid #d9d6d3; font-size: 11px; color: #605d5a; flex: none">✓</span>
+            <span style="font-size: 13px; color: #605d5a">Importer</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background-color: #0572ce; border: 1px solid #0572ce; font-size: 11px; color: #ffffff; flex: none">2</span>
+            <span style="font-size: 13px; font-weight: 600; color: #161513">Contrôler</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid #d9d6d3; font-size: 11px; color: #8a8683; flex: none">3</span>
+            <span style="font-size: 13px; color: #8a8683">Rapprocher</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid #d9d6d3; font-size: 11px; color: #8a8683; flex: none">4</span>
+            <span style="font-size: 13px; color: #8a8683">Charger</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid #d9d6d3; font-size: 11px; color: #8a8683; flex: none">5</span>
+            <span style="font-size: 13px; color: #8a8683">Analyser</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; flex: 1 1 0; width: 0; min-width: 0; min-height: 0; padding: 16px; gap: 12px; overflow: hidden">
+
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+            <span style="font-size: 14px; font-weight: 600; color: #161513">Organization</span>
+            <span style="font-size: 12px; color: #605d5a">departements-2026.csv · 12 lignes</span>
+          </div>
+          <button style="font: inherit; font-size: 13px; color: #161513; background-color: #ffffff; border: 1px solid #9b9793; border-radius: 6px; padding: 0 12px; height: 32px; cursor: pointer">Importer</button>
+          <button style="font: inherit; font-size: 13px; color: #161513; background-color: #ffffff; border: 1px solid #9b9793; border-radius: 6px; padding: 0 12px; height: 32px; cursor: pointer">Exporter</button>
+          <button style="font: inherit; font-size: 13px; color: #161513; background-color: #ffffff; border: 1px solid #9b9793; border-radius: 6px; padding: 0 12px; height: 32px; cursor: pointer">Télécharger le .dat</button>
+          <button style="font: inherit; font-size: 13px; font-weight: 600; color: #ffffff; background-color: #0572ce; border: none; border-radius: 6px; padding: 0 14px; height: 32px; cursor: pointer">Contrôler</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background-color: #f7f6f4; border: 1px solid #e6e4e1; border-radius: 6px">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#a15c00" stroke-width="1.5" stroke-linecap="round" style="flex: none"><circle cx="8" cy="8" r="6"></circle><path d="M8 5v3.5M8 10.8v.2"></path></svg>
+          <span style="flex-grow: 1; font-size: 13px; color: #161513">Le chargement reste bloqué tant qu'une anomalie subsiste sur une feuille du dossier.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; border: 1px solid #d9d6d3; border-radius: 6px; overflow: hidden">
+
+          <div style="display: grid; grid-template-columns: 76px 160px 176px 146px 92px 120px; background-color: #f7f6f4; border-bottom: 1px solid #d9d6d3">
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">État</span>
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">Anomalie</span>
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">Name</span>
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">ClassificationCode</span>
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">SetCode</span>
+            <span style="padding: 10px 12px; font-size: 12px; font-weight: 600; color: #605d5a">EffectiveStartDate</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 76px 160px 176px 146px 92px 120px; border-bottom: 1px solid #ebe9e6">
+            <span style="padding: 10px 12px"><span style="font-size: 12px; color: #0d5c40; background-color: #e7f4ee; border-radius: 4px; padding: 2px 8px">OK</span></span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #8a8683">—</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">Ventes France</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">DEPARTMENT</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">COMMON</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">2026/01/01</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 76px 160px 176px 146px 92px 120px; border-bottom: 1px solid #ebe9e6; background-color: #fdeceb">
+            <span style="padding: 10px 12px"><span style="font-size: 12px; color: #7a3a30; background-color: #f9d9d6; border-radius: 4px; padding: 2px 8px">Erreur</span></span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #7a3a30">SetCode vide</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">Ressources Humaines</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">DEPARTMENT</span>
+            <span style="padding: 8px 12px"><span style="display: block; height: 28px; border: 1px solid #c74634; border-radius: 4px; background-color: #ffffff"></span></span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">2026/01/01</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 76px 160px 176px 146px 92px 120px; border-bottom: 1px solid #ebe9e6">
+            <span style="padding: 10px 12px"><span style="font-size: 12px; color: #0d5c40; background-color: #e7f4ee; border-radius: 4px; padding: 2px 8px">OK</span></span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #8a8683">—</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">Direction Technique</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">DEPARTMENT</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">COMMON</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">2026/01/01</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 76px 160px 176px 146px 92px 120px; border-bottom: 1px solid #ebe9e6; background-color: #fbf6ec">
+            <span style="padding: 10px 12px"><span style="font-size: 12px; color: #7a4a00; background-color: #f6e6c8; border-radius: 4px; padding: 2px 8px">À vérifier</span></span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #7a4a00">CategoryCode absent</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">Logistique Sud</span>
+            <span style="padding: 8px 12px; position: relative">
+              <span style="display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 8px; border: 1px solid #0572ce; border-radius: 4px; background-color: #ffffff">
+                <span style="flex-grow: 1; font-size: 13px; color: #161513">DEPARTMENT</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#605d5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5 6 7.5 9 4.5"></path></svg>
+              </span>
+            </span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">COMMON</span>
+            <span style="padding: 10px 12px; font-size: 13px; color: #161513">2026/01/01</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; position: relative; margin: -1px 0 0 412px; width: 146px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 0 0 6px 6px; box-shadow: 0 4px 12px rgba(22, 21, 19, 0.12); z-index: 1">
+            <span style="padding: 8px 12px; font-size: 13px; color: #161513; background-color: #eaf3fb">DEPARTMENT</span>
+            <span style="padding: 8px 12px; font-size: 13px; color: #161513">HCM_PSU</span>
+            <span style="padding: 8px 12px; font-size: 13px; color: #161513">HCM_LRU</span>
+            <span style="padding: 6px 12px 8px; font-size: 11px; color: #8a8683; border-top: 1px solid #ebe9e6">valeurs lues dans le tenant</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="display: flex; flex-direction: column; flex: 0 0 320px; border-left: 1px solid #d9d6d3; min-height: 0">
+
+        <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-bottom: 1px solid #d9d6d3">
+          <span style="font-size: 13px; font-weight: 600; color: #161513">Assistant</span>
+          <span style="font-size: 12px; color: #605d5a">Il voit les feuilles du dossier, leurs liens et les anomalies.</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; padding: 16px; flex-grow: 1; overflow: hidden">
+
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; background-color: #f7f6f4; border: 1px solid #e6e4e1; border-radius: 6px">
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: #8a8683">CORRECTION PROPOSÉE</span>
+            <span style="font-size: 13px; line-height: 1.5; color: #161513; text-wrap: pretty">Feuille
+              Organization, ligne 2 — <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">SetCode = "COMMON"</span>.
+              Les onze autres lignes de la feuille portent cette valeur, et une classification
+              DEPARTMENT l'exige.</span>
+            <div style="display: flex; gap: 8px; margin-top: 4px">
+              <button style="font: inherit; font-size: 13px; font-weight: 600; color: #ffffff; background-color: #0572ce; border: none; border-radius: 6px; padding: 0 14px; height: 30px; cursor: pointer">Appliquer</button>
+              <button style="font: inherit; font-size: 13px; color: #161513; background-color: #ffffff; border: 1px solid #9b9793; border-radius: 6px; padding: 0 14px; height: 30px; cursor: pointer">Ignorer</button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 13px; color: #605d5a">Pourquoi la feuille Classification est-elle conforme&nbsp;?</span>
+            <span style="font-size: 13px; line-height: 1.5; color: #161513; text-wrap: pretty">Ses
+              douze lignes référencent un parent présent dans la feuille Organization du même
+              dossier. Le rattachement passera par la source key, donc l'ordre de création n'a
+              pas d'importance pour HDL.</span>
+            <span style="font-size: 12px; color: #8a8683">Organization · étape Contrôler · 3,1 s</span>
+          </div>
+
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-top: 1px solid #d9d6d3">
+          <span style="display: flex; align-items: center; height: 32px; padding: 0 10px; font-size: 13px; color: #8a8683; background-color: #ffffff; border: 1px solid #9b9793; border-radius: 6px">Poser une question sur ce dossier…</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div style="padding: 8px 16px; font-size: 12px; color: #605d5a; border-top: 1px solid #d9d6d3">Aucun chargement n'est déclenché sans validation explicite de votre part.</div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

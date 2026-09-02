@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; font-family: 'Oracle Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0572ce; } a:hover { color: #04549a; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; gap: 16px; height: 700px; box-sizing: border-box; padding: 24px; background-color: #f4f3f2">
+
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <span style="font-size: 16px; font-weight: 600; color: #161513">Fichier produit</span>
+    <span style="font-size: 13px; color: #605d5a">Prévisualisation avant téléchargement ou chargement.</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; background-color: #1c1b19; border-radius: 12px; overflow: hidden">
+
+    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #3a3835">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#c9c5c1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5h5l3 3v8H4z"></path><path d="M9 2.5v3h3"></path></svg>
+      <span style="font-size: 13px; font-weight: 600; color: #f2f0ee; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Organization.dat</span>
+      <span style="flex-grow: 1"></span>
+      <span style="font-size: 12px; color: #9b9793">UTF-8 · CRLF · 24 enregistrements</span>
+    </div>
+
+    <div style="padding: 16px; overflow: auto; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 1.9; white-space: pre">
+<span style="color: #8a8683">COMMENT Data for Business Object: Organization Version: V2</span>
+<span style="color: #7fb3e8">METADATA</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">Organization</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">SourceSystemOwner|SourceSystemId|EffectiveStartDate|Name|ClassificationCode|SetId|...</span>
+<span style="color: #8ecfa8">MERGE</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">Organization</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">HDLAGENT|</span><span style="color: #f0c987">ORG_DEPT_VENTES</span><span style="color: #c9c5c1">|2026/01/01|Ventes France|DEPARTMENT|COMMON|...</span>
+<span style="color: #8ecfa8">MERGE</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">Organization</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">HDLAGENT|</span><span style="color: #f0c987">ORG_DEPT_RH</span><span style="color: #c9c5c1">|2026/01/01|Ressources Humaines|DEPARTMENT|COMMON|...</span>
+
+<span style="color: #7fb3e8">METADATA</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">OrgUnitClassification</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">SourceSystemOwner|SourceSystemId|</span><span style="color: #f0c987">OrganizationId(SourceSystemId)</span><span style="color: #c9c5c1">|EffectiveStartDate|ClassificationCode|SetCode|Status|...</span>
+<span style="color: #8ecfa8">MERGE</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">OrgUnitClassification</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">HDLAGENT|ORGC_DEPT_VENTES|</span><span style="color: #f0c987">ORG_DEPT_VENTES</span><span style="color: #c9c5c1">|2026/01/01|DEPARTMENT|COMMON|A|...</span>
+<span style="color: #8ecfa8">MERGE</span><span style="color: #6b6864">|</span><span style="color: #f2f0ee">OrgUnitClassification</span><span style="color: #6b6864">|</span><span style="color: #c9c5c1">HDLAGENT|ORGC_DEPT_RH|</span><span style="color: #f0c987">ORG_DEPT_RH</span><span style="color: #c9c5c1">|2026/01/01|DEPARTMENT|COMMON|A|...</span>
+    </div>
+
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+
+    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 6px">
+      <span style="width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background-color: #f0c987; flex: none"></span>
+      <span style="font-size: 13px; line-height: 1.5; color: #161513; text-wrap: pretty">La source key
+        rattache l'enfant au parent, même quand le parent n'existe pas encore dans le tenant.
+        HDL traite les parents avant les enfants&nbsp;: l'ordre des lignes n'a pas à être géré.</span>
+    </div>
+
+    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background-color: #ffffff; border: 1px solid #d9d6d3; border-radius: 6px">
+      <span style="width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background-color: #7fb3e8; flex: none"></span>
+      <span style="font-size: 13px; line-height: 1.5; color: #161513; text-wrap: pretty">Une seule
+        archive <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">.zip</span>,
+        un <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">.dat</span> par
+        hiérarchie. Un dossier mêlant sites et départements produirait
+        <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Location.dat</span> et
+        <span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace">Organization.dat</span>.</span>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
