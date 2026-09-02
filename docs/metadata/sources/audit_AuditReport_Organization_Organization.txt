@@ -1,0 +1,319 @@
+================================================================================================================================= 
+Hierarchy Discriminator : Organization 
+Object Discriminator    : Organization 
+Version                 : V2 
+Hierarchy Level         : Top 
+Parent Discriminator    : (null) 
+ 
+ 
+Failure Summary 
+=============== 
+A summary of the errors and warnings raised for this object. 
+ 
+  CAT 1 FAIL : RGN-001: INCOMPATIBILITY - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  The shipping Flexfield support level DFF is no longer available. 
+ 
+ 
+Object Registration 
+=================== 
+Information registered in the HRC_DL_BUSINESS_OBJECTS and HRC_DL_UI_BUS_OBJECTS_TL tables 
+ 
+  UI_NAME                    : Organization 
+  UI_DESCRIPTION             : An organization is a logical group of people working together. It has a classification that determines its type. For example 
+                               department. 
+  BUS_OBJ_TOP_DISCRIMINATOR  : Organization 
+  BUS_OBJ_FILE_DISCRIMINATOR : Organization 
+  PROCESSING_ORDER           : 3000 
+  VALID_OPERATIONS           : MERGE 
+  PRODUCT_AREA               : ORA_HR_WORK_STRUCTURE 
+  BUSINESS_OBJECT_VO_FQ_NAME : oracle.apps.hcm.organizations.organizationServiceV2.view.OrganizationVO 
+  BUS_OBJ_SERVICE_VERSION    : V2 
+  USING_APP_FQ_NAME          : oracle.apps.hcm.organizations.organizationServiceV2.applicationModule.OrganizationAM 
+  USING_APP_CONFIG           : OrganizationAMLocal 
+  USING_APP_VIEWUSAGE_NAME   : Organization 
+  WS_CONNECTION_QNAME        : HcmDataLoaderCoreSetupService 
+  CALLBACK_CONNECTION_QNAME  : HcmDataLoaderEssCallbackService 
+  GROUP_BY_EXPRESSION        : (null) 
+  ORDER_BY_EXPRESSION        : (null) 
+  CUSTOM_ORDERING_PROCEDURE  : (null) 
+  POST_PROC_TYPE             : (null) 
+  POST_PROC_JOB_FQ_DEFN_NAME : (null) 
+  POST_PROC_JOB_FQ_CLASS_NAME: (null) 
+  POST_PROC_TASK_NAMES       : (null) 
+  VALIDATION_ENABLED         : (null) 
+  ROLLBACK_ENABLED           : (null) 
+ 
+ 
+Object Certification 
+==================== 
+Objects must be audited and certified before they are visible on customer environments. 
+ 
+  HDL Enabled                : Yes 
+  HSDL Enabled               : Yes 
+  Security Classification    : No ** The data security classification for this object is unknown so spreadsheets based on this object cannot be shared with 
+                               business users for bulk loading. 
+  Rollback Enabled           : No (null) 
+ 
+ 
+Object Derived Information 
+========================== 
+Information derived from the object registered. 
+ 
+  Integration Object Name    : Organization 
+  Parent Object              : n/a 
+  Translation Object         : OrganizationTranslation, V2 
+  Date Type                  : Date-effective 
+  Adjust Logical Start Date  : Yes 
+  Adjust Logical End Date    : No 
+  User Key DE Override       : No 
+  Flexfield support          : NONE 
+ 
+    ** CAT 1 FAIL : RGN-001: INCOMPATIBILITY - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  The shipping Flexfield support level DFF is no longer available. 
+ 
+ 
+Accepted Attributes 
+=================== 
+Attributes HCM Data Loader will expose for customer usage. 
+ 
+                                                                                                                                     Model 
+  Attribute Name                      Stage Column              SSO Stage              SID Stage              HDL Type Length Scale  Mandatory HDL Mandatory   Table or View Name             Column Name 
+  ----------------------------------- ------------------------- ---------------------- ---------------------- -------- ------ ------ --------- --------------- ------------------------------ ------------------------------ 
+  EffectiveStartDate                  P_EFFECTIVE_START_DATE    (null)                 (null)                 Date                   True      Yes             HR_ALL_ORGANIZATION_UNITS_F    EFFECTIVE_START_DATE 
+  EffectiveEndDate                    P_EFFECTIVE_END_DATE      (null)                 (null)                 Date                   True      No              HR_ALL_ORGANIZATION_UNITS_F    EFFECTIVE_END_DATE 
+  OrganizationId                      PVAL001                   (null)                 (null)                 Number       18 (null) True      Yes             HR_ALL_ORGANIZATION_UNITS_F    ORGANIZATION_ID 
+  Name                                PVAL002                   (null)                 (null)                 String      240        True      For new records HR_ORGANIZATION_UNITS_F_TL     NAME 
+  Title                               PVAL003                   (null)                 (null)                 String      240        False     No              HR_ORGANIZATION_UNITS_F_TL     TITLE 
+  ClassificationCode                  PVAL004                   (null)                 (null)                 String       40        True      For new records HR_ORG_UNIT_CLASSIFICATIONS_F  CLASSIFICATION_CODE 
+  ClassificationName                  PVAL005                   (null)                 (null)                 String      240        False     No              (null)                         (null) 
+  InternalAddressLine                 PVAL006                   (null)                 (null)                 String       80        False     No              HR_ALL_ORGANIZATION_UNITS_F    INTERNAL_ADDRESS_LINE 
+  ActionReasonCode                    PVAL007                   (null)                 (null)                 String   (null)        False     No              (null)                         (null) 
+  LocationId                          PVAL008                   PVAL023                PVAL024                Number       18 (null) False     No              HR_ALL_ORGANIZATION_UNITS_F    LOCATION_ID 
+  LocationCode                        PVAL010                   (null)                 (null)                 String      150        False     No              (null)                         (null) 
+  LocationSetCode                     PVAL011                   (null)                 (null)                 String       30        False     No              (null)                         (null) 
+  EstablishmentId                     PVAL013                   PVAL021                PVAL022                Number       18 (null) False     No              HR_ALL_ORGANIZATION_UNITS_F    ESTABLISHMENT_ID 
+  EstablishmentName                   PVAL014                   (null)                 (null)                 String      240        False     No              (null)                         (null) 
+  SourceSystemOwner                   PVAL017                   (null)                 (null)                 String       30        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_OWNER 
+  SourceSystemId                      PVAL018                   (null)                 (null)                 String     2000        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_ID 
+  GUID                                PVAL019                   (null)                 (null)                 String       32        False     No              HRC_INTEGRATION_KEY_MAP        GUID 
+ 
+  Mandatory Status Overrides 
+  -------------------------- 
+  HDL overrides the model mandatory status for specific situations. These attributes have had their mandatory status overridden. 
+ 
+                                        Model 
+    Attribute Name                      Mandatory HDL Mandatory   Override Reason 
+    ----------------------------------- --------- --------------- --------------------------------------------------------------------------- 
+    EffectiveEndDate                    True      No              EffectiveEndDate is defaulted to the end of time by HDL when not supplied. 
+ 
+ 
+Hidden Attributes 
+================= 
+These attributes will be hidden from HDL and HSDL customers as the DLoadHidden property is applied to them. 
+ 
+                                                                                                                                     Model 
+  Attribute Name                      Stage Column              SSO Stage              SID Stage              HDL Type Length Scale  Mandatory HDL Mandatory   Table or View Name             Column Name 
+  ----------------------------------- ------------------------- ---------------------- ---------------------- -------- ------ ------ --------- --------------- ------------------------------ ------------------------------ 
+  InternalExternal                    PVAL012                   (null)                 (null)                 String       30        False     No              HR_ALL_ORGANIZATION_UNITS_F    INTERNAL_EXTERNAL_FLAG 
+  LegalEntityId                       PVAL015                   (null)                 (null)                 Number       18 (null) False     No              HR_ALL_ORGANIZATION_UNITS_F    LEGAL_ENTITY_ID 
+  LegalEntityIdentifier               PVAL016                   (null)                 (null)                 String       30        False     No              (null)                         (null) 
+  LocationSetId                       PVAL009                   (null)                 (null)                 Number       18 (null) False     No              (null)                         (null) 
+  OrgCode                             PVAL020                   (null)                 (null)                 String   (null)        False     No              (null)                         (null) 
+ 
+These attributes are automatically hidden for all objects. 
+ 
+  None found. 
+ 
+ 
+Rejected Attributes 
+=================== 
+Attributes available on the registered VO that are rejected for use by HDL and HSDL. 
+ 
+  Attribute Name                      ADF Type               Table or View Name             Column Name                    Rejection Reason 
+  ----------------------------------- ---------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- 
+  RangeStartDate                      java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeEndDate                        java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeMode                           java.lang.String       (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  ActionOccurrenceId                  java.math.BigDecimal   HR_ALL_ORGANIZATION_UNITS_F    ACTION_OCCURRENCE_ID           ___SDO_HIDDEN 
+  ActionCode                          java.lang.String       (null)                         (null)                         ___SDO_HIDDEN 
+  OrganizationCode                    java.lang.String       HR_ALL_ORGANIZATION_UNITS_F    ORGANIZATION_CODE              ___SDO_HIDDEN 
+  BusinessGroupId                     java.lang.Long         HR_ALL_ORGANIZATION_UNITS_F    BUSINESS_GROUP_ID              ___SDO_HIDDEN 
+  CostAllocationKeyflexId             java.lang.Integer      HR_ALL_ORGANIZATION_UNITS_F    COST_ALLOCATION_KEYFLEX_ID     ___SDO_HIDDEN 
+  ModuleId                            java.lang.String       HR_ALL_ORGANIZATION_UNITS_F    MODULE_ID                      ___SDO_HIDDEN 
+  ObjectVersionNumber                 java.lang.Integer      HR_ALL_ORGANIZATION_UNITS_F    OBJECT_VERSION_NUMBER          ___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED 
+  EffectiveStartDate1                 java.sql.Date          HR_ORGANIZATION_UNITS_F_TL     EFFECTIVE_START_DATE           ___SDO_HIDDEN 
+  EffectiveEndDate1                   java.sql.Date          HR_ORGANIZATION_UNITS_F_TL     EFFECTIVE_END_DATE             ___SDO_HIDDEN 
+  ObjectVersionNumber1                java.lang.Integer      HR_ORGANIZATION_UNITS_F_TL     OBJECT_VERSION_NUMBER          ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED 
+  Language                            java.lang.String       HR_ORGANIZATION_UNITS_F_TL     LANGUAGE                       ___SDO_HIDDEN 
+  OrganizationId1                     java.lang.Long         HR_ORGANIZATION_UNITS_F_TL     ORGANIZATION_ID                ___SDO_HIDDEN 
+  Type                                java.lang.String       (null)                         (null)                         ___SDO_HIDDEN___READONLY 
+  SysEffectiveDate                    java.sql.Date          (null)                         (null)                         ___SDO_HIDDEN___in_ATTR_TRANSIENT_list 
+  OrgUnitClassificationId             java.lang.Long         HR_ORG_UNIT_CLASSIFICATIONS_F  ORG_UNIT_CLASSIFICATION_ID     ___SDO_HIDDEN___READONLY 
+  EffectiveStartDate2                 java.sql.Date          HR_ORG_UNIT_CLASSIFICATIONS_F  EFFECTIVE_START_DATE           ___SDO_HIDDEN___READONLY 
+  EffectiveEndDate2                   java.sql.Date          HR_ORG_UNIT_CLASSIFICATIONS_F  EFFECTIVE_END_DATE             ___SDO_HIDDEN___READONLY 
+  ObjectVersionNumber2                java.lang.Integer      HR_ORG_UNIT_CLASSIFICATIONS_F  OBJECT_VERSION_NUMBER          ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  Status                              java.lang.String       HR_ORG_UNIT_CLASSIFICATIONS_F  STATUS                         ___SDO_HIDDEN 
+  CreationDate                        java.sql.Timestamp     HR_ALL_ORGANIZATION_UNITS_F    CREATION_DATE                  ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  LastUpdateDate                      java.sql.Timestamp     HR_ALL_ORGANIZATION_UNITS_F    LAST_UPDATE_DATE               ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  OrganizationDFF                     oracle.jbo.Row         n/a                            n/a                            ___ATTR_ASSOCIATED_ROW___READONLY___UnknownAttributeSQLType:LONGVARCHAR 
+  OrganizationTranslation             oracle.jbo.RowIterator n/a                            n/a                            ___ATTR_ASSOCIATED_ROWITERATOR___READONLY___UnknownAttributeSQLType:LONGVARCHAR 
+  OrgUnitClassification               oracle.jbo.Row         n/a                            n/a                            ___ATTR_ASSOCIATED_ROW___READONLY___UnknownAttributeSQLType:LONGVARCHAR 
+  extraInformation                    oracle.jbo.RowIterator n/a                            n/a                            ___ATTR_ASSOCIATED_ROWITERATOR___READONLY___UnknownAttributeSQLType:LONGVARCHAR 
+  PerInternalorExternalVA             oracle.jbo.RowSet      n/a                            n/a                            ___ATTR_ROWSET 
+  OrgClassificationVA                 oracle.jbo.RowSet      n/a                            n/a                            ___ATTR_ROWSET 
+  LocationIdLOV                       oracle.jbo.RowSet      n/a                            n/a                            ___ATTR_ROWSET 
+  StatusLOV                           oracle.jbo.RowSet      n/a                            n/a                            ___ATTR_ROWSET 
+  ActionOccurrencesVO                 oracle.jbo.RowSet      n/a                            n/a                            ___ATTR_ROWSET 
+ 
+ 
+HSDL Attribute Level Annotations 
+================================ 
+Attributes with specific HSDL annotations. 
+ 
+  No security related annotations found. 
+ 
+  LOV Annotations 
+  --------------- 
+  Annotations that identify and specify LOV properties for HSDL templates. 
+ 
+    Attribute Name                         LOV Annotation Set 
+    -------------------------------------- ----------------------------------------------------------------------------------------------------------------------------- 
+    OrganizationId                         DLoadLOVListType                 : null 
+                                           DLoadLOVViewDefName              : oracle.apps.hcm.organizations.organizationServiceV2.view.OrganizationVO 
+                                           DLoadLOVDisplayAttributes        : [Name,ClassificationCode] 
+                                           DLoadLOVReturnAttributes         : OrganizationId 
+                                           DLoadLOVListViewCriteria         : null 
+                                           DLoadLOVListSecurityViewCriteria : FNDDS__PER_MANAGE_DEPARTMENT_DATA__HR_ALL_ORGANIZATION_UNITS_F__OrganizationUnitDEO 
+                                           DLoadLOVListQueryCriteria        : null 
+                                           DLoadLOVListQueryBindMap         : null 
+ 
+ 
+EOs Referenced in this VO 
+========================= 
+The entity objects referenced by the VO registered. 
+ 
+  1. Entity Object          : oracle.apps.hcm.organizations.protectedModel.entity.OrganizationUnitDEO 
+     Table/View             : HR_ALL_ORGANIZATION_UNITS_F 
+     Updateable             : True 
+     Integration Object Name: Organization 
+ 
+  2. Entity Object          : oracle.apps.hcm.organizations.protectedModel.entity.OrganizationUnitTranslationDEO 
+     Table/View             : HR_ORGANIZATION_UNITS_F_TL 
+     Updateable             : True 
+     Integration Object Name: Organization 
+ 
+  3. Entity Object          : oracle.apps.hcm.organizations.protectedModel.entity.OrgUnitClassificationDEO 
+     Table/View             : HR_ORG_UNIT_CLASSIFICATIONS_F 
+     Updateable             : True 
+     Integration Object Name: OrganizationClassification 
+ 
+ 
+Gather Statistics Tables 
+======================== 
+Tables that HDL will gather statistics post data loading. 
+ 
+  Table Name                     Identified By 
+  ------------------------------ ---------------------------------------- 
+  HR_ALL_ORGANIZATION_UNITS_F    HDL derivation. 
+  HR_ORGANIZATION_UNITS_F_TL     HDL derivation. 
+  HR_ORG_UNIT_CLASSIFICATIONS_F  HDL derivation. 
+ 
+ 
+Local Primary Key 
+================= 
+Attributes that form the primary key for this object. 
+ 
+  EffectiveStartDate 
+  EffectiveEndDate 
+  OrganizationId 
+ 
+ 
+Local Surrogate ID Analysis 
+=========================== 
+Analysis of the attribute identified as the local surrogate ID. 
+ 
+  Attribute Name         : OrganizationId 
+  Integration Object Name: Organization 
+  User Keys 
+    [0] Name, ClassificationName 
+    UK Stage [0] UKVAL001, UKVAL002 
+ 
+  User Key Attribute Source 
+  ------------------------- 
+  The table/view and column where the user key attribute can be found in the database. 
+ 
+    User Key Attribute             Source Table / View            Source Column                  Identified By 
+    ------------------------------ ------------------------------ ------------------------------ ------------------------------ 
+    Name                           HR_ORGANIZATION_UNITS_F_TL     NAME                           Local EO 
+    ClassificationName             HR_ORG_CLASSIFICATIONS_VL      CLASSIFICATION_NAME            DLoadAttributeTableAndColumn 
+ 
+ 
+Parent Surrogate ID Analysis 
+============================ 
+Analysis of the attribute identified as the parent surrogate ID. 
+ 
+  Not applicable, this is a top level component. 
+ 
+ 
+References to Integration Enabled Foreign Objects 
+================================================= 
+Analysis of foreign surrogate IDs that are known to reference integration enabled objects. 
+ 
+  Attribute Name         : EstablishmentId 
+  Attribute Availability : Accepted 
+  Integration Object Name: Establishment 
+    Identified by        : EO association usage + Referred Integration Object Library - no match for both generic table and column in the HRC_INTEGRATION_OBJECTS CA registry - column only is matched 
+  Referenced Table/View  : XLE_ETB_PROFILES 
+  Referenced Column      : ESTABLISHMENT_ID 
+  User Keys 
+    [0] EstablishmentName 
+ 
+    User Key Attributes 
+    ------------------------------ 
+    EstablishmentName 
+ 
+  Attribute Name         : LocationId 
+  Attribute Availability : Accepted 
+  Integration Object Name: Location 
+    Identified by        : EO association usage + Referred Integration Object Library - no match for both generic table and column in the HRC_INTEGRATION_OBJECTS CA registry - column only is matched 
+  Referenced Table/View  : HR_LOCATIONS_ALL_F_VL 
+  Referenced Column      : LOCATION_ID 
+  User Keys 
+    [0] LocationCode, LocationSetCode 
+ 
+    User Key Attributes 
+    ------------------------------ 
+    LocationCode 
+    LocationSetCode 
+ 
+ 
+Other Foreign Object References 
+=============================== 
+Review that these are not references to integration enabled objects.  You can identify integration enabled objects in the HRC_INTEGRATION_OBJECTS table. 
+ 
+  Attribute Name         : ClassificationCode 
+  Attribute Availability : Accepted 
+    Identified by        : EO association usage 
+  Referenced Table/View  : HR_ORG_INFO_TYPES_BY_CLASS 
+  Referenced Column      : CLASSIFICATION_CODE 
+ 
+  Attribute Name         : LegalEntityId 
+  Attribute Availability : HDL Hidden 
+    Identified by        : EO association usage 
+  Referenced Table/View  : XLE_ENTITY_PROFILES 
+  Referenced Column      : LEGAL_ENTITY_ID 
+ 
+  Attribute Name         : LocationSetId 
+  Attribute Availability : HDL Hidden 
+    Identified by        : User Key Only 
+  Referenced Table/View  : (null) 
+  Referenced Column      : (null) 
+ 
+ 
+Lookup Validated Attributes 
+=========================== 
+Review that all lookup validated attributes provide an LOV to expose the lookup type used for validation. 
+ 
+  Attribute Name                 Lookup Type 
+  ------------------------------ ------------------------------ 
+  InternalExternal               INTL_EXTL 
+ 
+ 

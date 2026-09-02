@@ -1,0 +1,242 @@
+================================================================================================================================= 
+Hierarchy Discriminator : Location 
+Object Discriminator    : LocationExtraInfo 
+Version                 : V2 
+Hierarchy Level         : 2 
+Parent Discriminator    : Location 
+ 
+ 
+Failure Summary 
+=============== 
+A summary of the errors and warnings raised for this object. 
+ 
+  CAT 3 FAIL : OBJ-203: ActionOccurrenceId - This model mandatory attribute is HDL hidden. 
+ 
+ 
+Object Registration 
+=================== 
+Information registered in the HRC_DL_BUSINESS_OBJECTS and HRC_DL_UI_BUS_OBJECTS_TL tables 
+ 
+  UI_NAME                    : Location Extra Information 
+  UI_DESCRIPTION             : Represents the extensible structure for the location. 
+  BUS_OBJ_TOP_DISCRIMINATOR  : Location 
+  BUS_OBJ_FILE_DISCRIMINATOR : LocationExtraInfo 
+  PROCESSING_ORDER           : (null) 
+  VALID_OPERATIONS           : MERGE_DELETE 
+  PRODUCT_AREA               : (null) 
+  BUSINESS_OBJECT_VO_FQ_NAME : oracle.apps.hcm.locations.model.core.view.LocationExtraInfoVO 
+  BUS_OBJ_SERVICE_VERSION    : V2 
+  USING_APP_FQ_NAME          : (null) 
+  USING_APP_CONFIG           : (null) 
+  USING_APP_VIEWUSAGE_NAME   : LocationExtraInfoVO 
+  WS_CONNECTION_QNAME        : (null) 
+  CALLBACK_CONNECTION_QNAME  : (null) 
+  GROUP_BY_EXPRESSION        : (null) 
+  ORDER_BY_EXPRESSION        : (null) 
+  CUSTOM_ORDERING_PROCEDURE  : (null) 
+  POST_PROC_TYPE             : (null) 
+  POST_PROC_JOB_FQ_DEFN_NAME : (null) 
+  POST_PROC_JOB_FQ_CLASS_NAME: (null) 
+  POST_PROC_TASK_NAMES       : (null) 
+  VALIDATION_ENABLED         : (null) 
+  ROLLBACK_ENABLED           : (null) 
+ 
+ 
+Object Certification 
+==================== 
+Objects must be audited and certified before they are visible on customer environments. 
+ 
+  HDL Enabled                : Yes 
+  HSDL Enabled               : Yes 
+  Security Classification    : YU ** unsecured object 
+  Rollback Enabled           : No (null) 
+ 
+ 
+Object Derived Information 
+========================== 
+Information derived from the object registered. 
+ 
+  Integration Object Name    : LocationExtraInfoEFF 
+  Parent Object              : Location 
+  Translation Object         : (null) 
+  Date Type                  : Date-effective 
+  Adjust Logical Start Date  : Yes 
+  Adjust Logical End Date    : No 
+  User Key DE Override       : No 
+  Flexfield support          : EFF 
+ 
+ 
+Accepted Attributes 
+=================== 
+Attributes HCM Data Loader will expose for customer usage. 
+ 
+                                                                                                                                     Model 
+  Attribute Name                      Stage Column              SSO Stage              SID Stage              HDL Type Length Scale  Mandatory HDL Mandatory   Table or View Name             Column Name 
+  ----------------------------------- ------------------------- ---------------------- ---------------------- -------- ------ ------ --------- --------------- ------------------------------ ------------------------------ 
+  LocationExtraInfoId                 PVAL001                   (null)                 (null)                 Number       18 (null) True      Yes             PER_LOCATION_EXTRA_INFO_F      LOCATION_EXTRA_INFO_ID 
+  EffectiveStartDate                  P_EFFECTIVE_START_DATE    (null)                 (null)                 Date                   True      Yes             PER_LOCATION_EXTRA_INFO_F      EFFECTIVE_START_DATE 
+  EffectiveEndDate                    P_EFFECTIVE_END_DATE      (null)                 (null)                 Date                   True      No              PER_LOCATION_EXTRA_INFO_F      EFFECTIVE_END_DATE 
+  LocationId                          PVAL002                   PVAL014                PVAL015                Number       18 (null) True      Yes             PER_LOCATION_EXTRA_INFO_F      LOCATION_ID 
+  InformationType                     PVAL003                   (null)                 (null)                 String       40        True      For new records PER_LOCATION_EXTRA_INFO_F      INFORMATION_TYPE 
+  LeiInformationCategory              PVAL005                   (null)                 (null)                 String       30        False     No              PER_LOCATION_EXTRA_INFO_F      LEI_INFORMATION_CATEGORY 
+  SequenceNumber                      PVAL006                   (null)                 (null)                 Number        8 (null) False     No              PER_LOCATION_EXTRA_INFO_F      SEQUENCE_NUMBER 
+  LegislationCode                     PVAL007                   (null)                 (null)                 String       30        False     No              PER_LOCATION_EXTRA_INFO_F      LEGISLATION_CODE 
+  SourceSystemOwner                   PVAL008                   (null)                 (null)                 String       30        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_OWNER 
+  SourceSystemId                      PVAL009                   (null)                 (null)                 String     2000        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_ID 
+  GUID                                PVAL010                   (null)                 (null)                 String       32        False     No              HRC_INTEGRATION_KEY_MAP        GUID 
+  SetId                               PVAL011                   (null)                 (null)                 String   (null)        False     No              (null)                         (null) 
+  SetCode                             PVAL012                   (null)                 (null)                 String       30        False     No              (null)                         (null) 
+  LocationCode                        PVAL013                   (null)                 (null)                 String      120        False     No              (null)                         (null) 
+ 
+  Mandatory Status Overrides 
+  -------------------------- 
+  HDL overrides the model mandatory status for specific situations. These attributes have had their mandatory status overridden. 
+ 
+                                        Model 
+    Attribute Name                      Mandatory HDL Mandatory   Override Reason 
+    ----------------------------------- --------- --------------- --------------------------------------------------------------------------- 
+    EffectiveEndDate                    True      No              EffectiveEndDate is defaulted to the end of time by HDL when not supplied. 
+ 
+ 
+Hidden Attributes 
+================= 
+These attributes will be hidden from HDL and HSDL customers as the DLoadHidden property is applied to them. 
+ 
+                                                                                                                                     Model 
+  Attribute Name                      Stage Column              SSO Stage              SID Stage              HDL Type Length Scale  Mandatory HDL Mandatory   Table or View Name             Column Name 
+  ----------------------------------- ------------------------- ---------------------- ---------------------- -------- ------ ------ --------- --------------- ------------------------------ ------------------------------ 
+  ActionOccurrenceId                  PVAL004                   (null)                 (null)                 Number       18 (null) True      No              PER_LOCATION_EXTRA_INFO_F      ACTION_OCCURRENCE_ID 
+    ** CAT 3 FAIL : OBJ-203: ActionOccurrenceId - This model mandatory attribute is HDL hidden. 
+ 
+These attributes are automatically hidden for all objects. 
+ 
+  None found. 
+ 
+ 
+Rejected Attributes 
+=================== 
+Attributes available on the registered VO that are rejected for use by HDL and HSDL. 
+ 
+  Attribute Name                      ADF Type               Table or View Name             Column Name                    Rejection Reason 
+  ----------------------------------- ---------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- 
+  BusinessGroupId                     java.lang.Long         PER_LOCATION_EXTRA_INFO_F      BUSINESS_GROUP_ID              ___SDO_HIDDEN 
+  ObjectVersionNumber                 java.lang.Integer      PER_LOCATION_EXTRA_INFO_F      OBJECT_VERSION_NUMBER          ___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED 
+  CreatedBy                           java.lang.String       PER_LOCATION_EXTRA_INFO_F      CREATED_BY                     ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  CreationDate                        java.sql.Timestamp     PER_LOCATION_EXTRA_INFO_F      CREATION_DATE                  ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  LastUpdateDate                      java.sql.Timestamp     PER_LOCATION_EXTRA_INFO_F      LAST_UPDATE_DATE               ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  LastUpdateLogin                     java.lang.String       PER_LOCATION_EXTRA_INFO_F      LAST_UPDATE_LOGIN              ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  LastUpdatedBy                       java.lang.String       PER_LOCATION_EXTRA_INFO_F      LAST_UPDATED_BY                ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED___READONLY 
+  SysEffectiveDate                    java.sql.Date          (null)                         (null)                         ___SDO_HIDDEN___in_ATTR_TRANSIENT_list 
+  RangeStartDate                      java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeEndDate                        java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeMode                           java.lang.String       (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+ 
+ 
+HSDL Attribute Level Annotations 
+================================ 
+Attributes with specific HSDL annotations. 
+ 
+  No security related annotations found. 
+ 
+  LOV Annotations 
+  --------------- 
+  Annotations that identify and specify LOV properties for HSDL templates. 
+ 
+  No LOV detail annotations found. 
+ 
+ 
+EOs Referenced in this VO 
+========================= 
+The entity objects referenced by the VO registered. 
+ 
+  1. Entity Object          : oracle.apps.hcm.locations.model.entity.LocationExtraInfoEFFDEO 
+     Table/View             : PER_LOCATION_EXTRA_INFO_F 
+     Updateable             : True 
+     Integration Object Name: LocationExtraInfoEFF 
+ 
+ 
+Gather Statistics Tables 
+======================== 
+Tables that HDL will gather statistics post data loading. 
+ 
+  Table Name                     Identified By 
+  ------------------------------ ---------------------------------------- 
+  PER_LOCATION_EXTRA_INFO_F      HDL derivation. 
+ 
+ 
+Local Primary Key 
+================= 
+Attributes that form the primary key for this object. 
+ 
+  LocationExtraInfoId 
+  EffectiveStartDate 
+  EffectiveEndDate 
+ 
+ 
+Local Surrogate ID Analysis 
+=========================== 
+Analysis of the attribute identified as the local surrogate ID. 
+ 
+  Attribute Name         : LocationExtraInfoId 
+  Integration Object Name: LocationExtraInfoEFF 
+  User Keys 
+    [0] SequenceNumber, LeiInformationCategory, LocationCode, SetCode 
+    UK Stage [0] UKVAL001, UKVAL002, UKVAL003, UKVAL004 
+ 
+  User Key Attribute Source 
+  ------------------------- 
+  The table/view and column where the user key attribute can be found in the database. 
+ 
+    User Key Attribute             Source Table / View            Source Column                  Identified By 
+    ------------------------------ ------------------------------ ------------------------------ ------------------------------ 
+    SequenceNumber                 PER_LOCATION_EXTRA_INFO_F      SEQUENCE_NUMBER                Local EO 
+    LeiInformationCategory         PER_LOCATION_EXTRA_INFO_F      LEI_INFORMATION_CATEGORY       Local EO 
+    LocationCode                   PER_LOCATIONS                  INTERNAL_LOCATION_CODE         Parent VO 
+    SetCode                        FND_SETID_SETS_VL              SET_CODE                       Parent VO 
+ 
+ 
+Parent Surrogate ID Analysis 
+============================ 
+Analysis of the attribute identified as the parent surrogate ID. 
+ 
+  Attribute Name         : LocationId 
+  Integration Object Name: Location 
+  User Keys 
+    [0] LocationCode, SetCode 
+    UK Stage [0] UKVAL001, UKVAL002 
+ 
+  User Key Attribute Source 
+  ------------------------- 
+  The table/view and column where the user key attribute can be found in the database. 
+ 
+    User Key Attribute             Source Table / View            Source Column                  Identified By 
+    ------------------------------ ------------------------------ ------------------------------ ------------------------------ 
+    LocationCode                   PER_LOCATIONS                  INTERNAL_LOCATION_CODE         Parent VO 
+    SetCode                        FND_SETID_SETS_VL              SET_CODE                       Parent VO 
+ 
+ 
+References to Integration Enabled Foreign Objects 
+================================================= 
+Analysis of foreign surrogate IDs that are known to reference integration enabled objects. 
+ 
+  None found. 
+ 
+ 
+Other Foreign Object References 
+=============================== 
+Review that these are not references to integration enabled objects.  You can identify integration enabled objects in the HRC_INTEGRATION_OBJECTS table. 
+ 
+  Attribute Name         : SetId 
+  Attribute Availability : Accepted 
+    Identified by        : User Key Only 
+  Referenced Table/View  : (null) 
+  Referenced Column      : (null) 
+ 
+ 
+Lookup Validated Attributes 
+=========================== 
+Review that all lookup validated attributes provide an LOV to expose the lookup type used for validation. 
+ 
+  None found. 
+ 
+ 

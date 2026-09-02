@@ -1,0 +1,286 @@
+================================================================================================================================= 
+Hierarchy Discriminator : Location 
+Object Discriminator    : LocationOtherAddress 
+Version                 : V2 
+Hierarchy Level         : 2 
+Parent Discriminator    : Location 
+ 
+ 
+Failure Summary 
+=============== 
+A summary of the errors and warnings raised for this object. 
+ 
+  CAT 2 FAIL : UKL-105: LocationSetCode - LocAddressUsageId - The user key attribute is not defined on the resolver VO: oracle.apps.hcm.locations.model.view.LocationVVO 
+  CAT 2 FAIL : UKP-105: LocationSetCode - LocationId - The user key attribute is not defined on the resolver VO: oracle.apps.hcm.locations.model.view.LocationVVO 
+  CAT 1 FAIL : LOV-001: AddressUsageType - The HcmLookup attribute has a configuration problem - attribute definition has no HcmLookup specified. 
+ 
+ 
+Information Summary 
+=================== 
+A selection of notable information analysed for this object. 
+ 
+  CAT 2 INFO : REV-001: Longitude - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL interface. 
+  CAT 2 INFO : REV-001: Latitude - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL interface. 
+  CAT 2 INFO : REV-001: ValidationStatusCode - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL interface. 
+  CAT 2 INFO : REV-001: Provider - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL interface. 
+ 
+ 
+Object Registration 
+=================== 
+Information registered in the HRC_DL_BUSINESS_OBJECTS and HRC_DL_UI_BUS_OBJECTS_TL tables 
+ 
+  UI_NAME                    : Location Other Address 
+  UI_DESCRIPTION             : Location Other Address is used to record additional addresses for a Location. For example, you may use a PO BOX to receive mail 
+                               at a mailing address, instead of the physical address of the location. 
+  BUS_OBJ_TOP_DISCRIMINATOR  : Location 
+  BUS_OBJ_FILE_DISCRIMINATOR : LocationOtherAddress 
+  PROCESSING_ORDER           : (null) 
+  VALID_OPERATIONS           : MERGE_DELETE 
+  PRODUCT_AREA               : (null) 
+  BUSINESS_OBJECT_VO_FQ_NAME : oracle.apps.hcm.locations.locationServiceV2.view.LocationOtherAddressVO 
+  BUS_OBJ_SERVICE_VERSION    : V2 
+  USING_APP_FQ_NAME          : (null) 
+  USING_APP_CONFIG           : (null) 
+  USING_APP_VIEWUSAGE_NAME   : LocationOtherAddress 
+  WS_CONNECTION_QNAME        : (null) 
+  CALLBACK_CONNECTION_QNAME  : (null) 
+  GROUP_BY_EXPRESSION        : (null) 
+  ORDER_BY_EXPRESSION        : (null) 
+  CUSTOM_ORDERING_PROCEDURE  : (null) 
+  POST_PROC_TYPE             : (null) 
+  POST_PROC_JOB_FQ_DEFN_NAME : (null) 
+  POST_PROC_JOB_FQ_CLASS_NAME: (null) 
+  POST_PROC_TASK_NAMES       : (null) 
+  VALIDATION_ENABLED         : (null) 
+  ROLLBACK_ENABLED           : (null) 
+ 
+ 
+Object Certification 
+==================== 
+Objects must be audited and certified before they are visible on customer environments. 
+ 
+  HDL Enabled                : Yes 
+  HSDL Enabled               : Yes 
+  Security Classification    : YU ** unsecured object 
+  Rollback Enabled           : No (null) 
+ 
+ 
+Object Derived Information 
+========================== 
+Information derived from the object registered. 
+ 
+  Integration Object Name    : LocationAddressUsage 
+  Parent Object              : Location 
+  Translation Object         : (null) 
+  Date Type                  : Date-effective 
+  Adjust Logical Start Date  : Yes 
+  Adjust Logical End Date    : No 
+  User Key DE Override       : No 
+  Flexfield support          : NONE 
+ 
+ 
+Accepted Attributes 
+=================== 
+Attributes HCM Data Loader will expose for customer usage. 
+ 
+                                                                                                                                     Model 
+  Attribute Name                      Stage Column              SSO Stage              SID Stage              HDL Type Length Scale  Mandatory HDL Mandatory   Table or View Name             Column Name 
+  ----------------------------------- ------------------------- ---------------------- ---------------------- -------- ------ ------ --------- --------------- ------------------------------ ------------------------------ 
+  LocAddressUsageId                   PVAL001                   (null)                 (null)                 Number       18 (null) True      Yes             PER_LOC_ADDRESS_USAGES_F       LOC_ADDRESS_USAGE_ID 
+  EffectiveStartDate                  P_EFFECTIVE_START_DATE    (null)                 (null)                 Date                   True      Yes             PER_LOC_ADDRESS_USAGES_F       EFFECTIVE_START_DATE 
+  EffectiveEndDate                    P_EFFECTIVE_END_DATE      (null)                 (null)                 Date                   True      No              PER_LOC_ADDRESS_USAGES_F       EFFECTIVE_END_DATE 
+  AddressUsageType                    PVAL002                   (null)                 (null)                 String       30        True      For new records PER_LOC_ADDRESS_USAGES_F       ADDRESS_USAGE_TYPE 
+  LocationId                          PVAL003                   PVAL010                PVAL011                Number       18 (null) True      Yes             PER_LOC_ADDRESS_USAGES_F       LOCATION_ID 
+  LocationSetCode                     PVAL004                   (null)                 (null)                 String       30        False     No              (null)                         (null) 
+  LocationCode                        PVAL005                   (null)                 (null)                 String      120        False     No              (null)                         (null) 
+  AddressLine1                        PVAL_SECURE001            (null)                 (null)                 String      240        False     No              PER_ADDRESSES_F                ADDRESS_LINE_1 
+  AddressLine2                        PVAL_SECURE002            (null)                 (null)                 String      240        False     No              PER_ADDRESSES_F                ADDRESS_LINE_2 
+  AddressLine3                        PVAL_SECURE003            (null)                 (null)                 String      240        False     No              PER_ADDRESSES_F                ADDRESS_LINE_3 
+  AddressLine4                        PVAL_SECURE004            (null)                 (null)                 String      240        False     No              PER_ADDRESSES_F                ADDRESS_LINE_4 
+  Building                            PVAL_SECURE005            (null)                 (null)                 String      240        False     No              PER_ADDRESSES_F                BUILDING 
+  TownOrCity                          PVAL_SECURE006            (null)                 (null)                 String       60        False     No              PER_ADDRESSES_F                TOWN_OR_CITY 
+  FloorNumber                         PVAL_SECURE007            (null)                 (null)                 String       40        False     No              PER_ADDRESSES_F                FLOOR_NUMBER 
+  Country                             PVAL_SECURE008            (null)                 (null)                 String       60        True      For new records PER_ADDRESSES_F                COUNTRY 
+  PostalCode                          PVAL_SECURE009            (null)                 (null)                 String       30        False     No              PER_ADDRESSES_F                POSTAL_CODE 
+  LongPostalCode                      PVAL_SECURE010            (null)                 (null)                 String       30        False     No              PER_ADDRESSES_F                LONG_POSTAL_CODE 
+  Region1                             PVAL_SECURE011            (null)                 (null)                 String      120        False     No              PER_ADDRESSES_F                REGION_1 
+  Region2                             PVAL_SECURE012            (null)                 (null)                 String      120        False     No              PER_ADDRESSES_F                REGION_2 
+  Region3                             PVAL_SECURE013            (null)                 (null)                 String      120        False     No              PER_ADDRESSES_F                REGION_3 
+  TimezoneCode                        PVAL006                   (null)                 (null)                 String       50        False     No              PER_ADDRESSES_F                TIMEZONE_CODE 
+  SourceSystemOwner                   PVAL007                   (null)                 (null)                 String       30        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_OWNER 
+  SourceSystemId                      PVAL008                   (null)                 (null)                 String     2000        False     No              HRC_INTEGRATION_KEY_MAP        SOURCE_SYSTEM_ID 
+  GUID                                PVAL009                   (null)                 (null)                 String       32        False     No              HRC_INTEGRATION_KEY_MAP        GUID 
+  Longitude                           PVAL_SECURE014            (null)                 (null)                 Number   (null) (null) False     No              PER_ADDRESSES_F                LONGITUDE 
+    ** CAT 2 INFO : REV-001: Longitude - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL 
+                             interface. 
+ 
+  Latitude                            PVAL_SECURE015            (null)                 (null)                 Number   (null) (null) False     No              PER_ADDRESSES_F                LATITUDE 
+    ** CAT 2 INFO : REV-001: Latitude - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL 
+                             interface. 
+ 
+  ValidationStatusCode                PVAL_SECURE016            (null)                 (null)                 String      120        False     No              PER_ADDRESSES_F                VALIDATION_STATUS_CODE 
+    ** CAT 2 INFO : REV-001: ValidationStatusCode - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping 
+                             HDL interface. 
+ 
+  Provider                            PVAL_SECURE017            (null)                 (null)                 String      150        False     No              PER_ADDRESSES_F                PROVIDER 
+    ** CAT 2 INFO : REV-001: Provider - QA_AND_DOC_REVIEW - QA_HCM_PREARU_MOBILE_230301.1238.S (23B):  This new visible attribute changes a shipping HDL 
+                             interface. 
+ 
+  Mandatory Status Overrides 
+  -------------------------- 
+  HDL overrides the model mandatory status for specific situations. These attributes have had their mandatory status overridden. 
+ 
+                                        Model 
+    Attribute Name                      Mandatory HDL Mandatory   Override Reason 
+    ----------------------------------- --------- --------------- --------------------------------------------------------------------------- 
+    EffectiveEndDate                    True      No              EffectiveEndDate is defaulted to the end of time by HDL when not supplied. 
+ 
+ 
+Hidden Attributes 
+================= 
+These attributes will be hidden from HDL and HSDL customers as the DLoadHidden property is applied to them. 
+ 
+  None found. 
+ 
+These attributes are automatically hidden for all objects. 
+ 
+  None found. 
+ 
+ 
+Rejected Attributes 
+=================== 
+Attributes available on the registered VO that are rejected for use by HDL and HSDL. 
+ 
+  Attribute Name                      ADF Type               Table or View Name             Column Name                    Rejection Reason 
+  ----------------------------------- ---------------------- ------------------------------ ------------------------------ -------------------------------------------------------------------------------- 
+  AddressId1                          java.lang.Long         PER_ADDRESSES_F                ADDRESS_ID                     ___SDO_HIDDEN 
+  BusinessGroupId                     java.lang.Long         PER_LOC_ADDRESS_USAGES_F       BUSINESS_GROUP_ID              ___SDO_HIDDEN 
+  AddressId                           java.lang.Long         PER_LOC_ADDRESS_USAGES_F       ADDRESS_ID                     ___SDO_HIDDEN 
+  EffectiveStartDate1                 java.sql.Date          PER_ADDRESSES_F                EFFECTIVE_START_DATE           ___SDO_HIDDEN 
+  EffectiveEndDate1                   java.sql.Date          PER_ADDRESSES_F                EFFECTIVE_END_DATE             ___SDO_HIDDEN 
+  ObjectVersionNumber                 java.lang.Integer      PER_LOC_ADDRESS_USAGES_F       OBJECT_VERSION_NUMBER          ___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED 
+  SysEffectiveDate                    java.sql.Date          (null)                         (null)                         ___SDO_HIDDEN___in_ATTR_TRANSIENT_list 
+  RangeStartDate                      java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeEndDate                        java.sql.Date          (null)                         (null)                         ___in_ATTR_TRANSIENT_list 
+  RangeMode                           java.lang.String       (null)                         (null)                         ___SDO_HIDDEN___in_ATTR_TRANSIENT_list 
+  ActionOccurrenceId                  java.lang.Long         PER_LOC_ADDRESS_USAGES_F       ACTION_OCCURRENCE_ID           ___SDO_HIDDEN 
+  ObjectVersionNumber1                java.lang.Integer      PER_ADDRESSES_F                OBJECT_VERSION_NUMBER          ___SDO_HIDDEN___HISTORY_NOT_DEFINED___EO_HISTORY_NOT_DEFINED 
+ 
+ 
+HSDL Attribute Level Annotations 
+================================ 
+Attributes with specific HSDL annotations. 
+ 
+  No security related annotations found. 
+ 
+  LOV Annotations 
+  --------------- 
+  Annotations that identify and specify LOV properties for HSDL templates. 
+ 
+  No LOV detail annotations found. 
+ 
+ 
+EOs Referenced in this VO 
+========================= 
+The entity objects referenced by the VO registered. 
+ 
+  1. Entity Object          : oracle.apps.hcm.locations.model.entity.LocationAddressUsageDEO 
+     Table/View             : PER_LOC_ADDRESS_USAGES_F 
+     Updateable             : True 
+     Integration Object Name: LocationAddressUsage 
+ 
+  2. Entity Object          : oracle.apps.hcm.addresses.publicModel.entity.AddressDEO 
+     Table/View             : PER_ADDRESSES_F 
+     Updateable             : True 
+     Integration Object Name: Address 
+ 
+ 
+Gather Statistics Tables 
+======================== 
+Tables that HDL will gather statistics post data loading. 
+ 
+  Table Name                     Identified By 
+  ------------------------------ ---------------------------------------- 
+  PER_ADDRESSES_F                HDL derivation. 
+  PER_LOC_ADDRESS_USAGES_F       HDL derivation. 
+ 
+ 
+Local Primary Key 
+================= 
+Attributes that form the primary key for this object. 
+ 
+  LocAddressUsageId 
+  EffectiveStartDate 
+  EffectiveEndDate 
+ 
+ 
+Local Surrogate ID Analysis 
+=========================== 
+Analysis of the attribute identified as the local surrogate ID. 
+ 
+  Attribute Name         : LocAddressUsageId 
+  Integration Object Name: LocationAddressUsage 
+  User Keys 
+    [0] AddressUsageType, LocationCode, LocationSetCode 
+    UK Stage [0] UKVAL001, UKVAL002, UKVAL003 
+ 
+  User Key Attribute Source 
+  ------------------------- 
+  The table/view and column where the user key attribute can be found in the database. 
+ 
+    User Key Attribute             Source Table / View            Source Column                  Identified By 
+    ------------------------------ ------------------------------ ------------------------------ ------------------------------ 
+    AddressUsageType               PER_LOC_ADDRESS_USAGES_F       ADDRESS_USAGE_TYPE             Local EO 
+    LocationCode                   PER_LOCATIONS                  INTERNAL_LOCATION_CODE         Parent VO 
+    LocationSetCode                FND_SETID_SETS_VL              SET_CODE                       Parent VO 
+      ** CAT 2 FAIL : UKL-105: LocationSetCode - LocAddressUsageId - The user key attribute is not defined on the resolver VO: 
+                               oracle.apps.hcm.locations.model.view.LocationVVO 
+ 
+ 
+Parent Surrogate ID Analysis 
+============================ 
+Analysis of the attribute identified as the parent surrogate ID. 
+ 
+  Attribute Name         : LocationId 
+  Integration Object Name: Location 
+  User Keys 
+    [0] LocationCode, LocationSetCode 
+    UK Stage [0] UKVAL001, UKVAL002 
+ 
+  User Key Attribute Source 
+  ------------------------- 
+  The table/view and column where the user key attribute can be found in the database. 
+ 
+    User Key Attribute             Source Table / View            Source Column                  Identified By 
+    ------------------------------ ------------------------------ ------------------------------ ------------------------------ 
+    LocationCode                   PER_LOCATIONS                  INTERNAL_LOCATION_CODE         Parent VO 
+    LocationSetCode                FND_SETID_SETS_VL              SET_CODE                       Parent VO 
+      ** CAT 2 FAIL : UKP-105: LocationSetCode - LocationId - The user key attribute is not defined on the resolver VO: 
+                               oracle.apps.hcm.locations.model.view.LocationVVO 
+ 
+ 
+References to Integration Enabled Foreign Objects 
+================================================= 
+Analysis of foreign surrogate IDs that are known to reference integration enabled objects. 
+ 
+  None found. 
+ 
+ 
+Other Foreign Object References 
+=============================== 
+Review that these are not references to integration enabled objects.  You can identify integration enabled objects in the HRC_INTEGRATION_OBJECTS table. 
+ 
+  None found. 
+ 
+ 
+Lookup Validated Attributes 
+=========================== 
+Review that all lookup validated attributes provide an LOV to expose the lookup type used for validation. 
+ 
+  None found. 
+  Attribute Name                 Lookup Type 
+  ------------------------------ ------------------------------ 
+  AddressUsageType               (null) 
+    ** CAT 1 FAIL : LOV-001: AddressUsageType - The HcmLookup attribute has a configuration problem - attribute definition has no HcmLookup specified. 
+ 
+ 
