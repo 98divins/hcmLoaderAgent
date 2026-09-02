@@ -1,0 +1,51 @@
+{
+    "addMetadataRules": [
+        {
+            "id": "jobRequisitionDFF",
+            "label": "Job Requisition DFF",
+            "description": "",
+            "status": "active",
+            "overlay": {
+                "fields": {
+                    "Details.requisitionDFF.VidCruiter.ReqUsageCode": {
+                        "required": {
+                            "value": false
+                        },
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.requisitionDFF.VidCruiter.vidcruiterTemplate": {
+                        "required": {
+                            "value": false
+                        },
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.requisitionDFF": {
+                        "required": {
+                            "value": false
+                        },
+                        "hidden": {
+                            "value": false
+                        }
+                    },
+                    "Details.requisitionDFF.VidCruiter": {
+                        "hidden": {
+                            "value": false
+                        }
+                    }
+                }
+            },
+            "condition": {
+                "expression": true
+            }
+        }
+      ],
+    "addCollectionMetadataRules": {
+        "metadataRules": []
+    },
+    "imports": {},
+    "metadataRulesVersion": "2607.8.0"
+}
