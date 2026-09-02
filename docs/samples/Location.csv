@@ -1,0 +1,6 @@
+﻿LocationCode;SetCode;EffectiveStartDate;LocationName;ActiveStatus;AddressLine1;TownOrCity;PostalCode;Country
+PAR01;COMMON;2026/01/01;Siège Paris;A;12 rue de Rivoli;Paris;75001;FR
+LYO01;COMMON;2026/01/01;Agence Lyon;A;4 quai Saint-Antoine;Lyon;69002;FR
+MAR01;;01/03/2026;Agence Marseille;A;9 rue Paradis;Marseille;13001;FR
+TLS01;COMMON;2026/01/01;Agence Toulouse;;15 rue d'Alsace;Toulouse;31000;FR
+PAR01;COMMON;2026/01/01;Siège Paris annexe;A;3 rue de la Paix;Paris;75002;FR

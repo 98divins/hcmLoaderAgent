@@ -1,0 +1,5 @@
+﻿OrganizationName;ClassificationName;ClassificationCode;CategoryCode;SetCode;Status;EffectiveStartDate
+Ventes France;Department;DEPARTMENT;;COMMON;A;2026/01/01
+Ressources Humaines;Department;DEPARTMENT;;;A;2026/01/01
+Direction Technique;Department;DEPARTMENT;;COMMON;A;2026/01/01
+Logistique Nord;Department;DEPARTMENT;;COMMON;A;2026/01/01

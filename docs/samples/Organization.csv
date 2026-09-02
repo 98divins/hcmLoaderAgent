@@ -1,0 +1,5 @@
+﻿Name;ClassificationName;ClassificationCode;EffectiveStartDate;LocationCode;LocationSetCode
+Ventes France;Department;DEPARTMENT;2026/01/01;PAR01;COMMON
+Ressources Humaines;Department;DEPARTMENT;01/03/2026;PAR01;COMMON
+Direction Technique;Department;DEPARTMENT;2026/01/01;LYO01;COMMON
+Logistique Sud;Department;DEPARTMENT;2026/01/01;MAR01;COMMON

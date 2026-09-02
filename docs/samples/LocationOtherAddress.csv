@@ -1,0 +1,4 @@
+﻿AddressUsageType;LocationCode;LocationSetCode;EffectiveStartDate;AddressLine1;TownOrCity;PostalCode;Country
+;PAR01;COMMON;2026/01/01;15 avenue de l'Opéra;Paris;75002;FR
+;LYO01;COMMON;2026/01/01;22 rue de la République;Lyon;69002;FR
+;NCE01;COMMON;2026/01/01;5 promenade des Anglais;Nice;06000;FR
