@@ -18,6 +18,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.sheets = [];
       $variables.activeSheet = 0;
       $variables.opened = false;
+      $variables.nextRefreshIn = 0;
       $variables.loadSummary = {};
       $variables.rejects = [];
       $variables.lastRefresh = '';

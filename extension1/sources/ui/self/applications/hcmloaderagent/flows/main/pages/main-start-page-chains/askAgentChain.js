@@ -180,7 +180,12 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   function describeProposal(data) {
     if (!data || !data.display) { return ''; }
     if (data.display === 'issues' && Array.isArray(data.rows)) {
-      return truncate(data.rows
+      // Une entree sans valeur n'est pas une correction : elle n'est pas
+      // affichee, et Appliquer ne la verrait pas non plus.
+      const usable = data.rows.filter((r) => r && r.suggestedValue !== undefined
+        && r.suggestedValue !== null && String(r.suggestedValue).trim() !== '');
+      if (!usable.length) { return ''; }
+      return truncate(usable
         .map((r) => `${r.sheet !== undefined ? `F${r.sheet} - ` : ''}${r.rowRef} - `
           + `${r.field} = "${r.suggestedValue}"`
           + (r.rationale ? `\n    ${r.rationale}` : '')));

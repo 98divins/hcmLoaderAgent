@@ -38,6 +38,10 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
 
   const LABEL_IN_DOSSIER = 'parent cree dans ce dossier';
 
+  // Libelle metier d'un objet reference, pour parler de "site" plutot que
+  // de "Location" dans un message d'anomalie.
+  const OBJECT_WORD = { Location: 'site', Organization: 'organisation' };
+
   /** Un identifiant interne ne se fournit jamais depuis un fichier. */
   function isSystemKey(attribute) {
     return attribute.keyType === 'surrogateId'
@@ -100,10 +104,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const satisfied = candidates.some((name) => columns.indexOf(name) !== -1
         && value(row, name) !== '');
 
+      // Declare obligatoire par Oracle mais accepte vide en chargement reel :
+      // ce n'est pas une anomalie de ligne, c'est une note de feuille.
+      if (attribute.softRequired) { return; }
+
       if (!satisfied) {
         missing.push({
           name: attribute.name,
-          level: attribute.softRequired ? 'forNewRecords' : attribute.required,
+          level: attribute.required,
           label: substitutes.length
             ? `${attribute.name} (ou ${substitutes.join(', ')})`
             : attribute.name
@@ -408,6 +416,13 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           structural.push(`${sheet.label} : colonnes inconnues de l'objet `
             + `(${unknown.join(', ')}).`);
         }
+        (spec.attributes || []).forEach((attribute) => {
+          if (attribute.softRequired && columns.indexOf(attribute.name) !== -1
+              && rows.some((row) => !value(row, attribute.name))) {
+            notes.push(`${attribute.name} vide sur certaines lignes : Oracle le declare `
+              + 'obligatoire mais l\'accepte vide en chargement reel, laissez-le vide sauf consigne');
+          }
+        });
         if (flexColumns.length) {
           notes.push(`${flexColumns.length} colonne${flexColumns.length > 1 ? 's' : ''} `
             + 'flexfield reconnue'
@@ -428,6 +443,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           const blocking = missingKeys.length || errors.length;
           if (blocking) { issues += 1; } else if (warnings.length) { warns += 1; }
           next.statusLabel = errors.length ? 'erreur' : (warnings.length ? 'a verifier' : 'ok');
+          // Une ligne deja acceptee par Oracle le reste, sauf erreur nouvelle.
+          if (row.loaded && !errors.length) { next.statusLabel = 'chargee'; }
           next.statusDetail = errors.concat(warnings).join(' ; ');
           next.matchLabel = '';
           if (errors.length || warnings.length) {
@@ -449,6 +466,40 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           countWarnings: warns
         });
       });
+
+      // References vers un autre objet : un site, une organisation designes par
+      // leur code doivent exister dans Oracle. C'est l'erreur que HDL rend par
+      // "valid value for the XId attribute. The current values are ..." : elle
+      // se voit ici, avant le chargement, quand la ressource est interrogeable.
+      for (let i = 0; i < checkedSheets.length; i += 1) {
+        const sheet = checkedSheets[i];
+        const spec = (catalog.objects || {})[sheet.object];
+        if (!spec || !(sheet.rows || []).length) { continue; }
+        const refs = (spec.attributes || []).filter((a) => a.keyType === 'foreignObjectReference'
+          && a.references && TENANT[a.references] && (a.foreignUserKey || []).length
+          && (sheet.columns || []).indexOf(a.foreignUserKey[0]) !== -1
+          && !(spec.parent && spec.parent.object === a.references));
+        for (let r = 0; r < refs.length; r += 1) {
+          const attribute = refs[r];
+          const lookup = TENANT[attribute.references];
+          const column = attribute.foreignUserKey[0];
+          const wanted = sheet.rows.map((row) => value(row, column)).filter((v) => v);
+          if (!wanted.length) { continue; }
+          // eslint-disable-next-line no-await-in-loop
+          const found = await askTenant(context, lookup, wanted, {});
+          const word = OBJECT_WORD[attribute.references] || attribute.references;
+          sheet.rows.forEach((row) => {
+            const v = value(row, column);
+            if (!v || found[v] !== false) { return; }
+            const text = `${word} ${v} introuvable dans Oracle (${column})`;
+            row.statusLabel = 'erreur';
+            row.statusDetail = row.statusDetail ? `${row.statusDetail} ; ${text}` : text;
+            sheet.countIssues += 1;
+            const entry = summarySheets.filter((s) => s.index === i)[0];
+            if (entry) { entry.items.push({ rowKey: row.rowKey, state: 'erreur', text }); }
+          });
+        }
+      }
 
       // Rapprochement : chaque ligne enfant doit pouvoir designer son parent,
       // dans le dossier ou dans le tenant. C'est le seul controle qu'un fichier
@@ -598,8 +649,10 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       $variables.errorText = structural.join(' ');
       if (ask !== false && totalIssues) { $variables.assistOpen = true; }
       $variables.question = (ask !== false && totalIssues)
-        ? 'Analyse des anomalies relevees par le controle : quelles lignes posent '
-          + 'probleme, et quelles corrections sont applicables ?'
+        ? `Le controle a releve ${totalIssues} ligne${totalIssues > 1 ? 's' : ''} bloquante`
+          + `${totalIssues > 1 ? 's' : ''}${totalWarns ? ` et ${totalWarns} a verifier` : ''}. `
+          + 'Explique chaque ligne bloquante et propose la correction quand tu peux l\'etablir. '
+          + 'Ne conclus jamais qu\'il n\'y a pas de probleme.'
         : '';
 
       const clean = totalRows - totalIssues;

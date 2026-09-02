@@ -20,7 +20,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       percent: 'LoadPercentageComplete' }
   ];
 
-  const RUNNING = ['ORA_IN_PROGRESS', 'IN_PROGRESS', 'NOT_READY', 'PENDING', 'ORA_PENDING'];
+  // Un job n'est termine que sur un code de fin connu. Un code inconnu vaut
+  // "en cours" : conclure trop tot ferait apparaitre "Terminer" puis le
+  // ferait disparaitre a la lecture suivante.
+  const FINISHED = ['SUCCESS', 'ORA_SUCCESS', 'ERROR', 'ORA_ERROR', 'WARNING', 'ORA_WARNING',
+    'COMPLETED', 'ORA_COMPLETED', 'CANCELLED', 'ORA_CANCELLED', 'FAILED', 'ORA_FAILED'];
 
   // Champs par lesquels un message d'Oracle peut designer la ligne du fichier.
   // Le vocabulaire exact varie selon l'objet et la phase : on essaie chacun, et
@@ -50,12 +54,12 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     return PHASES.map((phase, index) => {
       const meaning = dataSet[phase.meaning] || dataSet[phase.code] || '';
       const percent = phase.percent ? dataSet[phase.percent] : null;
+      const done = (percent === null || percent === undefined || percent === '')
+        ? '' : ` · ${percent} %`;
       return {
         rowKey: `P${index + 1}`,
         Etape: phase.label,
-        Etat: String(meaning),
-        Avancement: (percent === null || percent === undefined || percent === '')
-          ? '' : `${percent} %`
+        Etat: `${String(meaning) || 'en attente'}${done}`
       };
     });
   }
@@ -122,8 +126,8 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   }
 
   function isRunning(dataSet) {
-    const code = dataSet.DataSetStatusCode || '';
-    return RUNNING.indexOf(code) !== -1;
+    const code = String(dataSet.DataSetStatusCode || '').toUpperCase();
+    return FINISHED.indexOf(code) === -1;
   }
 
   class checkLoadStatusChain extends ActionChain {
@@ -148,8 +152,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         for (let i = 0; i < attempts; i += 1) {
           if ($variables.aborted) { break; }
           if (i > 0) {
-            // eslint-disable-next-line no-await-in-loop
-            await wait(POLL_MS);
+            // Le compte a rebours rend l'attente visible : l'utilisateur voit
+            // que la page lit seule, il n'a pas a cliquer.
+            for (let s = POLL_MS / 1000; s > 0 && !$variables.aborted; s -= 1) {
+              $variables.nextRefreshIn = s;
+              // eslint-disable-next-line no-await-in-loop
+              await wait(1000);
+            }
+            $variables.nextRefreshIn = 0;
             if ($variables.aborted) { break; }
           }
 

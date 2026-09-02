@@ -291,7 +291,8 @@
                 "name": "LocationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "Location"
               },
               {
                 "name": "LocationCode",
@@ -410,7 +411,8 @@
                 "keyType": "foreignObjectReference",
                 "foreignUserKey": [
                   "DesignatedPersonNumber"
-                ]
+                ],
+                "references": "Person"
               },
               {
                 "name": "DesignatedPersonNumber",
@@ -487,7 +489,8 @@
                 "keyType": "foreignObjectReference",
                 "foreignUserKey": [
                   "InventoryOrganizationName"
-                ]
+                ],
+                "references": "Organization"
               },
               {
                 "name": "Latitude",
@@ -619,7 +622,8 @@
                 "foreignUserKey": [
                   "ShipToLocationCode",
                   "ShipToLocationSetCode"
-                ]
+                ],
+                "references": "Location"
               },
               {
                 "name": "ShipToLocationSetCode",
@@ -753,7 +757,8 @@
                 "name": "LocAddressUsageId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "LocationAddressUsage"
               },
               {
                 "name": "LocationCode",
@@ -771,7 +776,8 @@
                 "name": "LocationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "parentSurrogateId"
+                "keyType": "parentSurrogateId",
+                "references": "Location"
               },
               {
                 "name": "EffectiveEndDate",
@@ -942,7 +948,8 @@
                 "name": "LocationLegId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "LocationLegislativeEFF"
               },
               {
                 "name": "LocationCode",
@@ -972,7 +979,8 @@
                 "name": "LocationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "parentSurrogateId"
+                "keyType": "parentSurrogateId",
+                "references": "Location"
               },
               {
                 "name": "EffectiveEndDate",
@@ -1062,7 +1070,8 @@
                 "name": "LocationExtraInfoId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "LocationExtraInfoEFF"
               },
               {
                 "name": "LeiInformationCategory",
@@ -1092,7 +1101,8 @@
                 "name": "LocationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "parentSurrogateId"
+                "keyType": "parentSurrogateId",
+                "references": "Location"
               },
               {
                 "name": "EffectiveEndDate",
@@ -1171,7 +1181,8 @@
                 "name": "OrganizationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "Organization"
               },
               {
                 "name": "ClassificationName",
@@ -1216,7 +1227,8 @@
                 "keyType": "foreignObjectReference",
                 "foreignUserKey": [
                   "EstablishmentName"
-                ]
+                ],
+                "references": "Establishment"
               },
               {
                 "name": "EstablishmentName",
@@ -1243,7 +1255,8 @@
                 "foreignUserKey": [
                   "LocationCode",
                   "LocationSetCode"
-                ]
+                ],
+                "references": "Location"
               },
               {
                 "name": "LocationSetCode",
@@ -1324,7 +1337,8 @@
                 "name": "OrgUnitClassificationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "OrganizationClassification"
               },
               {
                 "name": "ClassificationName",
@@ -1342,7 +1356,8 @@
                 "name": "OrganizationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "parentSurrogateId"
+                "keyType": "parentSurrogateId",
+                "references": "Organization"
               },
               {
                 "name": "EffectiveEndDate",
@@ -1451,7 +1466,8 @@
                 "name": "OrgInformationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "surrogateId"
+                "keyType": "surrogateId",
+                "references": "OrgInformationEFF"
               },
               {
                 "name": "ClassificationName",
@@ -1481,7 +1497,8 @@
                 "name": "OrganizationId",
                 "type": "number",
                 "required": "always",
-                "keyType": "parentSurrogateId"
+                "keyType": "parentSurrogateId",
+                "references": "Organization"
               },
               {
                 "name": "EffectiveEndDate",
@@ -1548,6 +1565,14 @@
     "lastRefresh": {
       "type": "string",
       "defaultValue": ""
+    },
+    "lastDossier": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "nextRefreshIn": {
+      "type": "number",
+      "defaultValue": 0
     }
   },
   "metadata": {},
@@ -1623,13 +1648,6 @@
       "chains": [
         {
           "chain": "toggleAssistChain"
-        }
-      ]
-    },
-    "onExport": {
-      "chains": [
-        {
-          "chain": "exportPlanChain"
         }
       ]
     },
@@ -1785,6 +1803,9 @@
       "chains": [
         {
           "chain": "finishChain"
+        },
+        {
+          "chain": "resetChain"
         }
       ]
     },
@@ -1792,6 +1813,16 @@
       "chains": [
         {
           "chain": "backToPlanChain"
+        }
+      ]
+    },
+    "onRowEditEnd": {
+      "chains": [
+        {
+          "chain": "rowEditChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
         }
       ]
     }
@@ -1812,6 +1843,9 @@
       },
       "oj-c-table": {
         "path": "oj-c/table"
+      },
+      "oj-c-train": {
+        "path": "oj-c/train"
       }
     }
   }

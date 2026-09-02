@@ -58,6 +58,8 @@ const Start = load('startDossierChain.js');
 const Import = load('importFileChain.js');
 const Status = load('checkLoadStatusChain.js');
 const Submit = load('submitLoadChain.js');
+const Apply = load('applyProposalChain.js');
+const RowEdit = load('rowEditChain.js');
 
 // Un fichier depose, tel que le navigateur le presente : nom et contenu.
 global.FileReader = function FileReader() {
@@ -124,7 +126,8 @@ async function main() {
   check('doublon de cle detecte (L1, L5)', loc[0].statusLabel === 'erreur' && loc[4].statusLabel === 'erreur'
     && /double/.test(loc[0].statusDetail));
   check('date jj/mm/aaaa refusee (L3)', /aaaa\/mm\/jj/.test(loc[2].statusDetail));
-  check('ActiveStatus vide : avertissement seulement (L4)', loc[3].statusLabel === 'a verifier');
+  check('ActiveStatus vide : note de feuille, pas d\'anomalie de ligne (L4)', loc[3].statusLabel !== 'erreur'
+    && v.checkSummary.sheets[0].notes.some((n) => /ActiveStatus vide/.test(n)));
   check('rapprochement parent : PAR01 mise a jour, LYO01 creation',
     loc[1].matchLabel === 'creation' && loc[0].matchLabel === 'mise a jour');
   check('adresse L1 : parent cree dans ce dossier', adr[0].matchLabel === 'parent cree dans ce dossier');
@@ -166,8 +169,48 @@ async function main() {
   await new Check().run({ $variables: v }, { ask: false });
   const cls = v.sheets[1].rows;
   check('regle conditionnelle SetCode/DEPARTMENT (L2)', /SetCode est obligatoire/.test(cls[1].statusDetail));
-  check('CategoryCode vide : avertissement', cls[0].statusLabel === 'a verifier');
+  check('CategoryCode vide : note de feuille, pas d\'anomalie de ligne', cls[0].statusLabel !== 'erreur'
+    && v.checkSummary.sheets[1].notes.some((n) => /CategoryCode vide/.test(n)));
   check('parent hors dossier, tenant muet : non verifie', /^non verifie/.test(cls[3].matchLabel));
+
+  // 5b. Reference vers un autre objet : un site inconnu du tenant bloque la ligne,
+  // avant qu'Oracle ne le dise par "valid value for the LocationId attribute".
+  restStub = async (opts) => {
+    const m = /IN \((.+)\)/.exec(opts.uriParams.q);
+    const asked = m ? m[1].split(',').map((s) => s.replace(/'/g, '')) : [];
+    if (/LocationCode/.test(opts.uriParams.q)) {
+      return { body: { items: asked.filter((x) => x === 'PAR01').map((x) => ({ LocationCode: x })) } };
+    }
+    return { body: { items: [] } };
+  };
+  v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv')]);
+  v.sheets[0].rows.forEach((r) => { r.EffectiveStartDate = '2026/01/01'; });
+  v.sheets[0].rows[2].LocationCode = 'MAR01';
+  await new Check().run({ $variables: v }, { ask: false });
+  check('site MAR01 absent du tenant : ligne bloquee avant chargement',
+    v.sheets[0].rows[2].statusLabel === 'erreur' && /MAR01 introuvable dans Oracle \(LocationCode\)/.test(v.sheets[0].rows[2].statusDetail));
+  check('site PAR01 present : les autres lignes ne sont pas touchees', v.sheets[0].rows[0].statusLabel !== 'erreur');
+
+  // 5c. Une valeur de remplacement de l'assistant n'est jamais ecrite.
+  v.hasProposal = true;
+  v.proposalJson = JSON.stringify({ display: 'issues', rows: [
+    { sheet: 0, rowRef: 'L1', field: 'ClassificationCode', suggestedValue: 'undefined' },
+    { sheet: 0, rowRef: 'L2', field: 'ClassificationCode' },
+    { sheet: 0, rowRef: 'L3', field: 'LocationCode', suggestedValue: 'PAR01' }] });
+  await new Apply().run({ $variables: v }, { source: 'agent' });
+  check('"undefined" et valeur absente refusees, valeur reelle appliquee',
+    v.sheets[0].rows[0].ClassificationCode === 'DEPARTMENT' && v.sheets[0].rows[1].ClassificationCode === 'DEPARTMENT'
+    && v.sheets[0].rows[2].LocationCode === 'PAR01' && /2/.test(v.appliedNote), v.appliedNote);
+
+  // 5d. Edition dans la grille : la ligne repasse "a controler", le dossier revient au controle.
+  v.step = 'submit'; v.armedAction = 'load';
+  const inputs = [{ getAttribute: () => 'LocationCode', value: 'LYO01' }];
+  await new RowEdit().run({ $variables: v }, { event: {
+    detail: { rowContext: { item: { metadata: { key: 'L1' } } } },
+    target: { querySelectorAll: () => inputs } } });
+  check('ligne editee : valeur relue, statut a controler, retour au controle',
+    v.sheets[0].rows[0].LocationCode === 'LYO01' && v.sheets[0].rows[0].statusLabel === 'a controler'
+    && v.step === 'review' && v.armedAction === '');
 
   // 6. Import : l'objet de chaque fichier est reconnu a ses colonnes.
   v = vars('Location', 'MERGE', []);
@@ -219,6 +262,12 @@ async function main() {
   check('les trois autres lignes sont marquees chargees', s0[0].loaded && s0[2].loaded && s0[3].loaded && !s0[1].loaded);
   check('bilan : 3 acceptees, 1 rejetee', v.loadSummary.accepted === 3 && v.loadSummary.rejected === 1);
   check('question a l\'agent en termes metier, sans JSON', /Ressources Humaines/.test(v.question) && v.question.indexOf('{') === -1);
+  restStub = async () => ({ body: { items: [{ DataSetStatusCode: 'ORA_IN_PROGRESS', DataSetStatusMeaning: 'In progress',
+    ImportStatusMeaning: 'Success', messages: { items: [] } }] } });
+  const before = v.sheets[0].rows.map((r) => r.statusLabel).join(',');
+  await new Status().run({ $variables: v }, { auto: false });
+  check('statut inconnu : le job reste en cours, aucune ligne remarquee',
+    v.loadSummary.finished === false && v.sheets[0].rows.map((r) => r.statusLabel).join(',') === before);
   v.step = 'submit'; v.countIssues = 0;
   await new Download().run({ $variables: v }, {});
   const dat4 = blobs.pop() || '';

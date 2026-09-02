@@ -1,29 +1,38 @@
 <div class="hdl-shell oj-flex oj-sm-flex-direction-column">
 
+  <!-- En-tete : le titre, le dossier en cours, et deux gestes au plus. -->
   <div class="hdl-bar oj-flex oj-sm-align-items-center oj-sm-padding-3x-horizontal">
     <span class="oj-typography-semi-bold oj-text-color-primary">Chargement en masse HCM</span>
     <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1">
       <oj-bind-text value="[[ $variables.opened
         ? $variables.hierarchy + ' · ' + $page.functions.operationLabel($variables.operation)
-        : 'Nouveau dossier' ]]"></oj-bind-text>
+        : '' ]]"></oj-bind-text>
     </span>
-    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 20</span>
+    <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end">build 21</span>
     <oj-bind-if test="[[ $variables.opened ]]">
       <oj-c-button label="[[ $variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
                    chroming="borderless" size="sm" button-type="button"
                    on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
+      <oj-c-button label="Abandonner le dossier" chroming="borderless" size="sm" button-type="button"
+                   disabled="[[ $variables.isThinking || $variables.isChecking || $variables.isLoading ]]"
+                   on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
     </oj-bind-if>
-    <oj-c-button label="Nouveau dossier" chroming="borderless" size="sm" button-type="button"
-                 disabled="[[ $variables.isThinking || $variables.isChecking || $variables.isLoading ]]"
-                 on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
   </div>
 
-  <!-- ECRAN 0 : l'objet, puis l'operation. Cliquer sur une carte choisit
-       l'objet ; cliquer sur une operation ouvre le dossier. Deux gestes, pas
-       trois. Les cartes viennent du catalogue ; le clic est ecoute sur le
-       conteneur, $listeners n'etant pas resolu dans un <template>. -->
+  <!-- ACCUEIL : l'objet, puis l'operation. Cliquer sur une carte choisit
+       l'objet ; cliquer sur une operation ouvre le dossier. Le clic est ecoute
+       sur le conteneur, $listeners n'etant pas resolu dans un <template>. -->
   <oj-bind-if test="[[ !$variables.opened ]]">
     <div class="hdl-entry oj-sm-padding-6x">
+
+      <oj-bind-if test="[[ $variables.lastDossier ]]">
+        <div class="hdl-panel oj-sm-padding-3x oj-sm-margin-5x-bottom">
+          <span class="oj-typography-body-xs oj-text-color-secondary">Dernier dossier</span>
+          <div class="oj-typography-body-sm oj-text-color-primary"><oj-bind-text value="[[ $variables.lastDossier ]]"></oj-bind-text></div>
+          <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top">Le detail
+            reste consultable dans Oracle : Data Exchange, Import and Load Data.</div>
+        </div>
+      </oj-bind-if>
 
       <h1 class="oj-typography-heading-sm oj-text-color-primary oj-sm-margin-0 oj-sm-margin-1x-bottom">1.
         Que voulez-vous charger ?</h1>
@@ -89,25 +98,15 @@
   </oj-bind-if>
 
   <oj-bind-if test="[[ $variables.opened ]]">
+
+  <!-- Le train Redwood : ou l'on est. Seule l'etape courante est active,
+       c'est l'action de l'ecran qui fait avancer. -->
+  <div class="hdl-train oj-sm-padding-2x-vertical">
+    <oj-c-train steps="[[ $page.functions.getTrainSteps($variables.step) ]]"
+                selected-step="[[ $variables.step ]]"></oj-c-train>
+  </div>
+
   <div class="hdl-body oj-flex">
-
-    <!-- Rail : ou l'on est, et les etapes deja faites. Rien d'autre. -->
-    <div class="hdl-rail oj-sm-padding-4x">
-      <div class="oj-typography-body-xs oj-text-color-secondary">Dossier</div>
-      <div class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary"><oj-bind-text
-        value="[[ $variables.hierarchy ]]"></oj-bind-text></div>
-      <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-4x-bottom"><oj-bind-text
-        value="[[ $page.functions.operationLabel($variables.operation) ]]"></oj-bind-text></div>
-
-      <oj-bind-for-each data="[[ $page.functions.getSteps($variables.step) ]]">
-        <template>
-          <div :class="[[ $current.data.cls ]]">
-            <span class="hdl-step-marker oj-typography-body-xs"><oj-bind-text value="[[ $current.data.marker ]]"></oj-bind-text></span>
-            <span class="oj-typography-body-sm oj-sm-margin-2x-start"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
-          </div>
-        </template>
-      </oj-bind-for-each>
-    </div>
 
     <!-- Zone centrale : un ecran par etape. -->
     <div class="hdl-plan oj-sm-padding-4x">
@@ -115,7 +114,7 @@
       <div class="oj-flex oj-sm-align-items-baseline oj-sm-margin-3x-bottom">
         <h1 class="oj-typography-heading-sm oj-text-color-primary oj-sm-margin-0 oj-sm-flex-1"><oj-bind-text
           value="[[ $page.functions.stepTitle($variables.step) ]]"></oj-bind-text></h1>
-        <oj-bind-if test="[[ $variables.summaryText && $variables.step === 'data' ]]">
+        <oj-bind-if test="[[ $variables.summaryText && $variables.step !== 'result' ]]">
           <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $variables.summaryText ]]"></oj-bind-text></span>
         </oj-bind-if>
       </div>
@@ -153,7 +152,7 @@
       </oj-bind-if>
 
       <!-- ETAPE 2 : CONTROLER. Le resultat en phrases, l'action suivante en
-           une ligne, et la grille qui porte l'etat de chaque ligne. -->
+           une ligne, et la grille, editable, qui porte l'etat de chaque ligne. -->
       <oj-bind-if test="[[ $variables.step === 'review' ]]">
         <div class="hdl-panel oj-sm-padding-3x oj-sm-margin-3x-bottom">
           <oj-bind-for-each data="[[ $page.functions.resultSentences($variables.checkSummary, $variables.operation) ]]">
@@ -165,18 +164,12 @@
             value="[[ $page.functions.nextAction($variables.checkSummary, $variables.hasAutoFix, $variables.hasProposal) ]]"></oj-bind-text></div>
         </div>
         <div class="hdl-actions oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
-          <oj-c-button label="[[ $variables.isChecking ? 'Controle en cours...' : 'Recontroler' ]]"
-                       button-type="button" size="sm" chroming="callToAction"
+          <oj-c-button label="[[ $variables.isChecking ? 'Controle en cours...' : 'Recontroler le dossier' ]]"
+                       button-type="button" size="lg" chroming="callToAction"
                        disabled="[[ $variables.isThinking || $variables.isChecking ]]"
                        on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
-          <oj-c-button label="Exporter pour corriger dans Excel" button-type="button" size="sm"
-                       chroming="outlined" class="oj-sm-margin-2x-start"
-                       on-oj-action="[[ $listeners.onExport ]]"></oj-c-button>
-          <div class="hdl-drop-compact oj-sm-margin-2x-start">
-            <oj-c-file-picker accept='["text/csv",".csv",".txt"]' selection-mode="multiple"
-                              primary-text="Redeposer un fichier corrige" secondary-text=""
-                              on-oj-select="[[ $listeners.onFilePick ]]"></oj-c-file-picker>
-          </div>
+          <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-start">Pour corriger
+            une ligne : double-clic dessus, modifiez, puis Entree.</span>
         </div>
       </oj-bind-if>
 
@@ -235,8 +228,9 @@
         </div>
       </oj-bind-if>
 
-      <!-- ETAPE 4 : SUIVRE. Le job, en trois phases, rafraichi tout seul ; puis
-           le bilan en une phrase et les rejets en clair. -->
+      <!-- ETAPE 4 : SUIVRE. Le job, en trois phases, rafraichi tout seul et
+           visiblement ; puis le bilan en une phrase, les rejets en clair, et
+           la suite qui s'impose : corriger, ou terminer. -->
       <oj-bind-if test="[[ $variables.step === 'result' ]]">
         <div class="hdl-panel oj-sm-padding-3x oj-sm-margin-3x-bottom">
           <div class="oj-flex oj-sm-align-items-center oj-sm-margin-2x-bottom">
@@ -245,7 +239,9 @@
             </oj-bind-if>
             <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1"><oj-bind-text value="[[ $variables.loadStatus ]]"></oj-bind-text></span>
             <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
-              value="[[ $variables.lastRefresh ? 'Derniere lecture ' + $variables.lastRefresh : '' ]]"></oj-bind-text></span>
+              value="[[ $variables.isPolling
+                ? ($variables.nextRefreshIn ? 'Prochaine lecture dans ' + $variables.nextRefreshIn + ' s' : 'Lecture en cours...')
+                : ($variables.lastRefresh ? 'Derniere lecture ' + $variables.lastRefresh : '') ]]"></oj-bind-text></span>
           </div>
           <div class="oj-typography-body-sm oj-text-color-primary oj-sm-margin-2x-bottom"><oj-bind-text
             value="[[ $page.functions.loadSentence($variables.loadSummary) || $variables.loadDetail ]]"></oj-bind-text></div>
@@ -260,7 +256,7 @@
           </oj-bind-if>
 
           <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-top"><oj-bind-text
-            value="[[ $variables.isPolling ? 'Actualisation automatique toutes les dix secondes.' : 'RequestId ' + $variables.requestId ]]"></oj-bind-text></div>
+            value="[[ 'Reference Oracle : RequestId ' + $variables.requestId + ($variables.dataSetName ? ', jeu ' + $variables.dataSetName : '') ]]"></oj-bind-text></div>
         </div>
 
         <oj-bind-if test="[[ $page.functions.getRejects($variables.rejects).length ]]">
@@ -275,7 +271,7 @@
               </template>
             </oj-bind-for-each>
             <div class="oj-typography-body-xs oj-text-color-secondary">L'assistant explique chaque rejet
-              dans le panneau de droite et propose la correction quand elle est certaine.</div>
+              a droite. Corrigez ensuite la ligne dans la grille, puis rechargez.</div>
           </div>
         </oj-bind-if>
 
@@ -290,33 +286,24 @@
             <oj-c-button label="Terminer le dossier" button-type="button" size="lg"
                          chroming="[[ $variables.loadSummary.rejected ? 'outlined' : 'callToAction' ]]"
                          class="oj-sm-margin-2x-start"
+                         disabled="[[ $variables.isThinking ]]"
                          on-oj-action="[[ $listeners.onFinish ]]"></oj-c-button>
           </oj-bind-if>
-          <oj-c-button label="Actualiser" button-type="button" size="sm" chroming="borderless"
-                       class="oj-sm-margin-3x-start"
-                       disabled="[[ $variables.isPolling || $variables.isThinking ]]"
-                       on-oj-action="[[ $listeners.onCheckLoad ]]"></oj-c-button>
+          <oj-bind-if test="[[ !$variables.loadSummary.finished && !$variables.isPolling ]]">
+            <oj-c-button label="Relire le statut" button-type="button" size="sm" chroming="outlined"
+                         disabled="[[ $variables.isThinking ]]"
+                         on-oj-action="[[ $listeners.onCheckLoad ]]"></oj-c-button>
+          </oj-bind-if>
           <oj-c-button label="Telecharger le .dat envoye" button-type="button" size="sm"
-                       chroming="borderless"
+                       chroming="borderless" class="oj-sm-margin-3x-start"
                        on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
         </div>
       </oj-bind-if>
 
-      <!-- ETAPE 5 : TERMINE. -->
-      <oj-bind-if test="[[ $variables.step === 'done' ]]">
-        <div class="hdl-panel oj-sm-padding-4x oj-sm-margin-3x-bottom">
-          <div class="oj-typography-body-md oj-text-color-primary oj-sm-margin-2x-bottom"><oj-bind-text
-            value="[[ $page.functions.loadSentence($variables.loadSummary) || 'Dossier clos sans chargement.' ]]"></oj-bind-text></div>
-          <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-bottom"><oj-bind-text
-            value="[[ $variables.requestId ? 'Reference Oracle : RequestId ' + $variables.requestId + '. Retrouvez le detail dans Data Exchange > Import and Load Data.' : '' ]]"></oj-bind-text></div>
-          <oj-c-button label="Nouveau dossier" button-type="button" size="lg" chroming="callToAction"
-                       on-oj-action="[[ $listeners.onReset ]]"></oj-c-button>
-        </div>
-      </oj-bind-if>
-
-      <!-- La grille : les feuilles en onglets, l'etat de chaque ligne dedans.
-           Presente a chaque etape des qu'il y a des donnees. -->
-      <oj-bind-if test="[[ $variables.sheets.length ]]">
+      <!-- La grille : les feuilles en onglets, l'etat de chaque ligne dedans,
+           et la correction directement dans la cellule (double-clic sur la
+           ligne). Absente pendant le suivi : la, seul le job compte. -->
+      <oj-bind-if test="[[ $variables.sheets.length && $variables.step !== 'result' ]]">
         <div class="hdl-tabs oj-flex oj-sm-align-items-center" on-click="[[ $listeners.onSelectSheet ]]">
           <oj-bind-for-each data="[[ $page.functions.getSheets($variables.sheets, $variables.activeSheet) ]]">
             <template>
@@ -327,34 +314,42 @@
               </div>
             </template>
           </oj-bind-for-each>
+          <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text
+            value="[[ $variables.sheets[$variables.activeSheet] ? $variables.sheets[$variables.activeSheet].fileName : '' ]]"></oj-bind-text></span>
           <oj-bind-if test="[[ $variables.sheets.length > 1 && $variables.step === 'data' ]]">
             <oj-c-button label="[[ $variables.armedAction === 'removeSheet' ? 'Confirmer le retrait' : 'Retirer cette feuille' ]]"
                          button-type="button" size="sm" chroming="borderless"
                          on-oj-action="[[ $listeners.onRemoveSheet ]]"></oj-c-button>
           </oj-bind-if>
         </div>
-        <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-bottom"><oj-bind-text
-          value="[[ $variables.sheets[$variables.activeSheet] ? $variables.sheets[$variables.activeSheet].fileName : '' ]]"></oj-bind-text></div>
         <div class="hdl-table-scroll">
           <oj-c-table class="hdl-table"
                       data="[[ $page.functions.getRowsDP($variables.sheets, $variables.activeSheet) ]]"
                       columns="[[ $page.functions.getTableColumns($variables.sheets, $variables.activeSheet, $variables.step) ]]"
                       layout="fixed"
-                      vertical-grid-visible="enabled"></oj-c-table>
+                      edit-mode="rowEdit"
+                      vertical-grid-visible="enabled"
+                      on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">
+            <template slot="editCell">
+              <oj-c-input-text value="{{ $current.item.data[$current.columnKey] }}"
+                               label-hint="[[ $current.columnKey ]]" label-edge="none"
+                               :data-column="[[ $current.columnKey ]]"></oj-c-input-text>
+            </template>
+          </oj-c-table>
         </div>
       </oj-bind-if>
 
     </div>
 
-    <!-- Assistant : contextuel, et ses propositions sont applicables ou
-         ignorables. Rien ne modifie le dossier sans geste explicite. -->
+    <!-- Assistant : sa derniere reponse, ses propositions applicables ou
+         ignorables, et une question. Rien ne modifie le dossier sans geste
+         explicite. -->
     <oj-bind-if test="[[ $variables.assistOpen ]]">
     <div class="hdl-assist oj-flex oj-sm-flex-direction-column">
 
-      <div class="hdl-assist-head oj-sm-padding-3x">
-        <span class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary">Assistant</span>
-        <div class="oj-typography-body-xs oj-text-color-secondary">Il analyse le dossier a chaque
-          controle et apres chaque chargement.</div>
+      <div class="hdl-assist-head oj-sm-padding-3x oj-flex oj-sm-align-items-center">
+        <span class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
+        <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $page.functions.olderTurns($variables.turns) ]]"></oj-bind-text></span>
       </div>
 
       <div class="hdl-assist-thread oj-sm-padding-3x">
@@ -389,19 +384,10 @@
           </div>
         </oj-bind-if>
 
-        <oj-bind-if test="[[ $variables.appliedNote || ($variables.summaryText && $variables.step !== 'data') ]]">
+        <oj-bind-if test="[[ $variables.appliedNote ]]">
           <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-bottom"><oj-bind-text
-            value="[[ $variables.appliedNote || $variables.summaryText ]]"></oj-bind-text></div>
+            value="[[ $variables.appliedNote ]]"></oj-bind-text></div>
         </oj-bind-if>
-
-        <oj-bind-for-each data="[[ $variables.turns ]]">
-          <template>
-            <div class="hdl-turn oj-sm-margin-3x-bottom">
-              <div class="hdl-a oj-typography-body-sm oj-text-color-primary"><oj-bind-text value="[[ $current.data.answer ]]"></oj-bind-text></div>
-              <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $current.data.meta ]]"></oj-bind-text></div>
-            </div>
-          </template>
-        </oj-bind-for-each>
 
         <oj-bind-if test="[[ $variables.isThinking ]]">
           <div class="hdl-turn oj-sm-margin-3x-bottom">
@@ -410,6 +396,19 @@
               <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $variables.currentStep ]]"></oj-bind-text></span>
             </div>
           </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ !$variables.isThinking && $page.functions.lastTurn($variables.turns) ]]">
+          <div class="hdl-turn oj-sm-margin-3x-bottom">
+            <div class="hdl-a oj-typography-body-sm oj-text-color-primary"><oj-bind-text value="[[ $page.functions.lastTurn($variables.turns).answer ]]"></oj-bind-text></div>
+            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $page.functions.lastTurn($variables.turns).meta ]]"></oj-bind-text></div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ !$variables.isThinking && !$page.functions.lastTurn($variables.turns) && !$variables.hasProposal && !$variables.hasAutoFix ]]">
+          <div class="oj-typography-body-sm oj-text-color-secondary">L'assistant lit le dossier a
+            chaque controle et apres chaque chargement. Il explique les anomalies et propose des
+            corrections, que vous appliquez ou non.</div>
         </oj-bind-if>
 
         <oj-bind-if test="[[ $variables.errorText ]]">
@@ -448,15 +447,14 @@
     <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-2x"><oj-bind-text value="[[ $variables.errorText ]]"></oj-bind-text></div>
   </oj-bind-if>
 
-  <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-padding-2x-horizontal oj-sm-padding-2x-bottom">Aucun
-    chargement n'est declenche sans validation explicite de votre part.</div>
-
 </div>
 
 <style>
+  /* La page tient dans la fenetre : c'est la zone centrale qui defile, et
+     la question a l'assistant reste toujours visible en bas a droite. */
   .hdl-shell {
-    height: 100%;
-    min-height: 34rem;
+    block-size: calc(100vh - 8rem);
+    min-block-size: 28rem;
     max-inline-size: 100%;
     min-inline-size: 0;
     background-color: var(--oj-core-bg-color-content);
@@ -466,7 +464,13 @@
   }
 
   .hdl-bar {
+    flex: none;
     min-height: 3rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-train {
+    flex: none;
     border-bottom: 1px solid var(--oj-core-divider-color);
   }
 
@@ -535,44 +539,6 @@
     min-inline-size: 0;
     align-items: stretch;
     flex-wrap: nowrap;
-  }
-
-  .hdl-rail {
-    flex: 0 0 12rem;
-    border-inline-end: 1px solid var(--oj-core-divider-color);
-    overflow-y: auto;
-  }
-
-  .hdl-step {
-    display: flex;
-    align-items: center;
-    padding-block: 0.5rem;
-    color: var(--oj-core-text-color-secondary);
-  }
-
-  .hdl-step-courante {
-    color: var(--oj-core-text-color-primary);
-    font-weight: 600;
-  }
-
-  .hdl-step-marker {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
-    border-radius: 50%;
-    border: 1px solid var(--oj-core-divider-color);
-    flex: none;
-  }
-
-  .hdl-step-courante .hdl-step-marker {
-    border-color: var(--oj-core-text-color-primary);
-    border-width: 2px;
-  }
-
-  .hdl-step-faite .hdl-step-marker {
-    background-color: var(--oj-core-bg-color-subtle);
   }
 
   /* La zone centrale defile seule : la page ne grandit jamais, on ne se
@@ -663,11 +629,19 @@
   .hdl-dot-ok { background-color: var(--oj-core-success-3, #197a56); }
   .hdl-dot-anomalie { background-color: var(--oj-core-danger-3, #c74634); }
 
+  /* La grille prend la place qui reste et defile elle-meme, dans les deux
+     sens : elle ne pousse jamais l'assistant hors de l'ecran. */
   .hdl-table-scroll {
-    flex: none;
+    flex: 1 1 auto;
+    min-block-size: 14rem;
+    min-inline-size: 0;
     inline-size: 100%;
-    max-inline-size: 100%;
-    overflow-x: auto;
+    overflow: hidden;
+  }
+
+  .hdl-table {
+    inline-size: 100%;
+    block-size: 100%;
   }
 
   .hdl-empty {
@@ -678,12 +652,6 @@
 
   .hdl-subtitle {
     max-width: 36rem;
-  }
-
-  .hdl-table {
-    inline-size: max-content;
-    min-inline-size: 100%;
-    block-size: 20rem;
   }
 
   .hdl-assist {
@@ -706,6 +674,7 @@
   }
 
   .hdl-assist-head {
+    flex: none;
     border-bottom: 1px solid var(--oj-core-divider-color);
   }
 
@@ -716,6 +685,7 @@
   }
 
   .hdl-assist-composer {
+    flex: none;
     border-top: 1px solid var(--oj-core-divider-color);
   }
 

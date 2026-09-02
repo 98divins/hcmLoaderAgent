@@ -2,60 +2,51 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
   'use strict';
 
   // Etapes du dossier, dans l'ordre ou l'utilisateur les traverse. Chaque etape
-  // est un ecran : on n'y voit que ce qui compte a ce moment-la.
+  // est un ecran : on n'y voit que ce qui compte a ce moment-la. Terminer
+  // ramene a l'accueil, ce n'est pas un ecran.
   const STEPS = [
     { id: 'data', label: 'Importer', title: 'Apportez vos donnees' },
     { id: 'review', label: 'Controler', title: 'Controle du dossier' },
     { id: 'submit', label: 'Charger', title: 'Le dossier est pret a partir' },
-    { id: 'result', label: 'Suivre', title: 'Suivi du chargement' },
-    { id: 'done', label: 'Terminer', title: 'Dossier termine' }
+    { id: 'result', label: 'Suivre', title: 'Suivi du chargement' }
   ];
-
-  const STATE_LABELS = {
-    ok: 'OK',
-    erreur: 'Erreur',
-    'a verifier': 'A verifier',
-    'a controler': 'A controler',
-    chargee: 'Chargee'
-  };
 
   function activeSheet(sheets, index) {
     return (sheets || [])[index || 0] || { columns: [], rows: [] };
   }
 
-  function plural(n, word, fem) {
-    const e = fem ? 'e' : '';
-    return `${n} ${word}${e}${n > 1 ? 's' : ''}`;
+  function plural(n, word) {
+    return `${n} ${word}${n > 1 ? 's' : ''}`;
   }
 
   class PageModule {
 
     /**
-     * oj-c-table exige un vrai DataProvider : un tableau JS brut donne
-     * "Invalid data type". La cle est portee par la ligne elle-meme.
+     * oj-c-table exige un vrai DataProvider. Il enveloppe les lignes elles-memes,
+     * pas des copies : une cellule editee ecrit dans la ligne du dossier, et le
+     * controle qui suit lit ce que l'utilisateur a tape.
      */
     getRowsDP(sheets, index) {
-      const rows = (activeSheet(sheets, index).rows || []).map((row) => Object.assign({}, row, {
-        etat: STATE_LABELS[row.statusLabel] || row.statusLabel || ''
-      }));
-      return new ArrayDataProvider(rows, { keyAttributes: 'rowKey' });
+      return new ArrayDataProvider(activeSheet(sheets, index).rows || [],
+        { keyAttributes: 'rowKey' });
     }
 
     /**
      * Les colonnes sont construites a l'execution a partir de celles de la
-     * feuille. Avant le controle, la grille ne montre que les donnees : l'etat
-     * et le detail n'ont rien a dire. Apres, ils viennent en tete, et le
-     * rapprochement seulement s'il a ete fait.
+     * feuille. Avant le controle, la grille ne montre que les donnees. Apres,
+     * l'etat et le detail viennent en tete. Chaque colonne de donnees porte le
+     * modele d'edition : la correction se fait dans la grille, comme dans une
+     * feuille HSDL.
      */
     getTableColumns(sheets, index, step) {
       const list = [];
       if (step !== 'data') {
-        list.push({ field: 'etat', headerText: 'Etat', weight: 1, minWidth: 90 });
-        list.push({ field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 220 });
-        list.push({ field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 160 });
+        list.push({ field: 'etat', headerText: 'Etat', weight: 1, minWidth: 96 });
+        list.push({ field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 240 });
+        list.push({ field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 180 });
       }
       (activeSheet(sheets, index).columns || []).forEach((name) => {
-        list.push({ field: name, headerText: name, weight: 2 });
+        list.push({ field: name, headerText: name, weight: 2, minWidth: 150, editTemplate: 'editCell' });
       });
       return list;
     }
@@ -67,26 +58,24 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
 
     getPhaseColumns() {
       return [
-        { field: 'Etape', headerText: 'Etape', weight: 2 },
-        { field: 'Etat', headerText: 'Etat', weight: 3 },
-        { field: 'Avancement', headerText: 'Avancement', weight: 2 }
+        { field: 'Etape', headerText: 'Etape', weight: 1 },
+        { field: 'Etat', headerText: 'Etat', weight: 3 }
       ];
     }
 
-    /** Le rail : chaque etape sait si elle est faite, courante ou a venir. */
-    getSteps(step) {
+    /**
+     * Les etapes pour le train Redwood. Seule l'etape courante est active : le
+     * train montre ou l'on est, on n'y navigue pas, c'est l'action de l'ecran
+     * qui fait avancer.
+     */
+    getTrainSteps(step) {
       const current = STEPS.map((s) => s.id).indexOf(step);
-      return STEPS.map((s, index) => {
-        let state = 'a-venir';
-        if (index < current) { state = 'faite'; }
-        if (index === current) { state = 'courante'; }
-        return {
-          id: s.id,
-          label: s.label,
-          marker: index < current ? 'OK' : String(index + 1),
-          cls: `hdl-step hdl-step-${state}`
-        };
-      });
+      return STEPS.map((s, index) => ({
+        id: s.id,
+        label: s.label,
+        visited: index < current,
+        disabled: index !== current
+      }));
     }
 
     /** Titre de l'ecran courant : dit ou l'on est et ce qu'on y fait. */
@@ -134,17 +123,13 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
           description: tree[id].description || '',
           objects: `${1 + children} objet${children ? 's' : ''} : ${top.uiName || id}`
             + (children ? ` et ${plural(children, 'objet')} enfant${children > 1 ? 's' : ''}` : ''),
-          userKey: (top.userKey || []).join(' + '),
           cls: id === selected ? 'hdl-card hdl-card-choisie' : 'hdl-card',
           action: id === selected ? 'Objet retenu' : 'Cliquer pour choisir'
         };
       });
     }
 
-    /**
-     * Objets que le dossier peut encore accueillir. Sert a dire a l'utilisateur
-     * quels fichiers il peut encore deposer, pas a lui faire choisir.
-     */
+    /** Objets que le dossier peut encore accueillir, pour dire quels fichiers deposer. */
     getAddableObjects(catalog, hierarchy, operation, sheets) {
       const tree = ((catalog || {}).hierarchies || {})[hierarchy];
       if (!tree) { return []; }
@@ -207,8 +192,7 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
 
     /**
      * Le resultat du controle, dit en phrases. Les chiffres sont la, mais c'est
-     * la phrase qui se lit : "3 lignes creeront un enregistrement" plutot qu'un
-     * compteur sous une etiquette technique.
+     * la phrase qui se lit.
      */
     resultSentences(summary, operation) {
       const s = summary || {};
@@ -232,7 +216,7 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
         if (m.missing) {
           out.push(`${plural(m.missing, 'ligne')} enfant${m.missing > 1 ? 's' : ''} designe${m.missing > 1 ? 'nt' : ''} `
             + 'un parent qui n\'existe ni dans le dossier ni dans Oracle : corrigez le nom du '
-            + 'parent, ou ajoutez-le a la feuille parent.');
+            + 'parent dans la grille, ou ajoutez-le a la feuille parent.');
         }
         if (m.unverified) {
           out.push(`${plural(m.unverified, 'ligne')} n'${m.unverified > 1 ? 'ont' : 'a'} pas pu etre `
@@ -253,10 +237,11 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       if (!s.rows) { return ''; }
       if (s.issues) {
         if (hasAutoFix || hasProposal) {
-          return 'Appliquez les corrections proposees dans le panneau de droite, puis recontrolez.';
+          return 'Appliquez les corrections proposees a droite, ou corrigez directement '
+            + 'dans la grille (double-clic sur une ligne), puis recontrolez.';
         }
-        return 'Corrigez les lignes en erreur : exportez, modifiez dans Excel, redeposez le '
-          + 'fichier, puis recontrolez. L\'assistant peut vous guider.';
+        return 'Corrigez les lignes en erreur directement dans la grille : double-clic sur la '
+          + 'ligne, modifiez, puis recontrolez. L\'assistant explique chaque anomalie a droite.';
       }
       return 'Aucune anomalie bloquante : vous pouvez passer au chargement.';
     }
@@ -266,8 +251,7 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * Une suppression est nommee comme telle.
      */
     confirmText(hierarchy, operation, sheets) {
-      const pending = (sheets || []).reduce((sum, sheet) => sum
-        + (sheet.rows || []).filter((r) => !r.loaded).length, 0);
+      const pending = this.pendingRows(sheets);
       const filled = (sheets || []).filter((sheet) => (sheet.rows || []).some((r) => !r.loaded)).length;
       const lines = plural(pending, 'ligne');
       const feuilles = plural(filled, 'feuille');
@@ -314,6 +298,20 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       }));
     }
 
+    /**
+     * La derniere reponse de l'assistant, seule. L'historique empile devenait
+     * illisible et contredisait l'etat courant : ce qui compte est la reponse
+     * au dernier controle ou au dernier chargement.
+     */
+    lastTurn(turns) {
+      const list = turns || [];
+      return list.length ? list[list.length - 1] : null;
+    }
+
+    olderTurns(turns) {
+      const n = Math.max(0, (turns || []).length - 1);
+      return n ? `${plural(n, 'reponse')} precedente${n > 1 ? 's' : ''} masquee${n > 1 ? 's' : ''}` : '';
+    }
   }
 
   return PageModule;

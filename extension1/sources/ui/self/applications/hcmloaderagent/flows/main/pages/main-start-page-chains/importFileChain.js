@@ -139,7 +139,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     const rows = [];
     for (let i = 1; i < lines.length; i += 1) {
       const values = parseCsvLine(lines[i], separator);
-      const row = { rowKey: `L${i}`, statusLabel: 'a controler', statusDetail: '', matchLabel: '' };
+      const row = { rowKey: `L${i}`, statusLabel: 'a controler', etat: 'A controler', statusDetail: '', matchLabel: '' };
       headers.forEach((header, position) => {
         const value = values[keptIndexes[position]];
         row[header] = value === undefined ? '' : value;

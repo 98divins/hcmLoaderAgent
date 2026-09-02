@@ -81,3 +81,36 @@ qu'ils ne changent ni l'architecture ni la vision. Ils sont réversibles.
 - [x] Défaut : une valeur de remplacement de l'assistant ("à fournir") était
       appliquée. Refusée par la page, interdite par le prompt (v9).
 - [x] Agent v9 : parler métier, jamais de JSON ni de rowKey en premier.
+
+## Itération 7 — deuxième test utilisateur (build 21, agent v10)
+
+- [x] Défaut : l'assistant proposait `CategoryCode = "undefined"` et la page
+      l'écrivait. Refusé par la page (`undefined`, `null`, vide), interdit par le
+      prompt, et l'agent ne propose plus de valeur pour un attribut dont ni la
+      spécification ni le fichier ne donnent les valeurs possibles.
+- [x] Défaut : un site inexistant (`MAR01`) n'était vu qu'au rejet Oracle
+      (« valid value for the LocationId attribute… 0,MAR01 »). Le contrôle
+      vérifie désormais l'existence des références vers un autre objet
+      (site d'une organisation, site de livraison…) dans le tenant, et l'agent
+      sait lire ce message : « 0, » n'est pas un préfixe à retirer.
+- [x] Défaut : l'agent concluait « pas de problème » alors que la grille en
+      montrait. La question de la page porte le verdict du contrôle ; le prompt
+      interdit de conclure à l'inverse.
+- [x] Défaut : « Terminer le dossier » apparaissait puis disparaissait. Un
+      statut inconnu vaut « en cours » ; seule une fin connue termine le suivi.
+- [x] Page trop haute, grille coupée par l'assistant, question invisible : la
+      page tient dans la fenêtre, la grille prend la place restante et défile
+      seule, la question reste en bas à droite.
+- [x] Rail remplacé par le train Redwood (`oj-c-train`) en tête de page, comme
+      les pages Oracle Import and Load Data.
+- [x] Correction directement dans la grille (double-clic sur la ligne), comme
+      dans une feuille HSDL. Export et ré-import retirés.
+- [x] Assistant : seule la dernière réponse est affichée, les précédentes sont
+      comptées, pas empilées.
+- [x] Suivi : compte à rebours « prochaine lecture dans N s » avec l'indicateur
+      qui tourne ; « Relire le statut » n'apparaît que si la lecture automatique
+      s'est arrêtée avant la fin ; « Corriger et recharger » apparaît seul dès
+      qu'il y a des rejets ; « Terminer » ramène à l'accueil, qui garde le bilan.
+- [x] Phrase de bas de page et étape « Terminé » supprimées.
+- [ ] À vérifier en exécution : `oj-c-train` et l'édition de ligne `oj-c-table`
+      dans la version JET du pod.

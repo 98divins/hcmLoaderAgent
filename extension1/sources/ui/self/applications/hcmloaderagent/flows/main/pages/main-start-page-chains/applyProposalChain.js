@@ -63,11 +63,18 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         // Une valeur de remplacement n'est pas une valeur : "a fournir" ecrit
         // tel quel dans Oracle est un chargement faux. La regle vaut pour
         // l'assistant comme pour toute autre source.
-        const PLACEHOLDER = /^(a fournir|à fournir|valeur[_ ]?existante|valeur|todo|tbd|n\/a|na|xxx+|\?+|\.\.\.|<[^>]*>|\[[^\]]*\])$/i;
+        const PLACEHOLDER = /^(a fournir|à fournir|valeur[_ ]?existante|valeur|todo|tbd|n\/a|na|xxx+|\?+|\.\.\.|<[^>]*>|\[[^\]]*\]|undefined|null|none|vide|inconnu)$/i;
         asIssues.forEach((item) => {
           if (!item || !item.rowRef || !item.field) { skipped += 1; return; }
-          const proposed = String(item.suggestedValue === undefined ? '' : item.suggestedValue).trim();
-          if (PLACEHOLDER.test(proposed) || /fournir/i.test(proposed)) {
+          // Une correction sans valeur (l'assistant a signale sans proposer)
+          // n'est pas applicable : "undefined" ecrit dans Oracle est une donnee.
+          if (item.suggestedValue === undefined || item.suggestedValue === null) {
+            skipped += 1;
+            placeholders += 1;
+            return;
+          }
+          const proposed = String(item.suggestedValue).trim();
+          if (proposed === '' || PLACEHOLDER.test(proposed) || /fournir/i.test(proposed)) {
             skipped += 1;
             placeholders += 1;
             return;

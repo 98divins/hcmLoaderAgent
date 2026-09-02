@@ -479,7 +479,7 @@ def main():
     KEEP_OBJ = ('uiName', 'hierarchy', 'level', 'validOperations', 'userKey',
                 'parent', 'flexfield', 'columnOrder', 'conditionalRules')
     KEEP_ATTR = ('name', 'type', 'required', 'keyType', 'lookup', 'softRequired',
-                 'foreignUserKey')
+                 'foreignUserKey', 'references')
     slim = {
         'keyResolutionOrder': catalogue['keyResolutionOrder'],
         'tailColumns': TAIL_COLUMNS,
