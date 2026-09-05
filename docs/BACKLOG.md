@@ -188,3 +188,17 @@ Demande : chaque page sur un Page Template Redwood, comme le recommande Oracle.
       question toujours visible en bas.
 - [x] Bouton « Contrôler le dossier » en double avec « Continuer » : retiré,
       Continuer lance le contrôle.
+
+## Itération 11 — enregistrement du test (build 25)
+
+- [x] Pastilles d'état sans texte lisible (couleur du texte égale au fond) :
+      couleurs explicites, fond pâle, texte foncé.
+- [x] Colonne Détail tronquée : cellule qui va à la ligne, colonne élargie.
+- [x] Tiroir de l'assistant à largeur variable, qui recouvrait parfois la moitié
+      de la page : largeur fixe (26 rem), marges intérieures, bouton Fermer.
+- [x] Message d'erreur de page hors style : bandeau Redwood d'avertissement.
+- [x] Grille vide à l'arrivée sur Contrôler : un seul DataProvider par tableau
+      de lignes, la grille ne se recharge plus à chaque rafraîchissement.
+- [ ] Assistant : « Vous ne semblez pas autorisé à utiliser cet assistant » dans
+      l'enregistrement. Côté tenant : équipe d'agents `AIAGENTHDL` active et rôle
+      de l'utilisateur. À vérifier avant de juger les réponses de l'agent.

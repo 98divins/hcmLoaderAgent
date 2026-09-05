@@ -182,8 +182,25 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * controle qui suit lit ce que l'utilisateur a tape.
      */
     getRowsDP(sheets, index) {
-      return new ArrayDataProvider(activeSheet(sheets, index).rows || [],
-        { keyAttributes: 'rowKey' });
+      const rows = activeSheet(sheets, index).rows || [];
+      // Un seul DataProvider par tableau de lignes : la grille ne se vide pas
+      // et ne se recharge pas a chaque rafraichissement de la page. Quand une
+      // chaine remplace les lignes, le tableau change et le fournisseur avec.
+      if (!rows.hdlProvider) {
+        Object.defineProperty(rows, 'hdlProvider', {
+          value: new ArrayDataProvider(rows, { keyAttributes: 'rowKey' }),
+          enumerable: false
+        });
+      }
+      return rows.hdlProvider;
+    }
+
+    /** Le message d'erreur de la page, en bandeau Redwood d'avertissement. */
+    getErrorDP(errorText) {
+      const items = errorText ? [{
+        key: 'error', severity: 'warning', closeAffordance: 'off', summary: errorText
+      }] : [];
+      return new ArrayDataProvider(items, { keyAttributes: 'key' });
     }
 
     /**
@@ -196,7 +213,7 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       const editable = step !== 'data';
       if (editable) {
         list.push({ field: 'statusLabel', headerText: 'Etat', width: 110, template: 'etatCell' });
-        list.push({ field: 'statusDetail', headerText: 'Detail', width: 320 });
+        list.push({ field: 'statusDetail', headerText: 'Detail', width: 360, template: 'detailCell' });
         list.push({ field: 'matchLabel', headerText: 'Rapprochement', width: 200 });
       }
       (activeSheet(sheets, index).columns || []).forEach((name) => {

@@ -27,7 +27,10 @@
     </oj-bind-if>
 
     <oj-bind-if test="[[ $flow.variables.errorText && !$flow.variables.assistOpen ]]">
-      <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-3x-bottom"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
+      <div class="oj-sm-margin-3x-bottom">
+        <oj-c-message-banner data="[[ $flow.functions.getErrorDP($flow.variables.errorText) ]]"
+                             type="section"></oj-c-message-banner>
+      </div>
     </oj-bind-if>
 
     <!-- ETAPE 1 : IMPORTER. Une seule zone de depot ; chaque fichier est
@@ -140,6 +143,9 @@
                     vertical-grid-visible="enabled"
                     horizontal-grid-visible="enabled"
                     on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">
+            <template slot="detailCell">
+              <span class="hdl-wrap"><oj-bind-text value="[[ $current.data ]]"></oj-bind-text></span>
+            </template>
             <template slot="etatCell">
               <span :class="[[ 'hdl-etat hdl-etat-' + String($current.row.statusLabel || '').replace(/ /g, '-') ]]"><oj-bind-text
                 value="[[ $flow.functions.etatLabel($current.row.statusLabel) ]]"></oj-bind-text></span>
@@ -167,8 +173,10 @@
                            opened="{{ $flow.variables.assistOpen }}">
         <div class="hdl-assist">
           <div class="hdl-assist-head">
-            <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
-            <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
+            <span class="oj-typography-heading-xs oj-text-color-primary oj-sm-flex-1">Assistant</span>
+            <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
+            <oj-c-button label="Fermer" chroming="borderless" size="sm" button-type="button"
+                         on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
           </div>
           <div class="hdl-assist-thread">
             <oj-bind-if test="[[ $flow.variables.hasAutoFix ]]">
@@ -409,8 +417,10 @@
                            opened="{{ $flow.variables.assistOpen }}">
         <div class="hdl-assist">
           <div class="hdl-assist-head">
-            <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
-            <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
+            <span class="oj-typography-heading-xs oj-text-color-primary oj-sm-flex-1">Assistant</span>
+            <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-end"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
+            <oj-c-button label="Fermer" chroming="borderless" size="sm" button-type="button"
+                         on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
           </div>
           <div class="hdl-assist-thread">
             <oj-bind-if test="[[ $flow.variables.hasProposal ]]">
@@ -660,14 +670,11 @@
 
   /* Tiroir de l'assistant : il glisse depuis le bord droit par-dessus la
      page, sans rien deplacer ; une colonne, la question toujours en bas. */
-  .hdl-assist-popup {
-    inline-size: 26rem;
-    max-inline-size: 100vw;
-  }
-
   .hdl-assist {
     display: flex;
     flex-direction: column;
+    inline-size: 26rem;
+    max-inline-size: 90vw;
     block-size: 100%;
     min-block-size: 0;
     background-color: var(--oj-core-bg-color-content);
@@ -676,7 +683,7 @@
   .hdl-assist-head {
     display: flex;
     align-items: center;
-    padding: 1rem 1rem 0.75rem;
+    padding: 1.25rem 1rem 0.75rem 1.5rem;
     border-bottom: 1px solid var(--oj-core-divider-color);
   }
 
@@ -684,13 +691,19 @@
     flex: 1 1 auto;
     min-block-size: 0;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1rem 1.5rem;
   }
 
   .hdl-assist-composer {
     flex: none;
-    padding: 0.75rem 1rem 1rem;
+    padding: 0.75rem 1.5rem 1.25rem;
     border-top: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-wrap {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
   }
 
   .hdl-proposal {
@@ -719,7 +732,8 @@
     font-size: 0.8125rem;
   }
 
-  .hdl-etat-erreur { background-color: var(--oj-core-danger-1, #fbe9e7); color: var(--oj-core-danger-3, #c74634); }
-  .hdl-etat-a-verifier { background-color: var(--oj-core-warning-1, #fff3e0); }
-  .hdl-etat-ok, .hdl-etat-chargee { background-color: var(--oj-core-success-1, #e6f4ea); color: var(--oj-core-success-3, #197a56); }
+  /* Couleurs explicites : fond pale, texte fonce, lisible sur tout theme. */
+  .hdl-etat-erreur { background-color: #fbe9e7; color: #9e2a1d; }
+  .hdl-etat-a-verifier { background-color: #fff3d6; color: #7a4d00; }
+  .hdl-etat-ok, .hdl-etat-chargee { background-color: #e3f3e8; color: #16603f; }
 </style>
