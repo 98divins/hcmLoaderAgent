@@ -1,0 +1,15 @@
+{
+  "title": "",
+  "description": "",
+  "variables": {},
+  "metadata": {},
+  "types": {},
+  "eventListeners": {},
+  "imports": {
+    "components": {
+      "oj-sp-step-by-step-page": {
+        "path": "oj-sp/step-by-step-page/loader"
+      }
+    }
+  }
+}
