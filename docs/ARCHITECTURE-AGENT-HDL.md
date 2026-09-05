@@ -371,3 +371,24 @@ Les chaînes d'action sont des chaînes de flux (`main-flow-chains/`), appelées
 navigation et sa condition ; `guardChain` renvoie à la bonne page quand
 l'adresse ne correspond pas à l'état (retour navigateur, rechargement).
 Les fonctions d'affichage sont dans `main-flow.js` (`$flow.functions`).
+
+## Révision build 23 — templates Redwood, une page par template
+
+Remplace la révision build 22. Deux pages, deux templates Oracle :
+
+| Page | Template | Rôle |
+|---|---|---|
+| `main-start` | `oj-sp-welcome-page` | Accueil : objet, opération, « Ouvrir le dossier » |
+| `dossier` | `oj-sp-guided-process` | Le dossier en quatre étapes : `?currentStep=data|review|submit|result` |
+
+L'état du dossier vit dans les **variables du flux** ; les chaînes sont des
+chaînes de page (`main-start-page-chains/`, `dossier-page-chains/`) qui lisent
+et écrivent `context.$flow.variables`. Les fonctions d'affichage sont dans
+`main-flow.js` (`$flow.functions`).
+
+Navigation : `goToStepChain` (avec sa condition : feuilles présentes, contrôle
+propre, RequestId) et `stepNavigateChain` pour les boutons Précédent / Suivant
+du template. `enterChain` renvoie à la bonne étape si l'URL ne correspond pas
+à l'état, lit les référentiels à l'import et relance la scrutation du job au
+suivi. `checkBeforeExitChain` ouvre le dialogue « modifications non
+enregistrées » avant de quitter un dossier qui a quelque chose à perdre.

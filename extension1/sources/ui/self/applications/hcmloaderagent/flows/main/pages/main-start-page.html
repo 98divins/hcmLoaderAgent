@@ -1,15 +1,18 @@
-<div class="hdl-page">
+<!-- Accueil : template Redwood "Welcome page". Le bandeau, le titre et
+     l'illustration sont au template ; le choix de l'objet et de l'operation
+     vient en dessous, dans son contenu. -->
+<oj-sp-welcome-page id="hdl-welcome"
+  page-title="Chargement en masse HCM"
+  overline-text="HCM Data Loader"
+  description-text="Preparez un dossier, controlez-le contre Oracle, chargez-le et suivez le resultat. Un dossier porte un objet et une seule operation."
+  background-color="[[ $page.variables.backgroundColor ]]"
+  illustration-background="[[ require.toUrl($page.variables.illustrationBackground) ]]"
+  illustration-foreground="[[ require.toUrl($page.variables.illustrationForeground) ]]"
+  display-options.image-stretch="[[ $page.variables.imageStretch ]]"
+  display-options.mobile-image="[[ $page.variables.mobileImage ]]"
+  display-options.responsive-padding="on">
 
-  <!-- En-tete Redwood : surtitre, titre, sous-titre. Rien d'autre. -->
-  <header class="hdl-header">
-    <div class="hdl-overline oj-typography-body-xs oj-text-color-secondary">HCM Data Loader</div>
-    <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0">Chargement en masse</h1>
-    <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-1x-top hdl-subtitle">Preparez
-      un dossier, controlez-le contre Oracle, chargez-le et suivez le resultat. Un dossier porte
-      un objet et une seule operation.</p>
-  </header>
-
-  <div class="hdl-content">
+  <div class="hdl-welcome-body">
 
     <oj-bind-if test="[[ $flow.variables.lastDossier ]]">
       <div class="oj-sm-margin-4x-bottom">
@@ -83,6 +86,12 @@
             </template>
           </oj-bind-for-each>
         </div>
+
+        <div class="oj-sm-margin-5x-top">
+          <oj-c-button label="Ouvrir le dossier" button-type="button" size="lg" chroming="callToAction"
+                       disabled="[[ !$flow.variables.hierarchy ]]"
+                       on-oj-action="[[ $listeners.onStart ]]"></oj-c-button>
+        </div>
       </section>
     </oj-bind-if>
 
@@ -90,91 +99,14 @@
       <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-4x-top"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
     </oj-bind-if>
 
+    <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-6x-top">build 23</div>
+
   </div>
-
-  <!-- Pied de page Redwood : l'action principale, a droite. -->
-  <footer class="hdl-footer">
-    <span class="oj-typography-body-xs oj-text-color-secondary">build 22</span>
-    <div class="hdl-footer-right">
-      <oj-c-button label="Ouvrir le dossier" button-type="button" size="lg" chroming="callToAction"
-                   disabled="[[ !$flow.variables.hierarchy ]]"
-                   on-oj-action="[[ $listeners.onStart ]]"></oj-c-button>
-    </div>
-  </footer>
-
-</div>
+</oj-sp-welcome-page>
 
 <style>
-  /* Chrome commun aux pages du flux : en-tete, train, contenu, pied de page. */
-  .hdl-page {
-    display: flex;
-    flex-direction: column;
-    min-block-size: calc(100vh - 6rem);
-    background-color: var(--oj-core-bg-color-content);
-  }
-
-  .hdl-header {
-    flex: none;
-    padding: 1.25rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--oj-core-divider-color);
-  }
-
-  .hdl-overline {
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-  }
-
-  .hdl-header-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .hdl-header-actions {
-    margin-inline-start: auto;
-    display: flex;
-    gap: 0.5rem;
-    flex: none;
-  }
-
-  .hdl-train {
-    flex: none;
-    padding: 0.5rem 1.5rem;
-    border-bottom: 1px solid var(--oj-core-divider-color);
-  }
-
-  .hdl-main {
-    flex: 1 1 auto;
-    min-block-size: 0;
-  }
-
-  .hdl-content {
-    flex: 1 1 auto;
-    padding: 1.5rem;
-    min-inline-size: 0;
-  }
-
-  .hdl-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
-    flex: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-top: 1px solid var(--oj-core-divider-color);
-    background-color: var(--oj-core-bg-color-content);
-  }
-
-  .hdl-footer-right {
-    margin-inline-start: auto;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+  .hdl-welcome-body {
+    padding-block: 1.5rem;
   }
 
   .hdl-subtitle {

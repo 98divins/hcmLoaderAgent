@@ -1,0 +1,370 @@
+{
+  "title": "Dossier de chargement",
+  "description": "Le dossier en quatre etapes (template Redwood Guided Process) : importer, controler, charger, suivre",
+  "variables": {
+    "currentStep": {
+      "type": "string",
+      "defaultValue": "data",
+      "input": "fromUrl"
+    },
+    "cancel": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "dirtyDialogOpen": {
+      "type": "boolean",
+      "defaultValue": false
+    }
+  },
+  "metadata": {},
+  "types": {
+    "step": {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "display": "string",
+      "status": "string",
+      "timestamp": "string",
+      "optional": "boolean"
+    }
+  },
+  "eventListeners": {
+    "vbEnter": {
+      "chains": [
+        {
+          "chain": "enterChain"
+        },
+        {
+          "chain": "firePageLayoutEventChain"
+        }
+      ]
+    },
+    "vbBeforeExit": {
+      "chains": [
+        {
+          "chain": "checkBeforeExitChain",
+          "parameters": {}
+        }
+      ]
+    },
+    "onSpBeforeStepNavigate": {
+      "preventDefault": "true",
+      "chains": [
+        {
+          "chain": "stepNavigateChain",
+          "parameters": {
+            "event": "{{ $event }}"
+          }
+        }
+      ]
+    },
+    "onSpCancel": {
+      "chains": [
+        {
+          "chain": "cancelChain"
+        }
+      ]
+    },
+    "onConfirmYesOjAction": {
+      "chains": [
+        {
+          "chain": "dialogResponseChain",
+          "parameters": {
+            "response": "YES"
+          }
+        }
+      ]
+    },
+    "onConfirmNoOjAction": {
+      "chains": [
+        {
+          "chain": "dialogResponseChain",
+          "parameters": {
+            "response": "NO"
+          }
+        }
+      ]
+    },
+    "onFilePick": {
+      "chains": [
+        {
+          "chain": "importFileChain",
+          "parameters": {
+            "files": "[[ Array.prototype.slice.call($event.detail.files) ]]"
+          }
+        }
+      ]
+    },
+    "onSelectSheet": {
+      "chains": [
+        {
+          "chain": "selectSheetChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onRemoveSheet": {
+      "chains": [
+        {
+          "chain": "removeSheetChain"
+        }
+      ]
+    },
+    "onCheck": {
+      "chains": [
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": true
+          }
+        },
+        {
+          "chain": "goToStepChain",
+          "parameters": {
+            "step": "review",
+            "when": "sheets"
+          }
+        },
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onAsk": {
+      "chains": [
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onStop": {
+      "chains": [
+        {
+          "chain": "stopChain"
+        }
+      ]
+    },
+    "onToggleAssist": {
+      "chains": [
+        {
+          "chain": "toggleAssistChain"
+        }
+      ]
+    },
+    "onApplyProposal": {
+      "chains": [
+        {
+          "chain": "applyProposalChain",
+          "parameters": {
+            "source": "agent"
+          }
+        },
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onIgnoreProposal": {
+      "chains": [
+        {
+          "chain": "ignoreProposalChain"
+        }
+      ]
+    },
+    "onApplyAutoFix": {
+      "chains": [
+        {
+          "chain": "applyProposalChain",
+          "parameters": {
+            "source": "auto"
+          }
+        },
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onIgnoreAutoFix": {
+      "chains": [
+        {
+          "chain": "ignoreProposalChain",
+          "parameters": {
+            "source": "auto"
+          }
+        }
+      ]
+    },
+    "onApplyDiagnosis": {
+      "chains": [
+        {
+          "chain": "applyProposalChain",
+          "parameters": {
+            "source": "agent"
+          }
+        },
+        {
+          "chain": "backToPlanChain"
+        },
+        {
+          "chain": "goToStepChain",
+          "parameters": {
+            "step": "review"
+          }
+        },
+        {
+          "chain": "checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onRowEditEnd": {
+      "chains": [
+        {
+          "chain": "rowEditChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onArmLoad": {
+      "chains": [
+        {
+          "chain": "armChain",
+          "parameters": {
+            "action": "load"
+          }
+        }
+      ]
+    },
+    "onDisarm": {
+      "chains": [
+        {
+          "chain": "armChain",
+          "parameters": {
+            "action": ""
+          }
+        }
+      ]
+    },
+    "onDownloadDat": {
+      "chains": [
+        {
+          "chain": "downloadDatChain"
+        }
+      ]
+    },
+    "onSubmitLoad": {
+      "chains": [
+        {
+          "chain": "submitLoadChain"
+        },
+        {
+          "chain": "goToStepChain",
+          "parameters": {
+            "step": "result",
+            "when": "requestId"
+          }
+        },
+        {
+          "chain": "checkLoadStatusChain",
+          "parameters": {
+            "auto": true
+          }
+        },
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onCheckLoad": {
+      "chains": [
+        {
+          "chain": "checkLoadStatusChain",
+          "parameters": {
+            "auto": false
+          }
+        },
+        {
+          "chain": "askAgentChain"
+        }
+      ]
+    },
+    "onBackToPlan": {
+      "chains": [
+        {
+          "chain": "backToPlanChain"
+        },
+        {
+          "chain": "goToStepChain",
+          "parameters": {
+            "step": "review"
+          }
+        }
+      ]
+    },
+    "onFinish": {
+      "chains": [
+        {
+          "chain": "finishChain"
+        },
+        {
+          "chain": "resetChain"
+        },
+        {
+          "chain": "goToStepChain",
+          "parameters": {
+            "step": "start"
+          }
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-sp-guided-process": {
+        "path": "oj-sp/guided-process/loader"
+      },
+      "oj-sp-message-unsaved-changes": {
+        "path": "oj-sp/message-unsaved-changes/loader"
+      },
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
+      "oj-c-file-picker": {
+        "path": "oj-c/file-picker"
+      },
+      "oj-c-table": {
+        "path": "oj-c/table"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      },
+      "oj-c-progress-bar": {
+        "path": "oj-c/progress-bar"
+      },
+      "oj-c-message-banner": {
+        "path": "oj-c/message-banner"
+      },
+      "oj-c-drawer-layout": {
+        "path": "oj-c/drawer-layout"
+      }
+    }
+  },
+  "@dt": {
+    "iconClass": "vbdt-dynamic-icon-102-icoPageTemplateSvg"
+  }
+}

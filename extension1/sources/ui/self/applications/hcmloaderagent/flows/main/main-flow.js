@@ -41,6 +41,24 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
       }));
     }
 
+    /**
+     * Les etapes pour le template Redwood "Guided Process" : il dessine le
+     * train et les boutons Precedent / Suivant, la page decide si on avance.
+     */
+    getGuidedSteps() {
+      return STEPS.map((s) => ({ id: s.id, title: s.label, description: s.title, optional: false }));
+    }
+
+    /**
+     * Le dossier a-t-il quelque chose a perdre ? Des feuilles, et un
+     * chargement qui n'est pas termine sans rejet. C'est ce qui declenche la
+     * demande de confirmation Redwood avant de quitter.
+     */
+    isDirty(opened, sheets, loadSummary) {
+      const s = loadSummary || {};
+      return Boolean(opened && (sheets || []).length && !(s.finished && !s.rejected));
+    }
+
     /** "Etape 2 sur 4" : l'utilisateur sait toujours ou il en est. */
     stepCounter(step) {
       const index = STEPS.map((s) => s.id).indexOf(step);

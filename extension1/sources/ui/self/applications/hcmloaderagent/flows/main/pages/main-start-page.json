@@ -1,13 +1,35 @@
 {
   "title": "Chargement en masse HCM",
-  "description": "Accueil : choisir l'objet a charger et l'operation, puis ouvrir un dossier",
-  "variables": {},
+  "description": "Accueil (template Redwood Welcome) : choisir l'objet et l'operation, puis ouvrir le dossier",
+  "variables": {
+    "backgroundColor": {
+      "type": "string",
+      "defaultValue": "dark-ocean"
+    },
+    "illustrationBackground": {
+      "type": "string",
+      "defaultValue": "https://static.oracle.com/cdn/fnd/gallery/2307.0.2/images/illust-welcome-banner-bg-01.png"
+    },
+    "illustrationForeground": {
+      "type": "string",
+      "defaultValue": "https://static.oracle.com/cdn/fnd/gallery/2307.0.2/images/illust-welcome-banner-fg-01.png"
+    },
+    "imageStretch": {
+      "type": "string",
+      "defaultValue": "none"
+    },
+    "mobileImage": {
+      "type": "string",
+      "defaultValue": "on"
+    }
+  },
   "metadata": {},
+  "types": {},
   "eventListeners": {
     "onPickHierarchy": {
       "chains": [
         {
-          "chain": "flow:pickHierarchyChain",
+          "chain": "pickHierarchyChain",
           "parameters": {
             "event": "[[ $event ]]"
           }
@@ -17,7 +39,7 @@
     "onPickOperation": {
       "chains": [
         {
-          "chain": "flow:pickOperationChain",
+          "chain": "pickOperationChain",
           "parameters": {
             "event": "[[ $event ]]"
           }
@@ -27,23 +49,19 @@
     "onStart": {
       "chains": [
         {
-          "chain": "flow:startDossierChain"
+          "chain": "startDossierChain"
         },
         {
-          "chain": "flow:goToPageChain",
-          "parameters": {
-            "page": "import",
-            "when": "opened"
-          }
-        },
-        {
-          "chain": "flow:loadLookupsChain"
+          "chain": "openDossierChain"
         }
       ]
     }
   },
   "imports": {
     "components": {
+      "oj-sp-welcome-page": {
+        "path": "oj-sp/welcome-page/loader"
+      },
       "oj-c-button": {
         "path": "oj-c/button"
       },
@@ -51,5 +69,8 @@
         "path": "oj-c/message-banner"
       }
     }
+  },
+  "@dt": {
+    "iconClass": "vbdt-dynamic-icon-109-icoWelcomePageTemplate48Svg"
   }
 }

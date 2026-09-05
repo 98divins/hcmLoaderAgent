@@ -1,0 +1,60 @@
+define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) => {
+  'use strict';
+
+  /** Repart d'un dossier vide, et d'une conversation neuve cote agent. */
+  class resetChain extends ActionChain {
+
+    /**
+     * @param {Object} context
+     * @param {Object} params
+     * @param {Object} params.event
+     */
+    async run(context, { event } = {}) {
+      // L'etat du dossier vit dans le flux : la page n'en montre qu'une etape.
+      const $variables = context.$flow.variables;
+      // Un nouveau dossier repart du choix de l'objet : c'est lui qui fixe
+      // tout le reste, le garder n'aurait pas de sens.
+      $variables.hierarchy = '';
+      $variables.operation = 'MERGE';
+      $variables.sheets = [];
+      $variables.activeSheet = 0;
+      $variables.opened = false;
+      $variables.nextRefreshIn = 0;
+      $variables.loadSummary = {};
+      $variables.rejects = [];
+      $variables.lastRefresh = '';
+      $variables.armedAction = '';
+      $variables.isChecking = false;
+      $variables.checkSummary = {};
+      $variables.lookupValues = {};
+      $variables.countTotal = 0;
+      $variables.countIssues = 0;
+      $variables.summaryText = '';
+      $variables.step = 'data';
+      $variables.turns = [];
+      $variables.question = '';
+      $variables.pendingQuestion = '';
+      $variables.conversationId = '';
+      $variables.errorText = '';
+      $variables.agentSteps = [];
+      $variables.currentStep = '';
+      $variables.aborted = false;
+      $variables.isLoading = false;
+      $variables.isPolling = false;
+      $variables.loadPhases = [];
+      $variables.loadStatus = '';
+      $variables.loadDetail = '';
+      $variables.requestId = '';
+      $variables.dataSetName = '';
+      $variables.appliedNote = '';
+      $variables.hasAutoFix = false;
+      $variables.autoFixText = '';
+      $variables.autoFixJson = '';
+      $variables.hasProposal = false;
+      $variables.proposalText = '';
+      $variables.proposalJson = '';
+    }
+  }
+
+  return resetChain;
+});

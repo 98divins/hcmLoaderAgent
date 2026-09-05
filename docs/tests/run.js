@@ -25,7 +25,13 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..');
 const PAGE = path.join(ROOT, 'extension1/sources/ui/self/applications/hcmloaderagent/flows/main/pages');
 const FLOW = path.join(ROOT, 'extension1/sources/ui/self/applications/hcmloaderagent/flows/main');
-const CHAINS = path.join(FLOW, 'main-flow-chains');
+// Les chaines sont des chaines de page : celles du dossier, celles de l'accueil.
+const CHAIN_DIRS = [path.join(PAGE, 'dossier-page-chains'), path.join(PAGE, 'main-start-page-chains')];
+function chainPath(file) {
+  const found = CHAIN_DIRS.map((d) => path.join(d, file)).filter((f) => fs.existsSync(f))[0];
+  if (!found) { throw new Error(`chaine introuvable : ${file}`); }
+  return found;
+}
 const SAMPLES = path.join(ROOT, 'docs/samples');
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/metadata/objectCatalog.page.json'), 'utf8'));
 
@@ -38,16 +44,33 @@ function check(label, ok, detail) {
 // --- chargement d'une chaine avec un REST simule --------------------------------
 let restStub = async () => { throw new Error('hors ligne'); };
 const navigations = [];
+const Actions = {
+  callRest: (ctx, opts) => restStub(opts),
+  navigateToPage: async (ctx, opts) => {
+    navigations.push(opts.params && opts.params.currentStep ? `${opts.page}:${opts.params.currentStep}` : opts.page);
+  },
+  callChain: async (ctx, opts) => new (load(`${opts.chain}.js`))().run(ctx, opts.params || {}),
+  fireEvent: async () => {}
+};
 function load(file) {
   let out;
-  const define = (deps, factory) => {
-    out = factory(class ActionChain {}, {
-      callRest: (ctx, opts) => restStub(opts),
-      navigateToPage: async (ctx, opts) => { navigations.push(opts.page); }
-    });
-  };
-  new Function('define', fs.readFileSync(path.join(CHAINS, file), 'utf8'))(define);
+  const define = (deps, factory) => { out = factory(class ActionChain {}, Actions); };
+  new Function('define', fs.readFileSync(chainPath(file), 'utf8'))(define);
   return out;
+}
+
+// Le module du flux : ses fonctions d'affichage, avec un DataProvider minimal.
+let flowFunctions;
+{
+  class ArrayDataProvider { constructor(data) { this.data = data; } }
+  const define = (deps, factory) => { const FlowModule = factory(ArrayDataProvider); flowFunctions = new FlowModule(); };
+  new Function('define', fs.readFileSync(path.join(FLOW, 'main-flow.js'), 'utf8'))(define);
+}
+
+// Le contexte d'une chaine de page : l'etat du dossier est dans le flux.
+function ctx(v, page) {
+  return { $variables: v, $flow: { variables: v, functions: flowFunctions },
+    $page: { variables: page || {}, functions: {} }, $application: { currentPage: { id: 'dossier' } } };
 }
 
 // Le navigateur n'est pas la : on capture ce que le telechargement produirait.
@@ -65,8 +88,9 @@ const Status = load('checkLoadStatusChain.js');
 const Submit = load('submitLoadChain.js');
 const Apply = load('applyProposalChain.js');
 const RowEdit = load('rowEditChain.js');
-const GoTo = load('goToPageChain.js');
-const Guard = load('guardChain.js');
+const GoTo = load('goToStepChain.js');
+const Enter = load('enterChain.js');
+const StepNav = load('stepNavigateChain.js');
 
 // Un fichier depose, tel que le navigateur le presente : nom et contenu.
 global.FileReader = function FileReader() {
@@ -105,7 +129,7 @@ function vars(hierarchy, operation, sheets) {
 async function main() {
   // 1. Les deux fabriques du .dat sont le meme texte.
   const extract = (file) => {
-    const src = fs.readFileSync(path.join(CHAINS, file), 'utf8');
+    const src = fs.readFileSync(chainPath(file), 'utf8');
     const start = src.indexOf('  /** Une cle source doit survivre');
     const tail = "    return lines.join('\\r\\n') + '\\r\\n';\n  }\n";
     const end = src.indexOf(tail, start) + tail.length;
@@ -124,10 +148,10 @@ async function main() {
   };
   let v = vars('Location', 'MERGE', [sheet('Location', 'Location.csv'),
     sheet('LocationOtherAddress', 'LocationOtherAddress.csv')]);
-  await new Download().run({ $variables: v }, {});
+  await new Download().run(ctx(v), {});
   check('telechargement refuse avant controle', blobs.length === 0 && /Controlez/.test(v.errorText));
 
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   const loc = v.sheets[0].rows;
   const adr = v.sheets[1].rows;
   check('doublon de cle detecte (L1, L5)', loc[0].statusLabel === 'erreur' && loc[4].statusLabel === 'erreur'
@@ -147,7 +171,7 @@ async function main() {
 
   // 3. Fichier produit : feuille mixte -> pas de cle source parent.
   v.step = 'submit'; v.countIssues = 0;
-  await new Download().run({ $variables: v }, {});
+  await new Download().run(ctx(v), {});
   const dat = blobs.pop() || '';
   check('un .dat, une METADATA par feuille', (dat.match(/^METADATA\|/gm) || []).length === 2);
   check('feuille mixte : rattachement par cle utilisateur, pas LocationId(SourceSystemId)',
@@ -157,14 +181,14 @@ async function main() {
   v = vars('Location', 'MERGE', [sheet('Location', 'Location.csv'),
     sheet('LocationOtherAddress', 'LocationOtherAddress.csv')]);
   v.sheets[1].rows = v.sheets[1].rows.slice(0, 2).map((r) => Object.assign(r, { AddressUsageType: 'MAIN' }));
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   v.step = 'submit'; v.countIssues = 0;
-  await new Download().run({ $variables: v }, {});
+  await new Download().run(ctx(v), {});
   const dat2 = blobs.pop() || '';
   check('sans proprietaire de source enregistre : aucune cle source ecrite',
     dat2.indexOf('SourceSystemOwner') === -1 && dat2.indexOf('LocationId(SourceSystemId)') === -1);
   v.lookupValues = { _sourceOwner: true };
-  await new Download().run({ $variables: v }, {});
+  await new Download().run(ctx(v), {});
   const dat3 = blobs.pop() || '';
   check('proprietaire HDLAGENT enregistre et parents dans le dossier : LocationId(SourceSystemId) ecrit',
     /LocationId\(SourceSystemId\)/.test(dat3) && /\|LOCATION_PAR01_COMMON\r\n/.test(dat3));
@@ -173,7 +197,7 @@ async function main() {
   restStub = async () => { throw new Error('ressource absente'); };
   v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv'),
     sheet('OrgUnitClassification', 'OrgUnitClassification.csv')]);
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   const cls = v.sheets[1].rows;
   check('regle conditionnelle SetCode/DEPARTMENT (L2)', /SetCode est obligatoire/.test(cls[1].statusDetail));
   check('CategoryCode vide : note de feuille, pas d\'anomalie de ligne', cls[0].statusLabel !== 'erreur'
@@ -193,7 +217,7 @@ async function main() {
   v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv')]);
   v.sheets[0].rows.forEach((r) => { r.EffectiveStartDate = '2026/01/01'; });
   v.sheets[0].rows[2].LocationCode = 'MAR01';
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   check('site MAR01 absent du tenant : ligne bloquee avant chargement',
     v.sheets[0].rows[2].statusLabel === 'erreur' && /MAR01 introuvable dans Oracle \(LocationCode\)/.test(v.sheets[0].rows[2].statusDetail));
   check('site PAR01 present : les autres lignes ne sont pas touchees', v.sheets[0].rows[0].statusLabel !== 'erreur');
@@ -204,7 +228,7 @@ async function main() {
     { sheet: 0, rowRef: 'L1', field: 'ClassificationCode', suggestedValue: 'undefined' },
     { sheet: 0, rowRef: 'L2', field: 'ClassificationCode' },
     { sheet: 0, rowRef: 'L3', field: 'LocationCode', suggestedValue: 'PAR01' }] });
-  await new Apply().run({ $variables: v }, { source: 'agent' });
+  await new Apply().run(ctx(v), { source: 'agent' });
   check('"undefined" et valeur absente refusees, valeur reelle appliquee',
     v.sheets[0].rows[0].ClassificationCode === 'DEPARTMENT' && v.sheets[0].rows[1].ClassificationCode === 'DEPARTMENT'
     && v.sheets[0].rows[2].LocationCode === 'PAR01' && /2/.test(v.appliedNote), v.appliedNote);
@@ -212,7 +236,7 @@ async function main() {
   // 5d. Edition dans la grille : la ligne repasse "a controler", le dossier revient au controle.
   v.step = 'submit'; v.armedAction = 'load';
   const inputs = [{ getAttribute: () => 'LocationCode', value: 'LYO01' }];
-  await new RowEdit().run({ $variables: v }, { event: {
+  await new RowEdit().run(ctx(v), { event: {
     detail: { rowContext: { item: { metadata: { key: 'L1' } } } },
     target: { querySelectorAll: () => inputs } } });
   check('ligne editee : valeur relue, statut a controler, retour au controle',
@@ -221,25 +245,25 @@ async function main() {
 
   // 6. Import : l'objet de chaque fichier est reconnu a ses colonnes.
   v = vars('Location', 'MERGE', []);
-  await new Start().run({ $variables: v });
+  await new Start().run(ctx(v));
   check('le dossier s\'ouvre sans feuille', v.opened === true && v.sheets.length === 0);
-  await new Import().run({ $variables: v }, { files: [fakeFile('LocationOtherAddress.csv'), fakeFile('Location.csv')] });
+  await new Import().run(ctx(v), { files: [fakeFile('LocationOtherAddress.csv'), fakeFile('Location.csv')] });
   check('deux fichiers deposes ensemble, deux feuilles, parent en premier',
     v.sheets.length === 2 && v.sheets[0].object === 'Location' && v.sheets[1].object === 'LocationOtherAddress');
-  await new Import().run({ $variables: v }, { files: [fakeFile('Organization.csv')] });
+  await new Import().run(ctx(v), { files: [fakeFile('Organization.csv')] });
   check('un fichier d\'une autre hierarchie est refuse avec explication',
     v.sheets.length === 2 && /aucun objet de Location/.test(v.errorText));
-  await new Import().run({ $variables: v }, { files: [fakeFile('Location.csv')] });
+  await new Import().run(ctx(v), { files: [fakeFile('Location.csv')] });
   check('redeposer un fichier remplace la feuille de son objet', v.sheets.length === 2);
 
   // 7. Suppression : pas d'exigence de creation.
   v = vars('Location', 'DELETE', []);
-  await new Start().run({ $variables: v });
+  await new Start().run(ctx(v));
   v.sheets = [{ object: 'LocationOtherAddress', label: 'Location Other Address', level: 2,
     columns: ['AddressUsageType', 'LocationCode', 'LocationSetCode', 'EffectiveStartDate'],
     rows: [{ rowKey: 'L1', AddressUsageType: 'MAIN', LocationCode: 'PAR01', LocationSetCode: 'COMMON',
       EffectiveStartDate: '2026/01/01' }], countIssues: 0, countWarnings: 0 }];
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   check('DELETE : ligne complete pour l\'identification, aucune fausse anomalie',
     v.sheets[0].rows[0].statusLabel === 'ok');
 
@@ -258,11 +282,11 @@ async function main() {
   };
   v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv')]);
   v.sheets[0].rows.forEach((r) => { r.EffectiveStartDate = '2026/01/01'; });
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   v.step = 'submit'; v.countIssues = 0; v.armedAction = 'load';
-  await new Submit().run({ $variables: v }, {});
+  await new Submit().run(ctx(v), {});
   check('soumission : RequestId retenu et lignes numerotees', v.requestId === '42' && v.sheets[0].rows[1].datLine === 4, v.errorText);
-  await new Status().run({ $variables: v }, { auto: false });
+  await new Status().run(ctx(v), { auto: false });
   const s0 = v.sheets[0].rows;
   // COMMENT est la ligne 1, METADATA la 2 : la ligne 4 du fichier est la 2e ligne de donnees.
   check('rejet rattache a la 2e ligne (ligne 4 du fichier)', s0[1].statusLabel === 'erreur' && /CategoryCode/.test(s0[1].statusDetail));
@@ -272,11 +296,11 @@ async function main() {
   restStub = async () => ({ body: { items: [{ DataSetStatusCode: 'ORA_IN_PROGRESS', DataSetStatusMeaning: 'In progress',
     ImportStatusMeaning: 'Success', messages: { items: [] } }] } });
   const before = v.sheets[0].rows.map((r) => r.statusLabel).join(',');
-  await new Status().run({ $variables: v }, { auto: false });
+  await new Status().run(ctx(v), { auto: false });
   check('statut inconnu : le job reste en cours, aucune ligne remarquee',
     v.loadSummary.finished === false && v.sheets[0].rows.map((r) => r.statusLabel).join(',') === before);
   v.step = 'submit'; v.countIssues = 0;
-  await new Download().run({ $variables: v }, {});
+  await new Download().run(ctx(v), {});
   const dat4 = blobs.pop() || '';
   check('nouvel envoi : seule la ligne rejetee repart', (dat4.match(/^MERGE\|/gm) || []).length === 1 && /Ressources Humaines/.test(dat4));
 
@@ -284,52 +308,63 @@ async function main() {
   v = vars('Organization', 'MERGE', [sheet('OrgUnitClassification', 'OrgUnitClassification.csv')]);
   v.lookupValues = { ACTIVE_INACTIVE: { ok: true, codes: ['A', 'I'] } };
   v.sheets[0].rows[0].Status = 'ACTIF';
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   check('valeur hors lookup ACTIVE_INACTIVE refusee', /referentiel ACTIVE_INACTIVE/.test(v.sheets[0].rows[0].statusDetail));
   v.lookupValues = { ACTIVE_INACTIVE: { ok: false } };
-  await new Check().run({ $variables: v }, { ask: false });
+  await new Check().run(ctx(v), { ask: false });
   check('lookup illisible : note de feuille, pas d\'erreur',
     !/referentiel ACTIVE_INACTIVE/.test(v.sheets[0].rows[0].statusDetail)
     && v.checkSummary.sheets[0].notes.some((n) => /ACTIVE_INACTIVE non lisible/.test(n)));
 
-  // 10. Navigation : une page ne s'ouvre que si l'etat le permet.
+  // 10. Navigation entre etapes : une etape ne s'ouvre que si l'etat le permet.
   v = vars('Location', 'MERGE', []);
   v.opened = false; v.requestId = '';
-  await new Guard().run({ $variables: v }, { needs: 'opened' });
-  await new GoTo().run({ $variables: v }, { page: 'import', when: 'opened' });
-  check('dossier ferme : la garde renvoie a l\'accueil, la navigation refuse',
-    navigations.join(',') === 'main-start');
-  v.opened = true; v.step = 'review'; v.countIssues = 2;
-  await new GoTo().run({ $variables: v }, { page: 'load', when: 'clean' });
-  await new Guard().run({ $variables: v }, { needs: 'clean' });
-  check('dossier en anomalie : pas de page de chargement, retour au controle',
-    navigations.join(',') === 'main-start,dossier-check');
+  await new Enter().run(ctx(v, { currentStep: 'data' }));
+  check('dossier ferme : l\'entree renvoie a l\'accueil', navigations.join(',') === 'main-start');
+  v.opened = true; v.step = 'review'; v.countIssues = 2; v.lookupValues = { X: { ok: true } };
+  await new GoTo().run(ctx(v), { step: 'submit', when: 'clean' });
+  await new Enter().run(ctx(v, { currentStep: 'submit' }));
+  check('dossier en anomalie : pas d\'etape Charger, retour au controle',
+    navigations.join(',') === 'main-start,dossier:review');
+  await new StepNav().run(ctx(v, { currentStep: 'review' }), { event: { detail: { nextStep: 'submit' } } });
+  check('bouton Suivant du template refuse tant que le controle n\'est pas propre',
+    navigations.length === 2 && /controle sans anomalie/.test(v.errorText));
+  v.sheets = [];
+  await new StepNav().run(ctx(v, { currentStep: 'data' }), { event: { detail: { nextStep: 'review' } } });
+  check('bouton Suivant sans fichier : explication, pas de navigation',
+    navigations.length === 2 && /Deposez au moins un fichier/.test(v.errorText));
   v.step = 'submit'; v.countIssues = 0;
-  await new GoTo().run({ $variables: v }, { page: 'load', when: 'clean' });
-  await new Guard().run({ $variables: v }, { needs: 'requestId' });
+  await new GoTo().run(ctx(v), { step: 'submit', when: 'clean' });
+  await new Enter().run(ctx(v, { currentStep: 'result' }));
   v.requestId = '42';
-  await new GoTo().run({ $variables: v }, { page: 'track', when: 'requestId' });
-  check('dossier propre : chargement ouvert ; suivi seulement avec un RequestId',
-    navigations.join(',') === 'main-start,dossier-check,dossier-load,dossier-check,dossier-track');
+  await new GoTo().run(ctx(v), { step: 'result', when: 'requestId' });
+  await new GoTo().run(ctx(v), { step: 'start' });
+  check('dossier propre : Charger ouvert ; Suivre seulement avec un RequestId ; Terminer ramene a l\'accueil',
+    navigations.join(',') === 'main-start,dossier:review,dossier:submit,dossier:review,dossier:result,main-start');
 
-  // 11. Le chrome Redwood (styles) est le meme texte sur toutes les pages du flux.
-  const pages = ['main-start', 'dossier-import', 'dossier-check', 'dossier-load', 'dossier-track'];
-  const chrome = (name) => {
-    const src = fs.readFileSync(path.join(PAGE, `${name}-page.html`), 'utf8');
-    const start = src.indexOf('  /* Chrome commun');
-    const end = src.indexOf('  .hdl-subtitle {', start);
-    return src.slice(start, end);
-  };
-  check('chrome commun identique sur les cinq pages',
-    pages.every((name) => chrome(name).length > 200 && chrome(name) === chrome(pages[0])));
-  const refs = pages.map((name) => JSON.parse(fs.readFileSync(path.join(PAGE, `${name}-page.json`), 'utf8')));
-  const chainFiles = fs.readdirSync(CHAINS).map((f) => f.replace(/\.js$/, ''));
-  const referenced = [];
-  refs.forEach((page) => Object.keys(page.eventListeners).forEach((l) => page.eventListeners[l].chains
-    .forEach((c) => referenced.push(c.chain))));
-  check('toutes les chaines referencees sont des chaines du flux qui existent',
-    referenced.every((c) => /^flow:/.test(c) && chainFiles.indexOf(c.replace('flow:', '')) !== -1));
-
+  // 11. Cablage des deux pages : chaque chaine referencee existe dans le dossier de
+  // chaines de sa page, chaque fonction $flow.functions existe, chaque composant est importe.
+  const pages = { 'main-start': 'main-start-page-chains', dossier: 'dossier-page-chains' };
+  const flowSrc = fs.readFileSync(path.join(FLOW, 'main-flow.js'), 'utf8');
+  const flowDefs = (flowSrc.match(/^    (\w+)\(/gm) || []).map((m) => m.trim().replace('(', ''));
+  Object.keys(pages).forEach((name) => {
+    const json = JSON.parse(fs.readFileSync(path.join(PAGE, `${name}-page.json`), 'utf8'));
+    const html = fs.readFileSync(path.join(PAGE, `${name}-page.html`), 'utf8');
+    const files = fs.readdirSync(path.join(PAGE, pages[name])).map((f) => f.replace(/\.js$/, ''));
+    const referenced = [];
+    Object.keys(json.eventListeners).forEach((l) => json.eventListeners[l].chains.forEach((c) => referenced.push(c.chain)));
+    check(`${name} : chaines referencees presentes dans ${pages[name]}`,
+      referenced.every((c) => files.indexOf(c) !== -1), referenced.filter((c) => files.indexOf(c) === -1).join(','));
+    const listeners = (html.match(/\$listeners\.(\w+)/g) || []).map((m) => m.replace('$listeners.', ''));
+    check(`${name} : ecouteurs du HTML declares dans le JSON`,
+      listeners.every((l) => json.eventListeners[l]), listeners.filter((l) => !json.eventListeners[l]).join(','));
+    const fns = (html.match(/\$flow\.functions\.(\w+)/g) || []).map((m) => m.replace('$flow.functions.', ''));
+    check(`${name} : fonctions $flow.functions definies`, fns.every((f) => flowDefs.indexOf(f) !== -1),
+      fns.filter((f) => flowDefs.indexOf(f) === -1).join(','));
+    const tags = (html.match(/<(oj-(?:c|sp)-[\w-]+)/g) || []).map((m) => m.slice(1));
+    check(`${name} : composants importes`, tags.every((c) => json.imports.components[c]),
+      tags.filter((c) => !json.imports.components[c]).join(','));
+  });
   console.log(failures ? `\n${failures} echec(s)` : '\ntous les tests passent');
   process.exit(failures ? 1 : 0);
 }

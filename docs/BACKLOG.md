@@ -145,3 +145,32 @@ Demande : « une page Redwood d'Oracle », et un flux de plusieurs pages, une pa
       `oj-c-message-banner`, `oj-c-progress-bar`, hauteur de la grille dans le tiroir.
 - [ ] Accentuation complète des libellés et messages (aujourd'hui sans accents,
       par cohérence avec les messages des chaînes) : à traiter avec le fond.
+
+## Itération 9 — templates Redwood d'Oracle (build 23)
+
+Demande : chaque page sur un Page Template Redwood, comme le recommande Oracle.
+Échafaudages fournis par le Designer (`oj-sp-welcome-page`, `oj-sp-guided-process`,
+`oj-sp-general-overview-page`) et relus avant de reconstruire.
+
+- [x] Accueil sur **Welcome Page** (`oj-sp-welcome-page`) : bandeau, titre,
+      illustration au template ; cartes d'objet et d'opération dans son contenu.
+- [x] Dossier sur **Guided Process** (`oj-sp-guided-process`) : une seule page,
+      quatre étapes adressées par l'URL (`currentStep`), train et boutons
+      Annuler / Précédent / Suivant au template. `sp-before-step-navigate` est
+      intercepté : la page décide si l'on avance (contrôle lancé au passage
+      Importer → Contrôler ; Charger seulement si le contrôle est propre ;
+      Suivre seulement après « Oui, charger »).
+- [x] Dialogue Redwood « modifications non enregistrées »
+      (`oj-sp-message-unsaved-changes`) sur Annuler ou sortie de page quand le
+      dossier a quelque chose à perdre.
+- [x] Boutons muets du build 22 : les chaînes redeviennent des chaînes de
+      page (syntaxe éprouvée), l'état reste dans le flux (`$flow.variables`,
+      lu par les chaînes via `context.$flow.variables`).
+- [x] Sous-flux et pages d'essai du Designer retirés.
+- [x] Tests : 50 vérifications, dont navigation entre étapes et câblage des
+      deux pages (chaînes, écouteurs, fonctions, composants).
+- [ ] Hypothèses à vérifier en exécution, faute d'accès à la documentation des
+      templates : attribut `steps` du Guided Process (tableau id/title/description) ;
+      attributs `page-title`, `overline-text`, `description-text` et slot par défaut
+      du Welcome ; ré-entrée de la page (vbEnter) à chaque changement d'étape.
+- [ ] Accentuation complète des libellés et messages : à traiter avec le fond.
