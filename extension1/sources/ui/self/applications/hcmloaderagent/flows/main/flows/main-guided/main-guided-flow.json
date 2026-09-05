@@ -1,8 +1,0 @@
-{
-  "id": "main-guided",
-  "description": "Flow main",
-  "defaultPage": "main-guided-start",
-  "services": {},
-  "types": {},
-  "variables": {}
-}

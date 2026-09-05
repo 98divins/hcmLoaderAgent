@@ -1,0 +1,17 @@
+<oj-sp-guided-process process-title="Guided Process Steps" current-step="{{$page.variables.currentStep}}"
+  display-options.responsive-padding="on" on-sp-before-step-navigate="[[$listeners.onSpBeforeStepNavigate]]"
+  on-sp-cancel="[[$listeners.onSpCancel]]">
+  <oj-validation-group id="validationGroup" valid="{{ $page.variables.valid }}">
+    <div>
+        <!-- default slot --></div>
+    <div>
+        <!-- default slot --></div>
+  </oj-validation-group>
+  <oj-sp-completion-panel slot='completionStep'
+    background-image-index="{{$page.variables.completionPanelBackgroundImageIndex}}"
+    ></oj-sp-completion-panel>
+</oj-sp-guided-process>
+<oj-sp-message-unsaved-changes id="dirtyDataWarningDialog" open-dialog="[[ $page.variables.dirtyDialogOpen ]]"
+  on-oj-sp-discard-changes="[[ $listeners.onConfirmYesOjAction ]]"
+  on-oj-sp-cancel="[[ $listeners.onConfirmNoOjAction ]]">
+</oj-sp-message-unsaved-changes>

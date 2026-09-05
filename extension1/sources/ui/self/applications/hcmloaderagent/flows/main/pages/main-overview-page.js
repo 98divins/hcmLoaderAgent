@@ -1,8 +1,8 @@
 define([], () => {
   'use strict';
 
-  class FlowModule {
+  class PageModule {
   }
   
-  return FlowModule;
+  return PageModule;
 });
