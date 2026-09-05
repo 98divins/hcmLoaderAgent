@@ -12,26 +12,19 @@
 
   <div class="hdl-step">
 
-    <!-- Titre de l'etape et actions de l'etape, a droite. -->
-    <div class="hdl-step-head">
-      <div>
-        <h2 class="oj-typography-heading-sm oj-text-color-primary oj-sm-margin-0"><oj-bind-text
-          value="[[ $flow.functions.stepTitle($page.variables.currentStep) ]]"></oj-bind-text></h2>
-        <p class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-1x-top hdl-subtitle"><oj-bind-text
-          value="[[ $flow.functions.stepSubtitle($page.variables.currentStep) ]]"></oj-bind-text></p>
-      </div>
+    <!-- Le template affiche deja le titre et la description de l'etape :
+         ici ne restent que les actions de l'etape, a droite. -->
+    <oj-bind-if test="[[ $page.variables.currentStep === 'review' || $page.variables.currentStep === 'result' ]]">
       <div class="hdl-step-actions">
-        <oj-bind-if test="[[ $page.variables.currentStep === 'review' || $page.variables.currentStep === 'result' ]]">
-          <oj-c-button label="[[ $flow.variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
-                       chroming="outlined" size="sm" button-type="button"
-                       on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
-        </oj-bind-if>
         <oj-bind-if test="[[ $page.variables.currentStep === 'result' ]]">
           <oj-c-button label="Telecharger le .dat envoye" chroming="borderless" size="sm" button-type="button"
                        on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
         </oj-bind-if>
+        <oj-c-button label="[[ $flow.variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
+                     chroming="outlined" size="sm" button-type="button"
+                     on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
       </div>
-    </div>
+    </oj-bind-if>
 
     <oj-bind-if test="[[ $flow.variables.errorText && !$flow.variables.assistOpen ]]">
       <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-3x-bottom"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
@@ -68,9 +61,9 @@
             <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
             <span class="oj-typography-body-sm oj-text-color-secondary">Controle en cours...</span>
           </oj-bind-if>
-          <oj-c-button label="Controler le dossier" button-type="button" chroming="callToAction"
-                       disabled="[[ $flow.variables.isChecking || $flow.variables.isThinking ]]"
-                       on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
+          <oj-bind-if test="[[ !$flow.variables.isChecking ]]">
+            <span class="oj-typography-body-sm oj-text-color-primary">Puis Continuer, pour controler le dossier.</span>
+          </oj-bind-if>
         </div>
 
         <div class="hdl-tabs" on-click="[[ $listeners.onSelectSheet ]]">
@@ -92,18 +85,19 @@
           </oj-bind-if>
         </div>
 
-        <oj-c-table class="hdl-table"
-                    data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
-                    columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'data') ]]"
-                    layout="fixed"
-                    vertical-grid-visible="enabled"></oj-c-table>
+        <oj-table class="hdl-table"
+                  data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
+                  columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'data') ]]"
+                  layout="fixed"
+                  vertical-grid-visible="enabled"
+                  horizontal-grid-visible="enabled"></oj-table>
       </oj-bind-if>
     </oj-bind-if>
 
     <!-- ETAPE 2 : CONTROLER. Bandeaux Redwood par niveau, la grille editable,
          l'assistant dans un tiroir a droite. -->
     <oj-bind-if test="[[ $page.variables.currentStep === 'review' ]]">
-      <oj-c-drawer-layout class="hdl-main" end-opened="{{ $flow.variables.assistOpen }}" end-display="reflow">
+      <div class="hdl-main">
 
         <div class="hdl-content">
           <div class="oj-sm-margin-3x-bottom">
@@ -135,25 +129,43 @@
             </oj-bind-for-each>
           </div>
 
-          <oj-c-table class="hdl-table"
-                      data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
-                      columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'review') ]]"
-                      layout="fixed"
-                      edit-mode="rowEdit"
-                      vertical-grid-visible="enabled"
-                      on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">
-            <template slot="editCell">
-              <oj-c-input-text value="{{ $current.item.data[$current.columnKey] }}"
-                               label-hint="[[ $current.columnKey ]]" label-edge="none"
-                               :data-column="[[ $current.columnKey ]]"></oj-c-input-text>
+          <!-- La correction se fait dans la grille : double-clic sur une ligne,
+               chaque cellule devient un champ, Entree valide. La cellule ecrit
+               dans la ligne du dossier ; la fin d'edition relit par securite. -->
+          <oj-table class="hdl-table"
+                    data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
+                    columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'review') ]]"
+                    layout="fixed"
+                    edit-mode="rowEdit"
+                    vertical-grid-visible="enabled"
+                    horizontal-grid-visible="enabled"
+                    on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">
+            <template slot="etatCell">
+              <span :class="[[ 'hdl-etat hdl-etat-' + String($current.row.statusLabel || '').replace(/ /g, '-') ]]"><oj-bind-text
+                value="[[ $flow.functions.etatLabel($current.row.statusLabel) ]]"></oj-bind-text></span>
             </template>
-          </oj-c-table>
+            <template slot="dataCell">
+              <oj-bind-if test="[[ $current.mode !== 'edit' ]]">
+                <oj-bind-text value="[[ $current.data ]]"></oj-bind-text>
+              </oj-bind-if>
+              <oj-bind-if test="[[ $current.mode === 'edit' ]]">
+                <oj-c-input-text value="{{ $current.row[$current.componentElement.columns[$current.columnIndex].field] }}"
+                                 label-hint="[[ $current.componentElement.columns[$current.columnIndex].field ]]" label-edge="none"
+                                 :data-column="[[ $current.componentElement.columns[$current.columnIndex].field ]]"
+                                 :data-row="[[ $current.key ]]"></oj-c-input-text>
+              </oj-bind-if>
+            </template>
+          </oj-table>
         </div>
 
         <!-- Assistant : sa derniere reponse, ses propositions applicables ou
              ignorables, et une question. Rien ne modifie le dossier sans geste
              explicite. -->
-        <div slot="end" class="hdl-assist">
+        </div>
+
+        <oj-c-drawer-popup class="hdl-assist-popup" edge="end" modality="modeless" auto-dismiss="none"
+                           opened="{{ $flow.variables.assistOpen }}">
+        <div class="hdl-assist">
           <div class="hdl-assist-head">
             <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
             <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
@@ -230,7 +242,7 @@
             </div>
           </div>
         </div>
-      </oj-c-drawer-layout>
+      </oj-c-drawer-popup>
     </oj-bind-if>
 
     <!-- ETAPE 3 : CHARGER. Ce qui part, deux sorties, une confirmation en place. -->
@@ -315,7 +327,7 @@
     <!-- ETAPE 4 : SUIVRE. Bandeau d'issue, une barre par phase, les rejets,
          puis la suite qui s'impose : corriger, ou terminer. -->
     <oj-bind-if test="[[ $page.variables.currentStep === 'result' ]]">
-      <oj-c-drawer-layout class="hdl-main" end-opened="{{ $flow.variables.assistOpen }}" end-display="reflow">
+      <div class="hdl-main">
 
         <div class="hdl-content">
           <div class="hdl-section">
@@ -391,7 +403,11 @@
           </div>
         </div>
 
-        <div slot="end" class="hdl-assist">
+        </div>
+
+        <oj-c-drawer-popup class="hdl-assist-popup" edge="end" modality="modeless" auto-dismiss="none"
+                           opened="{{ $flow.variables.assistOpen }}">
+        <div class="hdl-assist">
           <div class="hdl-assist-head">
             <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
             <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
@@ -452,7 +468,7 @@
             </div>
           </div>
         </div>
-      </oj-c-drawer-layout>
+      </oj-c-drawer-popup>
     </oj-bind-if>
 
   </div>
@@ -467,23 +483,23 @@
 </oj-sp-message-unsaved-changes>
 
 <style>
+  /* Le contenu s'aligne sur le titre du template : memes marges laterales. */
   .hdl-step {
-    padding-block: 0.5rem 1rem;
+    padding: 0.25rem 3rem 1.5rem;
     min-inline-size: 0;
   }
 
-  .hdl-step-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1rem;
+  @media (max-width: 64rem) {
+    .hdl-step {
+      padding-inline: 1.5rem;
+    }
   }
 
   .hdl-step-actions {
-    margin-inline-start: auto;
     display: flex;
+    justify-content: flex-end;
     gap: 0.5rem;
-    flex: none;
+    margin-bottom: 0.75rem;
   }
 
   .hdl-subtitle {
@@ -642,15 +658,18 @@
     padding-inline-start: 0.75rem;
   }
 
-  /* Tiroir de l'assistant : une colonne, la question toujours en bas. */
+  /* Tiroir de l'assistant : il glisse depuis le bord droit par-dessus la
+     page, sans rien deplacer ; une colonne, la question toujours en bas. */
+  .hdl-assist-popup {
+    inline-size: 26rem;
+    max-inline-size: 100vw;
+  }
+
   .hdl-assist {
     display: flex;
     flex-direction: column;
-    inline-size: 24rem;
-    max-inline-size: 100vw;
     block-size: 100%;
-    min-block-size: 24rem;
-    border-inline-start: 1px solid var(--oj-core-divider-color);
+    min-block-size: 0;
     background-color: var(--oj-core-bg-color-content);
   }
 
@@ -690,4 +709,17 @@
     border-radius: var(--oj-core-border-radius-md);
     background-color: var(--oj-core-bg-color-subtle);
   }
+
+  /* L'etat d'une ligne, en un mot colore. */
+  .hdl-etat {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+    background-color: var(--oj-core-bg-color-subtle);
+    font-size: 0.8125rem;
+  }
+
+  .hdl-etat-erreur { background-color: var(--oj-core-danger-1, #fbe9e7); color: var(--oj-core-danger-3, #c74634); }
+  .hdl-etat-a-verifier { background-color: var(--oj-core-warning-1, #fff3e0); }
+  .hdl-etat-ok, .hdl-etat-chargee { background-color: var(--oj-core-success-1, #e6f4ea); color: var(--oj-core-success-3, #197a56); }
 </style>

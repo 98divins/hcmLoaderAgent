@@ -169,8 +169,22 @@ Demande : chaque page sur un Page Template Redwood, comme le recommande Oracle.
 - [x] Sous-flux et pages d'essai du Designer retirés.
 - [x] Tests : 50 vérifications, dont navigation entre étapes et câblage des
       deux pages (chaînes, écouteurs, fonctions, composants).
-- [ ] Hypothèses à vérifier en exécution, faute d'accès à la documentation des
-      templates : attribut `steps` du Guided Process (tableau id/title/description) ;
-      attributs `page-title`, `overline-text`, `description-text` et slot par défaut
-      du Welcome ; ré-entrée de la page (vbEnter) à chaque changement d'étape.
+- [x] Hypothèses vérifiées en exécution (captures du build 23) : `steps` du
+      Guided Process, `page-title` / `overline-text` / `description-text` et slot
+      par défaut du Welcome, navigation par `currentStep`.
 - [ ] Accentuation complète des libellés et messages : à traiter avec le fond.
+
+## Itération 10 — retours sur le build 23 (build 24)
+
+- [x] Titre et description d'étape en double : le template les affiche déjà,
+      l'en-tête maison est retiré. Ne restent que les actions de l'étape, à droite.
+- [x] Contenu qui débordait à gauche du gabarit : mêmes marges latérales que
+      le titre du template.
+- [x] Saisie impossible dans la grille (`oj-c-table`) : grille remplacée par
+      `oj-table`, dont l'édition de ligne est éprouvée. Double-clic sur la ligne,
+      chaque cellule devient un champ, Entrée valide. Colonne État en pastille.
+- [x] Assistant mal placé et coupé : tiroir Redwood `oj-c-drawer-popup` qui
+      glisse depuis le bord droit par-dessus la page, sans rien déplacer,
+      question toujours visible en bas.
+- [x] Bouton « Contrôler le dossier » en double avec « Continuer » : retiré,
+      Continuer lance le contrôle.

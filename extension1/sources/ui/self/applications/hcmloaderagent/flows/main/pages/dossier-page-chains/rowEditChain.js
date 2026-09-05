@@ -23,8 +23,15 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const detail = (event && event.detail) || {};
       if (detail.cancelEdit) { return; }
 
-      const item = detail.rowContext && detail.rowContext.item;
-      const key = item && item.metadata ? item.metadata.key : null;
+      // oj-table designe la ligne par rowContext.status.rowKey ; oj-c-table par
+      // item.metadata.key ; a defaut, le champ edite porte la cle (data-row).
+      const rc = detail.rowContext || {};
+      let key = (rc.status && rc.status.rowKey !== undefined) ? rc.status.rowKey
+        : (rc.item && rc.item.metadata ? rc.item.metadata.key : null);
+      if ((key === null || key === undefined) && event.target && event.target.querySelector) {
+        const first = event.target.querySelector('[data-row]');
+        key = first ? first.getAttribute('data-row') : null;
+      }
       if (key === null || key === undefined) { return; }
 
       const sheets = ($variables.sheets || []).slice();

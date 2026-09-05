@@ -193,15 +193,24 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      */
     getTableColumns(sheets, index, step) {
       const list = [];
-      if (step !== 'data') {
-        list.push({ field: 'etat', headerText: 'Etat', weight: 1, minWidth: 96 });
-        list.push({ field: 'statusDetail', headerText: 'Detail', weight: 4, minWidth: 240 });
-        list.push({ field: 'matchLabel', headerText: 'Rapprochement', weight: 3, minWidth: 180 });
+      const editable = step !== 'data';
+      if (editable) {
+        list.push({ field: 'statusLabel', headerText: 'Etat', width: 110, template: 'etatCell' });
+        list.push({ field: 'statusDetail', headerText: 'Detail', width: 320 });
+        list.push({ field: 'matchLabel', headerText: 'Rapprochement', width: 200 });
       }
       (activeSheet(sheets, index).columns || []).forEach((name) => {
-        list.push({ field: name, headerText: name, weight: 2, minWidth: 150, editTemplate: 'editCell' });
+        const column = { field: name, headerText: name, width: 160 };
+        if (editable) { column.template = 'dataCell'; }
+        list.push(column);
       });
       return list;
+    }
+
+    /** L'etat d'une ligne, tel qu'il se lit dans la grille. */
+    etatLabel(statusLabel) {
+      const labels = { erreur: 'Erreur', 'a verifier': 'A verifier', ok: 'OK', chargee: 'Chargee' };
+      return labels[statusLabel] || 'A controler';
     }
 
     /**

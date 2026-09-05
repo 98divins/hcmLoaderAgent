@@ -347,9 +347,6 @@
       "oj-c-file-picker": {
         "path": "oj-c/file-picker"
       },
-      "oj-c-table": {
-        "path": "oj-c/table"
-      },
       "oj-c-progress-circle": {
         "path": "oj-c/progress-circle"
       },
@@ -359,8 +356,11 @@
       "oj-c-message-banner": {
         "path": "oj-c/message-banner"
       },
-      "oj-c-drawer-layout": {
-        "path": "oj-c/drawer-layout"
+      "oj-table": {
+        "path": "ojs/ojtable"
+      },
+      "oj-c-drawer-popup": {
+        "path": "oj-c/drawer-popup"
       }
     }
   },
