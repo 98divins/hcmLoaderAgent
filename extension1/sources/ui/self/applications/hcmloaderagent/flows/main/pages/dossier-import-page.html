@@ -1,0 +1,261 @@
+<div class="hdl-page">
+
+  <header class="hdl-header">
+    <div class="hdl-overline oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+      value="[[ $flow.functions.dossierOverline($flow.variables.hierarchy, $flow.variables.operation) ]]"></oj-bind-text></div>
+    <div class="hdl-header-row">
+      <div>
+        <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0"><oj-bind-text
+          value="[[ $flow.functions.stepTitle('data') ]]"></oj-bind-text></h1>
+        <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-1x-top hdl-subtitle"><oj-bind-text
+          value="[[ $flow.functions.stepSubtitle('data') ]]"></oj-bind-text></p>
+      </div>
+      <div class="hdl-header-actions">
+        <oj-c-button label="Abandonner le dossier" chroming="borderless" button-type="button"
+                     disabled="[[ $flow.variables.isChecking ]]"
+                     on-oj-action="[[ $listeners.onAbandon ]]"></oj-c-button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hdl-train">
+    <oj-c-train steps="[[ $flow.functions.getTrainSteps('data') ]]" selected-step="data"></oj-c-train>
+  </div>
+
+  <div class="hdl-content">
+
+    <!-- Sans feuille : une seule zone de depot, grande, au centre. -->
+    <oj-bind-if test="[[ !$flow.variables.sheets.length ]]">
+      <div class="hdl-empty">
+        <div class="hdl-drop">
+          <oj-c-file-picker accept='["text/csv",".csv",".txt"]' selection-mode="multiple"
+                            primary-text="Deposez vos fichiers CSV ici"
+                            secondary-text="[[ $flow.functions.addableText($flow.variables.objectCatalog, $flow.variables.hierarchy, $flow.variables.operation, $flow.variables.sheets) ]]"
+                            on-oj-select="[[ $listeners.onFilePick ]]"></oj-c-file-picker>
+        </div>
+        <p class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-top hdl-subtitle">Un fichier
+          par objet, ensemble ou l'un apres l'autre. Separateur point-virgule, premiere ligne :
+          les noms de colonnes HDL.</p>
+      </div>
+    </oj-bind-if>
+
+    <!-- Avec des feuilles : la zone de depot se fait discrete, la grille prend la place. -->
+    <oj-bind-if test="[[ $flow.variables.sheets.length ]]">
+      <div class="hdl-toolbar">
+        <div class="hdl-drop-compact">
+          <oj-c-file-picker accept='["text/csv",".csv",".txt"]' selection-mode="multiple"
+                            primary-text="Deposer un autre fichier"
+                            secondary-text="[[ $flow.functions.addableText($flow.variables.objectCatalog, $flow.variables.hierarchy, $flow.variables.operation, $flow.variables.sheets) ]]"
+                            on-oj-select="[[ $listeners.onFilePick ]]"></oj-c-file-picker>
+        </div>
+        <oj-bind-if test="[[ $flow.variables.summaryText ]]">
+          <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.variables.summaryText ]]"></oj-bind-text></span>
+        </oj-bind-if>
+      </div>
+
+      <div class="hdl-tabs" on-click="[[ $listeners.onSelectSheet ]]">
+        <oj-bind-for-each data="[[ $flow.functions.getSheets($flow.variables.sheets, $flow.variables.activeSheet) ]]">
+          <template>
+            <div :class="[[ $current.data.cls ]]" :data-sheet="[[ $current.data.index ]]" role="tab">
+              <span :class="[[ $current.data.dot ]]"></span>
+              <span class="oj-typography-body-sm oj-sm-margin-1x-start"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+              <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $current.data.detail ]]"></oj-bind-text></span>
+            </div>
+          </template>
+        </oj-bind-for-each>
+        <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-start oj-sm-flex-1"><oj-bind-text
+          value="[[ $flow.functions.activeFileName($flow.variables.sheets, $flow.variables.activeSheet) ]]"></oj-bind-text></span>
+        <oj-bind-if test="[[ $flow.variables.sheets.length > 1 ]]">
+          <oj-c-button label="[[ $flow.variables.armedAction === 'removeSheet' ? 'Confirmer le retrait' : 'Retirer cette feuille' ]]"
+                       button-type="button" size="sm" chroming="borderless"
+                       on-oj-action="[[ $listeners.onRemoveSheet ]]"></oj-c-button>
+        </oj-bind-if>
+      </div>
+
+      <oj-c-table class="hdl-table"
+                  data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
+                  columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'data') ]]"
+                  layout="fixed"
+                  vertical-grid-visible="enabled"></oj-c-table>
+    </oj-bind-if>
+
+    <oj-bind-if test="[[ $flow.variables.errorText ]]">
+      <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-3x-top"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
+    </oj-bind-if>
+
+  </div>
+
+  <footer class="hdl-footer">
+    <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.stepCounter('data') ]]"></oj-bind-text></span>
+    <div class="hdl-footer-right">
+      <oj-bind-if test="[[ $flow.variables.isChecking ]]">
+        <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
+        <span class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-end">Controle en cours...</span>
+      </oj-bind-if>
+      <oj-c-button label="Controler le dossier" button-type="button" size="lg" chroming="callToAction"
+                   disabled="[[ !$flow.variables.sheets.length || $flow.variables.isChecking || $flow.variables.isThinking ]]"
+                   on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
+    </div>
+  </footer>
+
+</div>
+
+<style>
+  /* Chrome commun aux pages du flux : en-tete, train, contenu, pied de page. */
+  .hdl-page {
+    display: flex;
+    flex-direction: column;
+    min-block-size: calc(100vh - 6rem);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-header {
+    flex: none;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-overline {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .hdl-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hdl-header-actions {
+    margin-inline-start: auto;
+    display: flex;
+    gap: 0.5rem;
+    flex: none;
+  }
+
+  .hdl-train {
+    flex: none;
+    padding: 0.5rem 1.5rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-main {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+
+  .hdl-content {
+    flex: 1 1 auto;
+    padding: 1.5rem;
+    min-inline-size: 0;
+  }
+
+  .hdl-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--oj-core-divider-color);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-footer-right {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .hdl-subtitle {
+    max-inline-size: 44rem;
+  }
+
+  .hdl-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .hdl-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: 3rem;
+  }
+
+  .hdl-drop {
+    inline-size: 100%;
+    max-inline-size: 40rem;
+  }
+
+  .hdl-drop-compact {
+    max-inline-size: 24rem;
+  }
+
+  .hdl-drop-compact .oj-filepicker-dropzone,
+  .hdl-drop-compact .oj-c-file-picker {
+    padding-block: 0.25rem;
+  }
+
+  /* Onglets de feuilles au-dessus de la grille, a la Redwood : trait sous
+     l'onglet courant, point de couleur pour l'etat de la feuille. */
+  .hdl-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+    margin-bottom: 0.75rem;
+  }
+
+  .hdl-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+  }
+
+  .hdl-tab:hover {
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+
+  .hdl-tab-courante {
+    border-bottom-color: var(--oj-core-text-color-primary);
+  }
+
+  .hdl-dot {
+    display: inline-block;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--oj-core-divider-color);
+    flex: none;
+  }
+
+  .hdl-dot-ok { background-color: var(--oj-core-success-3, #197a56); }
+  .hdl-dot-anomalie { background-color: var(--oj-core-danger-3, #c74634); }
+
+  /* La grille prend la hauteur qui reste et defile elle-meme, dans les deux
+     sens : la page ne grandit jamais au point de perdre son pied de page. */
+  .hdl-table {
+    inline-size: 100%;
+    block-size: max(16rem, calc(100vh - 30rem));
+  }
+
+  .hdl-error {
+    border: 1px solid var(--oj-core-danger-3, #c74634);
+    border-radius: var(--oj-core-border-radius-md);
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+</style>

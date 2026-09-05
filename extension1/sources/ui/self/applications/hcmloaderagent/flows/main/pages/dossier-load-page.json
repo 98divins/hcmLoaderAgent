@@ -1,0 +1,113 @@
+{
+  "title": "Charger",
+  "description": "Etape 3 : telecharger le .dat ou charger dans Oracle, apres confirmation",
+  "variables": {},
+  "metadata": {},
+  "eventListeners": {
+    "vbEnter": {
+      "chains": [
+        {
+          "chain": "flow:guardChain",
+          "parameters": {
+            "needs": "clean"
+          }
+        }
+      ]
+    },
+    "onArmLoad": {
+      "chains": [
+        {
+          "chain": "flow:armChain",
+          "parameters": {
+            "action": "load"
+          }
+        }
+      ]
+    },
+    "onDisarm": {
+      "chains": [
+        {
+          "chain": "flow:armChain",
+          "parameters": {
+            "action": ""
+          }
+        }
+      ]
+    },
+    "onDownloadDat": {
+      "chains": [
+        {
+          "chain": "flow:downloadDatChain"
+        }
+      ]
+    },
+    "onSubmitLoad": {
+      "chains": [
+        {
+          "chain": "flow:submitLoadChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "track",
+            "when": "requestId"
+          }
+        },
+        {
+          "chain": "flow:checkLoadStatusChain",
+          "parameters": {
+            "auto": true
+          }
+        },
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    },
+    "onBackToCheck": {
+      "chains": [
+        {
+          "chain": "flow:armChain",
+          "parameters": {
+            "action": ""
+          }
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "check"
+          }
+        }
+      ]
+    },
+    "onAbandon": {
+      "chains": [
+        {
+          "chain": "flow:resetChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "start"
+          }
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-train": {
+        "path": "oj-c/train"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      },
+      "oj-c-message-banner": {
+        "path": "oj-c/message-banner"
+      }
+    }
+  }
+}

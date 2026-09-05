@@ -1,0 +1,180 @@
+{
+  "title": "Controler",
+  "description": "Etape 2 : controle du dossier, correction dans la grille, assistant",
+  "variables": {},
+  "metadata": {},
+  "eventListeners": {
+    "vbEnter": {
+      "chains": [
+        {
+          "chain": "flow:guardChain",
+          "parameters": {
+            "needs": "opened"
+          }
+        }
+      ]
+    },
+    "onCheck": {
+      "chains": [
+        {
+          "chain": "flow:checkPlanChain",
+          "parameters": {
+            "ask": true
+          }
+        },
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    },
+    "onAsk": {
+      "chains": [
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    },
+    "onStop": {
+      "chains": [
+        {
+          "chain": "flow:stopChain"
+        }
+      ]
+    },
+    "onToggleAssist": {
+      "chains": [
+        {
+          "chain": "flow:toggleAssistChain"
+        }
+      ]
+    },
+    "onApplyProposal": {
+      "chains": [
+        {
+          "chain": "flow:applyProposalChain",
+          "parameters": {
+            "source": "agent"
+          }
+        },
+        {
+          "chain": "flow:checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onIgnoreProposal": {
+      "chains": [
+        {
+          "chain": "flow:ignoreProposalChain"
+        }
+      ]
+    },
+    "onApplyAutoFix": {
+      "chains": [
+        {
+          "chain": "flow:applyProposalChain",
+          "parameters": {
+            "source": "auto"
+          }
+        },
+        {
+          "chain": "flow:checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onIgnoreAutoFix": {
+      "chains": [
+        {
+          "chain": "flow:ignoreProposalChain",
+          "parameters": {
+            "source": "auto"
+          }
+        }
+      ]
+    },
+    "onSelectSheet": {
+      "chains": [
+        {
+          "chain": "flow:selectSheetChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onRowEditEnd": {
+      "chains": [
+        {
+          "chain": "flow:rowEditChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onBackToImport": {
+      "chains": [
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "import"
+          }
+        }
+      ]
+    },
+    "onContinue": {
+      "chains": [
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "load",
+            "when": "clean"
+          }
+        }
+      ]
+    },
+    "onAbandon": {
+      "chains": [
+        {
+          "chain": "flow:resetChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "start"
+          }
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
+      "oj-c-table": {
+        "path": "oj-c/table"
+      },
+      "oj-c-train": {
+        "path": "oj-c/train"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      },
+      "oj-c-message-banner": {
+        "path": "oj-c/message-banner"
+      },
+      "oj-c-drawer-layout": {
+        "path": "oj-c/drawer-layout"
+      }
+    }
+  }
+}

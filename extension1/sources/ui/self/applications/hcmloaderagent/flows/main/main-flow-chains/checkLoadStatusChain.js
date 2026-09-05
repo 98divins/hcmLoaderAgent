@@ -56,10 +56,22 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const percent = phase.percent ? dataSet[phase.percent] : null;
       const done = (percent === null || percent === undefined || percent === '')
         ? '' : ` · ${percent} %`;
+      // Valeur de la barre : l'avancement quand Oracle le donne ; sinon 100 sur
+      // un etat final, 0 sans etat, et "indetermine" pendant que ca tourne.
+      const text = String(meaning);
+      let bar = -1;
+      if (percent !== null && percent !== undefined && percent !== '' && !isNaN(Number(percent))) {
+        bar = Number(percent);
+      } else if (!text) {
+        bar = 0;
+      } else if (/success|complet|termin|error|erreur|fail|warning|avert|cancel|annul/i.test(text)) {
+        bar = 100;
+      }
       return {
         rowKey: `P${index + 1}`,
         Etape: phase.label,
-        Etat: `${String(meaning) || 'en attente'}${done}`
+        Etat: `${text || 'en attente'}${done}`,
+        bar
       };
     });
   }

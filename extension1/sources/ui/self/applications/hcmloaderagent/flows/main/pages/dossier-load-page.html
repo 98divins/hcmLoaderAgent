@@ -1,0 +1,253 @@
+<div class="hdl-page">
+
+  <header class="hdl-header">
+    <div class="hdl-overline oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+      value="[[ $flow.functions.dossierOverline($flow.variables.hierarchy, $flow.variables.operation) ]]"></oj-bind-text></div>
+    <div class="hdl-header-row">
+      <div>
+        <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0"><oj-bind-text
+          value="[[ $flow.functions.stepTitle('submit') ]]"></oj-bind-text></h1>
+        <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-1x-top hdl-subtitle"><oj-bind-text
+          value="[[ $flow.functions.stepSubtitle('submit') ]]"></oj-bind-text></p>
+      </div>
+      <div class="hdl-header-actions">
+        <oj-c-button label="Abandonner le dossier" chroming="borderless" button-type="button"
+                     disabled="[[ $flow.variables.isLoading ]]"
+                     on-oj-action="[[ $listeners.onAbandon ]]"></oj-c-button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hdl-train">
+    <oj-c-train steps="[[ $flow.functions.getTrainSteps('submit') ]]" selected-step="submit"></oj-c-train>
+  </div>
+
+  <div class="hdl-content">
+
+    <div class="hdl-section">
+
+      <div class="oj-sm-margin-4x-bottom">
+        <oj-c-message-banner data="[[ $flow.functions.getBannersDP($flow.variables.checkSummary, $flow.variables.operation, false, false) ]]"
+                             type="section"></oj-c-message-banner>
+      </div>
+
+      <!-- Ce qui part, en clair, avant le geste. -->
+      <div class="hdl-panel">
+        <div class="oj-typography-heading-xs oj-text-color-primary oj-sm-margin-2x-bottom">Ce qui va partir</div>
+        <div class="hdl-facts">
+          <div class="hdl-fact">
+            <span class="oj-typography-body-xs oj-text-color-secondary">Objet</span>
+            <span class="oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $flow.variables.hierarchy ]]"></oj-bind-text></span>
+          </div>
+          <div class="hdl-fact">
+            <span class="oj-typography-body-xs oj-text-color-secondary">Operation</span>
+            <span class="oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $flow.functions.operationLabel($flow.variables.operation) ]]"></oj-bind-text></span>
+          </div>
+          <div class="hdl-fact">
+            <span class="oj-typography-body-xs oj-text-color-secondary">Feuilles</span>
+            <span class="oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $flow.variables.sheets.length ]]"></oj-bind-text></span>
+          </div>
+          <div class="hdl-fact">
+            <span class="oj-typography-body-xs oj-text-color-secondary">Lignes a envoyer</span>
+            <span class="oj-typography-body-md oj-text-color-primary"><oj-bind-text value="[[ $flow.functions.pendingRows($flow.variables.sheets) ]]"></oj-bind-text></span>
+          </div>
+        </div>
+        <oj-bind-if test="[[ $flow.functions.pendingRows($flow.variables.sheets) < $flow.variables.countTotal ]]">
+          <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-2x-top"><oj-bind-text
+            value="[[ 'Seules les ' + $flow.functions.pendingRows($flow.variables.sheets) + ' lignes non encore acceptees par Oracle partiront.' ]]"></oj-bind-text></div>
+        </oj-bind-if>
+      </div>
+
+      <!-- Deux sorties. La premiere demande une confirmation, en place. -->
+      <oj-bind-if test="[[ $flow.variables.armedAction !== 'load' && !$flow.variables.isLoading ]]">
+        <div class="hdl-choices oj-sm-margin-4x-top">
+          <div class="hdl-choice">
+            <div class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary">Charger dans Oracle</div>
+            <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-top oj-sm-margin-3x-bottom">La page
+              envoie le fichier a HCM Data Loader et suit le job jusqu'a sa fin. Vous confirmez
+              d'abord.</div>
+            <oj-c-button label="Charger dans Oracle" button-type="button" size="lg" chroming="callToAction"
+                         on-oj-action="[[ $listeners.onArmLoad ]]"></oj-c-button>
+          </div>
+          <div class="hdl-choice">
+            <div class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary">Telecharger le fichier .dat</div>
+            <div class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-1x-top oj-sm-margin-3x-bottom">Vous
+              recuperez le fichier tel qu'il partirait, pour le deposer vous-meme ou le conserver.</div>
+            <oj-c-button label="Telecharger le .dat" button-type="button" size="lg" chroming="outlined"
+                         on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
+          </div>
+        </div>
+      </oj-bind-if>
+
+      <oj-bind-if test="[[ $flow.variables.armedAction === 'load' && !$flow.variables.isLoading ]]">
+        <div class="hdl-confirm oj-sm-margin-4x-top">
+          <div class="oj-typography-heading-xs oj-text-color-primary oj-sm-margin-1x-bottom">Confirmer le chargement</div>
+          <div class="oj-typography-body-md oj-text-color-primary oj-sm-margin-3x-bottom"><oj-bind-text
+            value="[[ $flow.functions.confirmText($flow.variables.hierarchy, $flow.variables.operation, $flow.variables.sheets) ]]"></oj-bind-text></div>
+          <div class="oj-flex">
+            <oj-c-button label="[[ $flow.variables.operation === 'DELETE' ? 'Oui, supprimer' : 'Oui, charger' ]]"
+                         button-type="button" size="lg" chroming="callToAction"
+                         on-oj-action="[[ $listeners.onSubmitLoad ]]"></oj-c-button>
+            <oj-c-button label="Annuler" button-type="button" size="lg" chroming="outlined"
+                         class="oj-sm-margin-2x-start"
+                         on-oj-action="[[ $listeners.onDisarm ]]"></oj-c-button>
+          </div>
+        </div>
+      </oj-bind-if>
+
+      <oj-bind-if test="[[ $flow.variables.isLoading ]]">
+        <div class="hdl-confirm oj-sm-margin-4x-top oj-flex oj-sm-align-items-center">
+          <oj-c-progress-circle value="-1" size="sm" class="oj-sm-margin-2x-end"></oj-c-progress-circle>
+          <span class="oj-typography-body-md"><oj-bind-text value="[[ $flow.variables.loadStatus || 'Envoi du fichier a Oracle...' ]]"></oj-bind-text></span>
+        </div>
+      </oj-bind-if>
+
+      <oj-bind-if test="[[ $flow.variables.errorText ]]">
+        <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-3x-top"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
+      </oj-bind-if>
+
+    </div>
+  </div>
+
+  <footer class="hdl-footer">
+    <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.stepCounter('submit') ]]"></oj-bind-text></span>
+    <div class="hdl-footer-right">
+      <oj-c-button label="Retour au controle" button-type="button" size="lg" chroming="borderless"
+                   disabled="[[ $flow.variables.isLoading ]]"
+                   on-oj-action="[[ $listeners.onBackToCheck ]]"></oj-c-button>
+    </div>
+  </footer>
+
+</div>
+
+<style>
+  /* Chrome commun aux pages du flux : en-tete, train, contenu, pied de page. */
+  .hdl-page {
+    display: flex;
+    flex-direction: column;
+    min-block-size: calc(100vh - 6rem);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-header {
+    flex: none;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-overline {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .hdl-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hdl-header-actions {
+    margin-inline-start: auto;
+    display: flex;
+    gap: 0.5rem;
+    flex: none;
+  }
+
+  .hdl-train {
+    flex: none;
+    padding: 0.5rem 1.5rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-main {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+
+  .hdl-content {
+    flex: 1 1 auto;
+    padding: 1.5rem;
+    min-inline-size: 0;
+  }
+
+  .hdl-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--oj-core-divider-color);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-footer-right {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .hdl-subtitle {
+    max-inline-size: 44rem;
+  }
+
+  .hdl-section {
+    max-inline-size: 60rem;
+  }
+
+  .hdl-panel,
+  .hdl-choice,
+  .hdl-confirm {
+    padding: 1.25rem;
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-lg);
+    background-color: var(--oj-core-bg-color-content);
+    box-shadow: var(--oj-core-box-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  .hdl-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+  }
+
+  .hdl-fact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .hdl-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .hdl-choice {
+    flex: 1 1 20rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hdl-choice oj-c-button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+
+  .hdl-confirm {
+    border-color: var(--oj-core-text-color-primary);
+  }
+
+  .hdl-error {
+    border: 1px solid var(--oj-core-danger-3, #c74634);
+    border-radius: var(--oj-core-border-radius-md);
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+</style>

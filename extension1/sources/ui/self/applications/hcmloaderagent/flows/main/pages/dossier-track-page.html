@@ -1,0 +1,343 @@
+<div class="hdl-page">
+
+  <header class="hdl-header">
+    <div class="hdl-overline oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+      value="[[ $flow.functions.dossierOverline($flow.variables.hierarchy, $flow.variables.operation) ]]"></oj-bind-text></div>
+    <div class="hdl-header-row">
+      <div>
+        <h1 class="oj-typography-heading-md oj-text-color-primary oj-sm-margin-0"><oj-bind-text
+          value="[[ $flow.functions.stepTitle('result') ]]"></oj-bind-text></h1>
+        <p class="oj-typography-body-md oj-text-color-secondary oj-sm-margin-0 oj-sm-margin-1x-top hdl-subtitle"><oj-bind-text
+          value="[[ $flow.functions.stepSubtitle('result') ]]"></oj-bind-text></p>
+      </div>
+      <div class="hdl-header-actions">
+        <oj-c-button label="[[ $flow.variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
+                     chroming="outlined" button-type="button"
+                     on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
+        <oj-c-button label="Telecharger le .dat envoye" chroming="borderless" button-type="button"
+                     on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
+      </div>
+    </div>
+  </header>
+
+  <div class="hdl-train">
+    <oj-c-train steps="[[ $flow.functions.getTrainSteps('result') ]]" selected-step="result"></oj-c-train>
+  </div>
+
+  <oj-c-drawer-layout class="hdl-main" end-opened="{{ $flow.variables.assistOpen }}" end-display="reflow">
+
+    <div class="hdl-content">
+      <div class="hdl-section">
+
+        <div class="oj-sm-margin-4x-bottom">
+          <oj-c-message-banner data="[[ $flow.functions.getTrackBannersDP($flow.variables.loadSummary, $flow.variables.loadStatus, $flow.variables.loadDetail) ]]"
+                               type="section"></oj-c-message-banner>
+        </div>
+
+        <!-- Le job, en trois phases, avec l'indicateur qui tourne tant que la
+             page relit seule. -->
+        <div class="hdl-panel">
+          <div class="oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
+            <span class="oj-typography-heading-xs oj-text-color-primary oj-sm-flex-1">Avancement du job Oracle</span>
+            <oj-bind-if test="[[ $flow.variables.isPolling || $flow.variables.isLoading ]]">
+              <oj-c-progress-circle value="-1" size="sm" class="oj-sm-margin-2x-end"></oj-c-progress-circle>
+            </oj-bind-if>
+            <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text
+              value="[[ $flow.functions.refreshText($flow.variables.isPolling, $flow.variables.nextRefreshIn, $flow.variables.lastRefresh) ]]"></oj-bind-text></span>
+          </div>
+
+          <oj-bind-if test="[[ !$flow.variables.loadPhases.length ]]">
+            <div class="oj-typography-body-sm oj-text-color-secondary"><oj-bind-text
+              value="[[ $flow.variables.loadStatus || 'Chargement soumis, en attente du premier statut.' ]]"></oj-bind-text></div>
+          </oj-bind-if>
+
+          <oj-bind-for-each data="[[ $flow.variables.loadPhases ]]">
+            <template>
+              <div class="hdl-phase">
+                <div class="oj-flex oj-sm-align-items-baseline oj-sm-margin-1x-bottom">
+                  <span class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1"><oj-bind-text value="[[ $current.data.Etape ]]"></oj-bind-text></span>
+                  <span class="oj-typography-body-sm oj-text-color-secondary"><oj-bind-text value="[[ $current.data.Etat ]]"></oj-bind-text></span>
+                </div>
+                <oj-c-progress-bar value="[[ $current.data.bar ]]" max="100"></oj-c-progress-bar>
+              </div>
+            </template>
+          </oj-bind-for-each>
+
+          <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-3x-top"><oj-bind-text
+            value="[[ 'Reference Oracle : RequestId ' + $flow.variables.requestId + ($flow.variables.dataSetName ? ', jeu ' + $flow.variables.dataSetName : '') ]]"></oj-bind-text></div>
+        </div>
+
+        <oj-bind-if test="[[ $flow.functions.getRejects($flow.variables.rejects).length ]]">
+          <div class="hdl-panel oj-sm-margin-4x-top">
+            <div class="oj-typography-heading-xs oj-text-color-primary oj-sm-margin-3x-bottom">Lignes rejetees par Oracle</div>
+            <oj-bind-for-each data="[[ $flow.functions.getRejects($flow.variables.rejects) ]]">
+              <template>
+                <div class="hdl-reject oj-sm-margin-3x-bottom">
+                  <div class="oj-typography-body-sm oj-typography-semi-bold oj-text-color-primary"><oj-bind-text value="[[ $current.data.where ]]"></oj-bind-text></div>
+                  <div class="oj-typography-body-sm oj-text-color-secondary hdl-pre"><oj-bind-text value="[[ $current.data.text ]]"></oj-bind-text></div>
+                </div>
+              </template>
+            </oj-bind-for-each>
+            <div class="oj-typography-body-sm oj-text-color-secondary">L'assistant explique chaque rejet.
+              Corrigez ensuite la ligne dans la grille, puis rechargez : seules les lignes non
+              acceptees repartiront.</div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ $flow.variables.errorText && !$flow.variables.assistOpen ]]">
+          <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x oj-sm-margin-3x-top"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
+        </oj-bind-if>
+
+      </div>
+    </div>
+
+    <div slot="end" class="hdl-assist">
+      <div class="hdl-assist-head">
+        <span class="oj-typography-body-md oj-typography-semi-bold oj-text-color-primary oj-sm-flex-1">Assistant</span>
+        <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.olderTurns($flow.variables.turns) ]]"></oj-bind-text></span>
+      </div>
+
+      <div class="hdl-assist-thread">
+
+        <oj-bind-if test="[[ $flow.variables.hasProposal ]]">
+          <div class="hdl-proposal oj-sm-padding-3x oj-sm-margin-3x-bottom">
+            <div class="oj-typography-body-xs oj-typography-semi-bold oj-sm-margin-1x-bottom">CORRECTION PROPOSEE</div>
+            <div class="oj-typography-body-sm hdl-pre"><oj-bind-text value="[[ $flow.variables.proposalText ]]"></oj-bind-text></div>
+            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-top">Appliquer
+              ramene au controle, pour verifier avant de recharger.</div>
+            <div class="oj-flex oj-sm-margin-2x-top">
+              <oj-c-button label="Appliquer" button-type="button" size="sm" chroming="callToAction"
+                           disabled="[[ $flow.variables.isPolling ]]"
+                           on-oj-action="[[ $listeners.onApplyProposal ]]"></oj-c-button>
+              <oj-c-button label="Ignorer" button-type="button" size="sm" chroming="outlined"
+                           class="oj-sm-margin-2x-start"
+                           on-oj-action="[[ $listeners.onIgnoreProposal ]]"></oj-c-button>
+            </div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ $flow.variables.isThinking ]]">
+          <div class="oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
+            <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
+            <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-2x-start"><oj-bind-text value="[[ $flow.variables.currentStep ]]"></oj-bind-text></span>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ !$flow.variables.isThinking && $flow.functions.lastTurn($flow.variables.turns) ]]">
+          <div class="oj-sm-margin-3x-bottom">
+            <div class="hdl-pre oj-typography-body-sm oj-text-color-primary"><oj-bind-text value="[[ $flow.functions.lastTurn($flow.variables.turns).answer ]]"></oj-bind-text></div>
+            <div class="oj-typography-body-xs oj-text-color-secondary oj-sm-margin-1x-top"><oj-bind-text value="[[ $flow.functions.lastTurn($flow.variables.turns).meta ]]"></oj-bind-text></div>
+          </div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ !$flow.variables.isThinking && !$flow.functions.lastTurn($flow.variables.turns) && !$flow.variables.hasProposal ]]">
+          <div class="oj-typography-body-sm oj-text-color-secondary">L'assistant lit le resultat du
+            chargement des qu'il est termine et explique chaque rejet en termes metier.</div>
+        </oj-bind-if>
+
+        <oj-bind-if test="[[ $flow.variables.errorText ]]">
+          <div class="hdl-error oj-typography-body-sm oj-sm-padding-2x"><oj-bind-text value="[[ $flow.variables.errorText ]]"></oj-bind-text></div>
+        </oj-bind-if>
+
+      </div>
+
+      <div class="hdl-assist-composer">
+        <oj-c-input-text label-hint="Question" label-edge="none"
+                         placeholder="Une question sur ce chargement ?"
+                         value="{{ $flow.variables.question }}"
+                         disabled="[[ $flow.variables.isThinking ]]"
+                         on-keyup="[[ $listeners.onAsk ]]"></oj-c-input-text>
+        <div class="oj-flex oj-sm-margin-2x-top">
+          <oj-bind-if test="[[ !$flow.variables.isThinking ]]">
+            <oj-c-button label="Envoyer" button-type="button" size="sm"
+                         disabled="[[ !$flow.variables.question ]]"
+                         on-oj-action="[[ $listeners.onAsk ]]"></oj-c-button>
+          </oj-bind-if>
+          <oj-bind-if test="[[ $flow.variables.isThinking ]]">
+            <oj-c-button label="Arreter" button-type="button" size="sm" chroming="outlined"
+                         on-oj-action="[[ $listeners.onStop ]]"></oj-c-button>
+          </oj-bind-if>
+        </div>
+      </div>
+    </div>
+
+  </oj-c-drawer-layout>
+
+  <!-- La suite qui s'impose : corriger s'il y a des rejets, terminer sinon.
+       "Relire" n'apparait que si la lecture automatique s'est arretee avant la fin. -->
+  <footer class="hdl-footer">
+    <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ $flow.functions.stepCounter('result') ]]"></oj-bind-text></span>
+    <div class="hdl-footer-right">
+      <oj-bind-if test="[[ !$flow.variables.loadSummary.finished && !$flow.variables.isPolling ]]">
+        <oj-c-button label="Relire le statut" button-type="button" size="lg" chroming="outlined"
+                     disabled="[[ $flow.variables.isThinking ]]"
+                     on-oj-action="[[ $listeners.onCheckLoad ]]"></oj-c-button>
+      </oj-bind-if>
+      <oj-bind-if test="[[ $flow.variables.loadSummary.finished && $flow.variables.loadSummary.rejected ]]">
+        <oj-c-button label="Corriger et recharger les lignes rejetees" button-type="button" size="lg"
+                     chroming="callToAction"
+                     disabled="[[ $flow.variables.isPolling || $flow.variables.isThinking ]]"
+                     on-oj-action="[[ $listeners.onBackToPlan ]]"></oj-c-button>
+      </oj-bind-if>
+      <oj-bind-if test="[[ $flow.variables.loadSummary.finished ]]">
+        <oj-c-button label="Terminer le dossier" button-type="button" size="lg"
+                     chroming="[[ $flow.variables.loadSummary.rejected ? 'outlined' : 'callToAction' ]]"
+                     disabled="[[ $flow.variables.isThinking ]]"
+                     on-oj-action="[[ $listeners.onFinish ]]"></oj-c-button>
+      </oj-bind-if>
+    </div>
+  </footer>
+
+</div>
+
+<style>
+  /* Chrome commun aux pages du flux : en-tete, train, contenu, pied de page. */
+  .hdl-page {
+    display: flex;
+    flex-direction: column;
+    min-block-size: calc(100vh - 6rem);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-header {
+    flex: none;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-overline {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .hdl-header-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hdl-header-actions {
+    margin-inline-start: auto;
+    display: flex;
+    gap: 0.5rem;
+    flex: none;
+  }
+
+  .hdl-train {
+    flex: none;
+    padding: 0.5rem 1.5rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-main {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+
+  .hdl-content {
+    flex: 1 1 auto;
+    padding: 1.5rem;
+    min-inline-size: 0;
+  }
+
+  .hdl-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid var(--oj-core-divider-color);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-footer-right {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .hdl-subtitle {
+    max-inline-size: 44rem;
+  }
+
+  .hdl-section {
+    max-inline-size: 60rem;
+  }
+
+  .hdl-panel {
+    padding: 1.25rem;
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-lg);
+    background-color: var(--oj-core-bg-color-content);
+    box-shadow: var(--oj-core-box-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  .hdl-phase {
+    margin-bottom: 1rem;
+  }
+
+  .hdl-phase oj-c-progress-bar {
+    inline-size: 100%;
+  }
+
+  .hdl-reject {
+    border-inline-start: 3px solid var(--oj-core-danger-3, #c74634);
+    padding-inline-start: 0.75rem;
+  }
+
+  /* Tiroir de l'assistant : une colonne, la question toujours en bas. */
+  .hdl-assist {
+    display: flex;
+    flex-direction: column;
+    inline-size: 24rem;
+    max-inline-size: 100vw;
+    block-size: 100%;
+    min-block-size: 24rem;
+    border-inline-start: 1px solid var(--oj-core-divider-color);
+    background-color: var(--oj-core-bg-color-content);
+  }
+
+  .hdl-assist-head {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-assist-thread {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .hdl-assist-composer {
+    flex: none;
+    padding: 0.75rem 1rem 1rem;
+    border-top: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-proposal {
+    background-color: var(--oj-core-bg-color-subtle);
+    border: 1px solid var(--oj-core-divider-color);
+    border-radius: var(--oj-core-border-radius-md);
+  }
+
+  .hdl-pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .hdl-error {
+    border: 1px solid var(--oj-core-danger-3, #c74634);
+    border-radius: var(--oj-core-border-radius-md);
+    background-color: var(--oj-core-bg-color-subtle);
+  }
+</style>

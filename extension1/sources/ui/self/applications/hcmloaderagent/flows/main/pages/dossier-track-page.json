@@ -1,0 +1,145 @@
+{
+  "title": "Suivre",
+  "description": "Etape 4 : suivi du job Oracle, rejets rattaches aux lignes, fin de dossier",
+  "variables": {},
+  "metadata": {},
+  "eventListeners": {
+    "vbEnter": {
+      "chains": [
+        {
+          "chain": "flow:guardChain",
+          "parameters": {
+            "needs": "requestId"
+          }
+        }
+      ]
+    },
+    "onCheckLoad": {
+      "chains": [
+        {
+          "chain": "flow:checkLoadStatusChain",
+          "parameters": {
+            "auto": false
+          }
+        },
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    },
+    "onAsk": {
+      "chains": [
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    },
+    "onStop": {
+      "chains": [
+        {
+          "chain": "flow:stopChain"
+        }
+      ]
+    },
+    "onToggleAssist": {
+      "chains": [
+        {
+          "chain": "flow:toggleAssistChain"
+        }
+      ]
+    },
+    "onApplyProposal": {
+      "chains": [
+        {
+          "chain": "flow:applyProposalChain",
+          "parameters": {
+            "source": "agent"
+          }
+        },
+        {
+          "chain": "flow:backToPlanChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "check"
+          }
+        },
+        {
+          "chain": "flow:checkPlanChain",
+          "parameters": {
+            "ask": false
+          }
+        }
+      ]
+    },
+    "onIgnoreProposal": {
+      "chains": [
+        {
+          "chain": "flow:ignoreProposalChain"
+        }
+      ]
+    },
+    "onBackToPlan": {
+      "chains": [
+        {
+          "chain": "flow:backToPlanChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "check"
+          }
+        }
+      ]
+    },
+    "onFinish": {
+      "chains": [
+        {
+          "chain": "flow:finishChain"
+        },
+        {
+          "chain": "flow:resetChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "start"
+          }
+        }
+      ]
+    },
+    "onDownloadDat": {
+      "chains": [
+        {
+          "chain": "flow:downloadDatChain"
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-input-text": {
+        "path": "oj-c/input-text"
+      },
+      "oj-c-train": {
+        "path": "oj-c/train"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      },
+      "oj-c-progress-bar": {
+        "path": "oj-c/progress-bar"
+      },
+      "oj-c-message-banner": {
+        "path": "oj-c/message-banner"
+      },
+      "oj-c-drawer-layout": {
+        "path": "oj-c/drawer-layout"
+      }
+    }
+  }
+}

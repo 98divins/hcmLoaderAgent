@@ -16,8 +16,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
      * @param {Object} params
      * @param {string} params.operation  MERGE ou DELETE
      */
-    async run(context, { operation } = {}) {
+    async run(context, { operation, event } = {}) {
       const { $variables } = context;
+      let wanted = operation;
+      if (!wanted && event && event.target && event.target.closest) {
+        const node = event.target.closest('[data-operation]');
+        wanted = node ? node.getAttribute('data-operation') : '';
+      }
+      operation = wanted;
       if (operation !== 'MERGE' && operation !== 'DELETE') { return; }
       $variables.operation = operation;
 

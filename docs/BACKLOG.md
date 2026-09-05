@@ -114,3 +114,34 @@ qu'ils ne changent ni l'architecture ni la vision. Ils sont réversibles.
 - [x] Phrase de bas de page et étape « Terminé » supprimées.
 - [ ] À vérifier en exécution : `oj-c-train` et l'édition de ligne `oj-c-table`
       dans la version JET du pod.
+
+## Itération 8 — page Redwood, flux multi-pages (build 22)
+
+Demande : « une page Redwood d'Oracle », et un flux de plusieurs pages, une par
+étape. Le fond n'a pas bougé : mêmes chaînes, mêmes contrôles, mêmes tests.
+
+- [x] L'état du dossier vit dans le flux (`main-flow.json`) ; les chaînes sont
+      des chaînes de flux (`main-flow-chains/`), référencées `flow:` depuis les
+      pages ; les fonctions d'affichage dans `main-flow.js` (`$flow.functions`).
+- [x] Cinq pages : `main-start` (accueil), `dossier-import`, `dossier-check`,
+      `dossier-load`, `dossier-track`. Navigation par `goToPageChain`, avec la
+      condition qui la justifie (dossier ouvert, feuilles présentes, contrôle
+      propre, RequestId). Garde `vbEnter` sur chaque page du dossier.
+- [x] Chrome Redwood commun : surtitre, titre, sous-titre, actions à droite ;
+      train `oj-c-train` ; pied de page collant avec « Étape n sur 4 » à gauche
+      et les actions à droite (Retour, Recontrôler, Continuer).
+- [x] Accueil : bandeau `oj-c-message-banner` du dernier dossier, cartes
+      d'objet, cartes d'opération à cocher, « Ouvrir le dossier ».
+- [x] Contrôle : bandeaux Redwood par niveau (erreur, avertissement,
+      confirmation, à savoir), grille éditable, assistant dans un tiroir
+      `oj-c-drawer-layout` repliable.
+- [x] Chargement : ce qui part en faits (objet, opération, feuilles, lignes),
+      deux cartes de sortie, confirmation en place.
+- [x] Suivi : bandeau d'issue, une barre `oj-c-progress-bar` par phase, rejets,
+      actions de fin.
+- [x] Test : chrome identique sur les cinq pages ; chaînes référencées
+      existantes ; navigation conditionnelle.
+- [ ] À vérifier en exécution : `flow:` dans les écouteurs de page, `oj-c-drawer-layout`,
+      `oj-c-message-banner`, `oj-c-progress-bar`, hauteur de la grille dans le tiroir.
+- [ ] Accentuation complète des libellés et messages (aujourd'hui sans accents,
+      par cohérence avec les messages des chaînes) : à traiter avec le fond.

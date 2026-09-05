@@ -24,7 +24,8 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const PAGE = path.join(ROOT, 'extension1/sources/ui/self/applications/hcmloaderagent/flows/main/pages');
-const CHAINS = path.join(PAGE, 'main-start-page-chains');
+const FLOW = path.join(ROOT, 'extension1/sources/ui/self/applications/hcmloaderagent/flows/main');
+const CHAINS = path.join(FLOW, 'main-flow-chains');
 const SAMPLES = path.join(ROOT, 'docs/samples');
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/metadata/objectCatalog.page.json'), 'utf8'));
 
@@ -36,10 +37,14 @@ function check(label, ok, detail) {
 
 // --- chargement d'une chaine avec un REST simule --------------------------------
 let restStub = async () => { throw new Error('hors ligne'); };
+const navigations = [];
 function load(file) {
   let out;
   const define = (deps, factory) => {
-    out = factory(class ActionChain {}, { callRest: (ctx, opts) => restStub(opts) });
+    out = factory(class ActionChain {}, {
+      callRest: (ctx, opts) => restStub(opts),
+      navigateToPage: async (ctx, opts) => { navigations.push(opts.page); }
+    });
   };
   new Function('define', fs.readFileSync(path.join(CHAINS, file), 'utf8'))(define);
   return out;
@@ -60,6 +65,8 @@ const Status = load('checkLoadStatusChain.js');
 const Submit = load('submitLoadChain.js');
 const Apply = load('applyProposalChain.js');
 const RowEdit = load('rowEditChain.js');
+const GoTo = load('goToPageChain.js');
+const Guard = load('guardChain.js');
 
 // Un fichier depose, tel que le navigateur le presente : nom et contenu.
 global.FileReader = function FileReader() {
@@ -284,6 +291,44 @@ async function main() {
   check('lookup illisible : note de feuille, pas d\'erreur',
     !/referentiel ACTIVE_INACTIVE/.test(v.sheets[0].rows[0].statusDetail)
     && v.checkSummary.sheets[0].notes.some((n) => /ACTIVE_INACTIVE non lisible/.test(n)));
+
+  // 10. Navigation : une page ne s'ouvre que si l'etat le permet.
+  v = vars('Location', 'MERGE', []);
+  v.opened = false; v.requestId = '';
+  await new Guard().run({ $variables: v }, { needs: 'opened' });
+  await new GoTo().run({ $variables: v }, { page: 'import', when: 'opened' });
+  check('dossier ferme : la garde renvoie a l\'accueil, la navigation refuse',
+    navigations.join(',') === 'main-start');
+  v.opened = true; v.step = 'review'; v.countIssues = 2;
+  await new GoTo().run({ $variables: v }, { page: 'load', when: 'clean' });
+  await new Guard().run({ $variables: v }, { needs: 'clean' });
+  check('dossier en anomalie : pas de page de chargement, retour au controle',
+    navigations.join(',') === 'main-start,dossier-check');
+  v.step = 'submit'; v.countIssues = 0;
+  await new GoTo().run({ $variables: v }, { page: 'load', when: 'clean' });
+  await new Guard().run({ $variables: v }, { needs: 'requestId' });
+  v.requestId = '42';
+  await new GoTo().run({ $variables: v }, { page: 'track', when: 'requestId' });
+  check('dossier propre : chargement ouvert ; suivi seulement avec un RequestId',
+    navigations.join(',') === 'main-start,dossier-check,dossier-load,dossier-check,dossier-track');
+
+  // 11. Le chrome Redwood (styles) est le meme texte sur toutes les pages du flux.
+  const pages = ['main-start', 'dossier-import', 'dossier-check', 'dossier-load', 'dossier-track'];
+  const chrome = (name) => {
+    const src = fs.readFileSync(path.join(PAGE, `${name}-page.html`), 'utf8');
+    const start = src.indexOf('  /* Chrome commun');
+    const end = src.indexOf('  .hdl-subtitle {', start);
+    return src.slice(start, end);
+  };
+  check('chrome commun identique sur les cinq pages',
+    pages.every((name) => chrome(name).length > 200 && chrome(name) === chrome(pages[0])));
+  const refs = pages.map((name) => JSON.parse(fs.readFileSync(path.join(PAGE, `${name}-page.json`), 'utf8')));
+  const chainFiles = fs.readdirSync(CHAINS).map((f) => f.replace(/\.js$/, ''));
+  const referenced = [];
+  refs.forEach((page) => Object.keys(page.eventListeners).forEach((l) => page.eventListeners[l].chains
+    .forEach((c) => referenced.push(c.chain))));
+  check('toutes les chaines referencees sont des chaines du flux qui existent',
+    referenced.every((c) => /^flow:/.test(c) && chainFiles.indexOf(c.replace('flow:', '')) !== -1));
 
   console.log(failures ? `\n${failures} echec(s)` : '\ntous les tests passent');
   process.exit(failures ? 1 : 0);

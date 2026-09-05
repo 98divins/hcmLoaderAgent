@@ -1,8 +1,1580 @@
 {
   "id": "main",
-  "description": "Flow main",
+  "description": "Flux de chargement en masse : accueil, puis un dossier en quatre etapes (importer, controler, charger, suivre). L'etat du dossier vit ici, les pages ne font que l'afficher.",
   "defaultPage": "main-start",
   "services": {},
-  "types": {},
-  "variables": {}
+  "types": {
+    "turnType": {
+      "question": "string",
+      "answer": "string",
+      "meta": "string"
+    }
+  },
+  "variables": {
+    "hierarchy": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "operation": {
+      "type": "string",
+      "defaultValue": "MERGE"
+    },
+    "sheets": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "activeSheet": {
+      "type": "number",
+      "defaultValue": 0
+    },
+    "step": {
+      "type": "string",
+      "defaultValue": "data"
+    },
+    "countTotal": {
+      "type": "number",
+      "defaultValue": 0
+    },
+    "countIssues": {
+      "type": "number",
+      "defaultValue": 0
+    },
+    "summaryText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "hasProposal": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "proposalText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "proposalJson": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "question": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "pendingQuestion": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isThinking": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "aborted": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "errorText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "conversationId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "turns": {
+      "type": "turnType[]",
+      "defaultValue": []
+    },
+    "agentSteps": {
+      "type": "string[]",
+      "defaultValue": []
+    },
+    "currentStep": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "assistOpen": {
+      "type": "boolean",
+      "defaultValue": true
+    },
+    "hasAutoFix": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "autoFixText": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "autoFixJson": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "appliedNote": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isLoading": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadStatus": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "loadDetail": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "requestId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "dataSetName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isPolling": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadPhases": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "objectCatalog": {
+      "type": "object",
+      "defaultValue": {
+        "keyResolutionOrder": [
+          "guid",
+          "sourceKey",
+          "userKey"
+        ],
+        "tailColumns": [
+          "SourceSystemId",
+          "SourceSystemOwner",
+          "GUID",
+          "SourceRefTableName",
+          "SourceRef001",
+          "SourceRef002",
+          "SourceRef003",
+          "SourceRef004",
+          "SourceRef005",
+          "SourceRef006",
+          "SourceRef007",
+          "SourceRef008",
+          "SourceRef009",
+          "SourceRef010"
+        ],
+        "hierarchies": {
+          "Location": {
+            "top": "Location",
+            "file": "Location.dat",
+            "title": "Site",
+            "description": "Sites et adresses de l'entreprise.",
+            "children": [
+              "LocationOtherAddress",
+              "LocationLegislative",
+              "LocationExtraInfo"
+            ]
+          },
+          "Organization": {
+            "top": "Organization",
+            "file": "Organization.dat",
+            "title": "Organisation, departement",
+            "description": "Departements, unites legales, entites declaratives.",
+            "children": [
+              "OrgUnitClassification",
+              "OrgInformation"
+            ]
+          }
+        },
+        "lookupApi": "/hcmRestApi/resources/11.13.18.05/commonLookupsLOV",
+        "objects": {
+          "Location": {
+            "uiName": "Location",
+            "hierarchy": "Location",
+            "level": "top",
+            "validOperations": [
+              "MERGE"
+            ],
+            "userKey": [
+              "LocationCode",
+              "SetCode"
+            ],
+            "flexfield": {
+              "support": "DFF",
+              "code": "PER_LOCATIONS_DF"
+            },
+            "columnOrder": [
+              "FLEX:PER_LOCATIONS_DF",
+              "LocationId",
+              "SetId",
+              "SetCode",
+              "LocationImageURL",
+              "ActiveStatus",
+              "EmployeeLocationFlag",
+              "MainphoneAreaCode",
+              "MainphoneCountryCode",
+              "MainphoneExtension",
+              "MainphoneSubscriberNumber",
+              "FaxAreaCode",
+              "FaxCountryCode",
+              "FaxExtension",
+              "FaxSubscriberNumber",
+              "OtherphoneAreaCode",
+              "OtherphoneCountryCode",
+              "OtherphoneExtension",
+              "OtherphoneSubscriberNumber",
+              "OfficialLanguageCode",
+              "EmailAddress",
+              "ShipToSiteFlag",
+              "ShipToLocationSetCode",
+              "ShipToLocationCode",
+              "ShipToLocationId",
+              "ReceivingSiteFlag",
+              "BillToSiteFlag",
+              "OfficeSiteFlag",
+              "DesignatedReceiverId",
+              "DesignatedPersonNumber",
+              "InventoryOrganizationId",
+              "InventoryOrganizationName",
+              "GeoHierarchyNodeId",
+              "GeoHierarchyNodeCode",
+              "StandardWorkingHours",
+              "StandardWorkingFrequency",
+              "StandardAnnualWorkingDuration",
+              "AnnualWorkingDurationUnits",
+              "DeliverToSiteFlag",
+              "ReceivableMaterials",
+              "LocationCode",
+              "LocationName",
+              "Description",
+              "AddressLine1",
+              "AddressLine2",
+              "AddressLine3",
+              "AddressLine4",
+              "Building",
+              "Country",
+              "FloorNumber",
+              "LongPostalCode",
+              "PostalCode",
+              "Region1",
+              "Region2",
+              "Region3",
+              "TimezoneName",
+              "TownOrCity",
+              "AddlAddressAttribute1",
+              "AddlAddressAttribute2",
+              "AddlAddressAttribute3",
+              "AddlAddressAttribute4",
+              "AddlAddressAttribute5",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "ActionReasonCode",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "Longitude",
+              "Latitude",
+              "ValidationStatusCode",
+              "Provider",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "attributes": [
+              {
+                "name": "LocationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "Location"
+              },
+              {
+                "name": "LocationCode",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "ActionReasonCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "ActiveStatus",
+                "type": "string",
+                "required": "forNewRecords",
+                "lookup": "ACTIVE_INACTIVE",
+                "softRequired": true
+              },
+              {
+                "name": "AddlAddressAttribute1",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddlAddressAttribute2",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddlAddressAttribute3",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddlAddressAttribute4",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddlAddressAttribute5",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine1",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine2",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine3",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine4",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AnnualWorkingDurationUnits",
+                "type": "string",
+                "required": "no",
+                "lookup": "ORA_PER_ANN_WORK_DURATION_UOM"
+              },
+              {
+                "name": "BillToSiteFlag",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Building",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Country",
+                "type": "string",
+                "required": "forNewRecords"
+              },
+              {
+                "name": "DeliverToSiteFlag",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Description",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "DesignatedReceiverId",
+                "type": "number",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "DesignatedPersonNumber"
+                ],
+                "references": "Person"
+              },
+              {
+                "name": "DesignatedPersonNumber",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "EmailAddress",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "EmployeeLocationFlag",
+                "type": "string",
+                "required": "no",
+                "lookup": "YES_NO"
+              },
+              {
+                "name": "FaxAreaCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "FaxCountryCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "FaxExtension",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "FaxSubscriberNumber",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "FloorNumber",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "GeoHierarchyNodeCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "GeoHierarchyNodeId",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "GeoHierarchyNodeCode"
+                ]
+              },
+              {
+                "name": "LocationImageURL",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "InventoryOrganizationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "InventoryOrganizationId",
+                "type": "number",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "InventoryOrganizationName"
+                ],
+                "references": "Organization"
+              },
+              {
+                "name": "Latitude",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "LocationName",
+                "type": "string",
+                "required": "forNewRecords"
+              },
+              {
+                "name": "LongPostalCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Longitude",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "MainphoneAreaCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "MainphoneCountryCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "MainphoneExtension",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "MainphoneSubscriberNumber",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OfficeSiteFlag",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OfficialLanguageCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference"
+              },
+              {
+                "name": "OtherphoneAreaCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OtherphoneCountryCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OtherphoneExtension",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OtherphoneSubscriberNumber",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "PostalCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Provider",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "ReceivableMaterials",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference"
+              },
+              {
+                "name": "ReceivingSiteFlag",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region1",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region2",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region3",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "SetId",
+                "type": "number",
+                "required": "forNewRecords",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "SetCode"
+                ]
+              },
+              {
+                "name": "ShipToLocationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "ShipToLocationId",
+                "type": "number",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "ShipToLocationCode",
+                  "ShipToLocationSetCode"
+                ],
+                "references": "Location"
+              },
+              {
+                "name": "ShipToLocationSetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "ShipToSiteFlag",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "StandardAnnualWorkingDuration",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "StandardWorkingHours",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "StandardWorkingFrequency",
+                "type": "string",
+                "required": "no",
+                "lookup": "FREQUENCY"
+              },
+              {
+                "name": "TimezoneName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "TownOrCity",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "ValidationStatusCode",
+                "type": "string",
+                "required": "no"
+              }
+            ]
+          },
+          "LocationOtherAddress": {
+            "uiName": "Location Other Address",
+            "hierarchy": "Location",
+            "level": 2,
+            "validOperations": [
+              "MERGE",
+              "DELETE"
+            ],
+            "userKey": [
+              "AddressUsageType",
+              "LocationCode",
+              "LocationSetCode"
+            ],
+            "parent": {
+              "object": "Location",
+              "column": "LocationId",
+              "userKey": [
+                "LocationCode",
+                "LocationSetCode"
+              ]
+            },
+            "columnOrder": [
+              "LocAddressUsageId",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "AddressUsageType",
+              "LocationId",
+              "LocationSetCode",
+              "LocationCode",
+              "AddressLine1",
+              "AddressLine2",
+              "AddressLine3",
+              "AddressLine4",
+              "Building",
+              "TownOrCity",
+              "FloorNumber",
+              "Country",
+              "PostalCode",
+              "LongPostalCode",
+              "Region1",
+              "Region2",
+              "Region3",
+              "TimezoneCode",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "Longitude",
+              "Latitude",
+              "ValidationStatusCode",
+              "Provider",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "conditionalRules": [
+              {
+                "column": "PostalCode",
+                "dependsOnCountry": true,
+                "severity": "warning",
+                "source": "This value may be mandatory depending upon the country."
+              },
+              {
+                "column": "Region1",
+                "dependsOnCountry": true,
+                "severity": "warning",
+                "source": "This value may be mandatory depending upon the country."
+              },
+              {
+                "column": "TownOrCity",
+                "dependsOnCountry": true,
+                "severity": "warning",
+                "source": "This value may be mandatory depending upon the country."
+              }
+            ],
+            "attributes": [
+              {
+                "name": "LocAddressUsageId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "LocationAddressUsage"
+              },
+              {
+                "name": "LocationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationSetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "parentSurrogateId",
+                "references": "Location"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "AddressLine1",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine2",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine3",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressLine4",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "AddressUsageType",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "foreignObjectReference"
+              },
+              {
+                "name": "Building",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Country",
+                "type": "string",
+                "required": "forNewRecords"
+              },
+              {
+                "name": "FloorNumber",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Latitude",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "LongPostalCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Longitude",
+                "type": "number",
+                "required": "no"
+              },
+              {
+                "name": "PostalCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Provider",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region1",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region2",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "Region3",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "TimezoneCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "TownOrCity",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "ValidationStatusCode",
+                "type": "string",
+                "required": "no"
+              }
+            ]
+          },
+          "LocationLegislative": {
+            "uiName": "Location Legislative Extra Information",
+            "hierarchy": "Location",
+            "level": 2,
+            "validOperations": [
+              "MERGE",
+              "DELETE"
+            ],
+            "userKey": [
+              "SequenceNumber",
+              "LleInformationCategory",
+              "LocationCode",
+              "SetCode"
+            ],
+            "parent": {
+              "object": "Location",
+              "column": "LocationId",
+              "userKey": [
+                "LocationCode",
+                "SetCode"
+              ]
+            },
+            "flexfield": {
+              "support": "EFF",
+              "code": "PER_LOCATION_LEG_EFF",
+              "categoryCode": "HcmLocationsLegislativeCategory",
+              "contextColumn": "LleInformationCategory"
+            },
+            "columnOrder": [
+              "FLEX:PER_LOCATION_LEG_EFF",
+              "EFF_CATEGORY_CODE",
+              "LocationLegId",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "LocationId",
+              "LegislationCode",
+              "LleInformationCategory",
+              "SequenceNumber",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "SetId",
+              "SetCode",
+              "LocationCode",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "attributes": [
+              {
+                "name": "LocationLegId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "LocationLegislativeEFF"
+              },
+              {
+                "name": "LocationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LleInformationCategory",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SequenceNumber",
+                "type": "number",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "parentSurrogateId",
+                "references": "Location"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "LegislationCode",
+                "type": "string",
+                "required": "forNewRecords"
+              },
+              {
+                "name": "SetId",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "SetCode"
+                ]
+              }
+            ]
+          },
+          "LocationExtraInfo": {
+            "uiName": "Location Extra Information",
+            "hierarchy": "Location",
+            "level": 2,
+            "validOperations": [
+              "MERGE",
+              "DELETE"
+            ],
+            "userKey": [
+              "SequenceNumber",
+              "LeiInformationCategory",
+              "LocationCode",
+              "SetCode"
+            ],
+            "parent": {
+              "object": "Location",
+              "column": "LocationId",
+              "userKey": [
+                "LocationCode",
+                "SetCode"
+              ]
+            },
+            "flexfield": {
+              "support": "EFF",
+              "code": "PER_LOCATION_INFORMATION_EFF",
+              "categoryCode": "HcmLocationsCategory",
+              "contextColumn": "InformationType"
+            },
+            "columnOrder": [
+              "FLEX:PER_LOCATION_INFORMATION_EFF",
+              "EFF_CATEGORY_CODE",
+              "LocationExtraInfoId",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "LocationId",
+              "InformationType",
+              "LeiInformationCategory",
+              "SequenceNumber",
+              "LegislationCode",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "SetId",
+              "SetCode",
+              "LocationCode",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "attributes": [
+              {
+                "name": "LocationExtraInfoId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "LocationExtraInfoEFF"
+              },
+              {
+                "name": "LeiInformationCategory",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SequenceNumber",
+                "type": "number",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "parentSurrogateId",
+                "references": "Location"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "InformationType",
+                "type": "string",
+                "required": "forNewRecords"
+              },
+              {
+                "name": "LegislationCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "SetId",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "SetCode"
+                ]
+              }
+            ]
+          },
+          "Organization": {
+            "uiName": "Organization",
+            "hierarchy": "Organization",
+            "level": "top",
+            "validOperations": [
+              "MERGE"
+            ],
+            "userKey": [
+              "Name",
+              "ClassificationName"
+            ],
+            "columnOrder": [
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "OrganizationId",
+              "Name",
+              "Title",
+              "ClassificationCode",
+              "ClassificationName",
+              "InternalAddressLine",
+              "ActionReasonCode",
+              "LocationId",
+              "LocationCode",
+              "LocationSetCode",
+              "EstablishmentId",
+              "EstablishmentName",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "attributes": [
+              {
+                "name": "OrganizationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "Organization"
+              },
+              {
+                "name": "ClassificationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "Name",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "userKey"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "ActionReasonCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "ClassificationCode",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "ClassificationName"
+                ]
+              },
+              {
+                "name": "EstablishmentId",
+                "type": "number",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "EstablishmentName"
+                ],
+                "references": "Establishment"
+              },
+              {
+                "name": "EstablishmentName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "InternalAddressLine",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "LocationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "LocationId",
+                "type": "number",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "LocationCode",
+                  "LocationSetCode"
+                ],
+                "references": "Location"
+              },
+              {
+                "name": "LocationSetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "Title",
+                "type": "string",
+                "required": "no"
+              }
+            ]
+          },
+          "OrgUnitClassification": {
+            "uiName": "Organization Classification",
+            "hierarchy": "Organization",
+            "level": 2,
+            "validOperations": [
+              "MERGE"
+            ],
+            "userKey": [
+              "OrganizationName",
+              "ClassificationName"
+            ],
+            "parent": {
+              "object": "Organization",
+              "column": "OrganizationId",
+              "userKey": [
+                "OrganizationName",
+                "ClassificationName"
+              ]
+            },
+            "columnOrder": [
+              "OrgUnitClassificationId",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "OrganizationId",
+              "OrganizationName",
+              "ClassificationCode",
+              "ClassificationName",
+              "CategoryCode",
+              "SetCode",
+              "Status",
+              "LegislationCode",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "conditionalRules": [
+              {
+                "column": "SetCode",
+                "requiredWhen": {
+                  "column": "ClassificationCode",
+                  "equals": "DEPARTMENT"
+                },
+                "forbiddenWhen": {
+                  "column": "ClassificationCode",
+                  "notEquals": "DEPARTMENT"
+                },
+                "severity": "error",
+                "source": "Mandatory for department classifications. Do not supply for other classification types."
+              }
+            ],
+            "attributes": [
+              {
+                "name": "OrgUnitClassificationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "OrganizationClassification"
+              },
+              {
+                "name": "ClassificationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "OrganizationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "OrganizationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "parentSurrogateId",
+                "references": "Organization"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "CategoryCode",
+                "type": "string",
+                "required": "forNewRecords",
+                "softRequired": true
+              },
+              {
+                "name": "ClassificationCode",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "ClassificationName"
+                ]
+              },
+              {
+                "name": "LegislationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference"
+              },
+              {
+                "name": "SetCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "Status",
+                "type": "string",
+                "required": "forNewRecords",
+                "lookup": "ACTIVE_INACTIVE"
+              }
+            ]
+          },
+          "OrgInformation": {
+            "uiName": "Organization Extra Information",
+            "hierarchy": "Organization",
+            "level": 2,
+            "validOperations": [
+              "MERGE",
+              "DELETE"
+            ],
+            "userKey": [
+              "OrganizationName",
+              "ClassificationName",
+              "OrgInformationContext",
+              "SequenceNumber"
+            ],
+            "parent": {
+              "object": "Organization",
+              "column": "OrganizationId",
+              "userKey": [
+                "OrganizationName",
+                "ClassificationName"
+              ]
+            },
+            "flexfield": {
+              "support": "EFF",
+              "code": "PER_ORGANIZATION_INFORMATION_EFF",
+              "categoryCode": null,
+              "contextColumn": "OrgInformationContext"
+            },
+            "columnOrder": [
+              "FLEX:PER_ORGANIZATION_INFORMATION_EFF",
+              "EFF_CATEGORY_CODE",
+              "OrgInformationId",
+              "EffectiveStartDate",
+              "EffectiveEndDate",
+              "OrgInformationContext",
+              "OrganizationId",
+              "OrganizationName",
+              "ClassificationCode",
+              "ClassificationName",
+              "LegislationCode",
+              "SequenceNumber",
+              "SourceSystemOwner",
+              "SourceSystemId",
+              "GUID",
+              "OrgUnitClassificationId",
+              "SourceRefTableName",
+              "SourceRef001",
+              "SourceRef002",
+              "SourceRef003",
+              "SourceRef004",
+              "SourceRef005",
+              "SourceRef006",
+              "SourceRef007",
+              "SourceRef008",
+              "SourceRef009",
+              "SourceRef010"
+            ],
+            "attributes": [
+              {
+                "name": "OrgInformationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "surrogateId",
+                "references": "OrgInformationEFF"
+              },
+              {
+                "name": "ClassificationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "OrgInformationContext",
+                "type": "string",
+                "required": "forNewRecords",
+                "keyType": "userKey"
+              },
+              {
+                "name": "OrganizationName",
+                "type": "string",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "SequenceNumber",
+                "type": "number",
+                "required": "no",
+                "keyType": "userKey"
+              },
+              {
+                "name": "OrganizationId",
+                "type": "number",
+                "required": "always",
+                "keyType": "parentSurrogateId",
+                "references": "Organization"
+              },
+              {
+                "name": "EffectiveEndDate",
+                "type": "date",
+                "required": "no"
+              },
+              {
+                "name": "EffectiveStartDate",
+                "type": "date",
+                "required": "always"
+              },
+              {
+                "name": "ClassificationCode",
+                "type": "string",
+                "required": "no",
+                "keyType": "foreignObjectReference",
+                "foreignUserKey": [
+                  "ClassificationName"
+                ]
+              },
+              {
+                "name": "LegislationCode",
+                "type": "string",
+                "required": "no"
+              },
+              {
+                "name": "OrgUnitClassificationId",
+                "type": "string",
+                "required": "no"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "isChecking": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "armedAction": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "checkSummary": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "lookupValues": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "opened": {
+      "type": "boolean",
+      "defaultValue": false
+    },
+    "loadSummary": {
+      "type": "object",
+      "defaultValue": {}
+    },
+    "rejects": {
+      "type": "object[]",
+      "defaultValue": []
+    },
+    "lastRefresh": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "lastDossier": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "nextRefreshIn": {
+      "type": "number",
+      "defaultValue": 0
+    }
+  }
 }

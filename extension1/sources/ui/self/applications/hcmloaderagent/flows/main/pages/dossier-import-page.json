@@ -1,0 +1,97 @@
+{
+  "title": "Importer",
+  "description": "Etape 1 : deposer les fichiers du dossier",
+  "variables": {},
+  "metadata": {},
+  "eventListeners": {
+    "vbEnter": {
+      "chains": [
+        {
+          "chain": "flow:guardChain",
+          "parameters": {
+            "needs": "opened"
+          }
+        }
+      ]
+    },
+    "onFilePick": {
+      "chains": [
+        {
+          "chain": "flow:importFileChain",
+          "parameters": {
+            "files": "[[ Array.prototype.slice.call($event.detail.files) ]]"
+          }
+        }
+      ]
+    },
+    "onSelectSheet": {
+      "chains": [
+        {
+          "chain": "flow:selectSheetChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
+        }
+      ]
+    },
+    "onRemoveSheet": {
+      "chains": [
+        {
+          "chain": "flow:removeSheetChain"
+        }
+      ]
+    },
+    "onAbandon": {
+      "chains": [
+        {
+          "chain": "flow:resetChain"
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "start"
+          }
+        }
+      ]
+    },
+    "onCheck": {
+      "chains": [
+        {
+          "chain": "flow:checkPlanChain",
+          "parameters": {
+            "ask": true
+          }
+        },
+        {
+          "chain": "flow:goToPageChain",
+          "parameters": {
+            "page": "check",
+            "when": "sheets"
+          }
+        },
+        {
+          "chain": "flow:askAgentChain"
+        }
+      ]
+    }
+  },
+  "imports": {
+    "components": {
+      "oj-c-button": {
+        "path": "oj-c/button"
+      },
+      "oj-c-file-picker": {
+        "path": "oj-c/file-picker"
+      },
+      "oj-c-table": {
+        "path": "oj-c/table"
+      },
+      "oj-c-train": {
+        "path": "oj-c/train"
+      },
+      "oj-c-progress-circle": {
+        "path": "oj-c/progress-circle"
+      }
+    }
+  }
+}

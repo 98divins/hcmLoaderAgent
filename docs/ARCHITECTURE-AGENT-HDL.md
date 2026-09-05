@@ -350,3 +350,24 @@ comment lire une specification d'objet, ce qu'est une cle parent, quand DELETE
 est permis, comment traiter une valeur hors referentiel. Les metadonnees, elles,
 arrivent a chaque tour depuis le catalogue de la page, a jour, sans republication
 de l'agent.
+
+## Révision build 22 — flux multi-pages Redwood
+
+L'application est un flux `main` de cinq pages. L'état du dossier (feuilles,
+lignes, résultat du contrôle, job Oracle, conversation avec l'assistant) est
+porté par les **variables du flux** : passer d'une page à l'autre ne copie rien,
+chaque page n'affiche qu'une étape du même dossier.
+
+| Page | Étape | Entrée gardée par | Sortie |
+|---|---|---|---|
+| `main-start` | Accueil : objet, opération | — | Ouvrir le dossier → `dossier-import` |
+| `dossier-import` | Importer | dossier ouvert | Contrôler → `dossier-check` |
+| `dossier-check` | Contrôler, corriger dans la grille, assistant | dossier ouvert | Continuer (si propre) → `dossier-load` |
+| `dossier-load` | Charger : .dat ou Oracle, confirmation | contrôle propre | Oui, charger → `dossier-track` |
+| `dossier-track` | Suivre le job, rejets, fin | RequestId présent | Corriger → `dossier-check` ; Terminer → `main-start` |
+
+Les chaînes d'action sont des chaînes de flux (`main-flow-chains/`), appelées
+`flow:<chaîne>` depuis les écouteurs des pages. `goToPageChain` porte la
+navigation et sa condition ; `guardChain` renvoie à la bonne page quand
+l'adresse ne correspond pas à l'état (retour navigateur, rechargement).
+Les fonctions d'affichage sont dans `main-flow.js` (`$flow.functions`).
