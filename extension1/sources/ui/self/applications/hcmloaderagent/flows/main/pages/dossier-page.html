@@ -156,8 +156,11 @@
               </oj-bind-if>
               <oj-bind-if test="[[ $current.mode === 'edit' ]]">
                 <!-- Champ classique : c'est lui que la grille classique ecoute
-                     (Entree valide la ligne, Echap annule). -->
-                <oj-input-text value="{{ $current.row[$current.componentElement.columns[$current.columnIndex].field] }}"
+                     (Entree valide la ligne, Echap annule). Liaison simple :
+                     une liaison bidirectionnelle sur une cle calculee est
+                     refusee par Knockout. C'est la fin d'edition qui relit le
+                     champ (data-column) et ecrit dans la ligne du dossier. -->
+                <oj-input-text value="[[ $current.data ]]"
                                label-edge="none" class="hdl-cell-input"
                                :data-column="[[ $current.componentElement.columns[$current.columnIndex].field ]]"
                                :data-row="[[ $current.key ]]"></oj-input-text>
