@@ -30,6 +30,11 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           $variables.errorText = 'La ligne a corriger n\'a pas ete retrouvee : fermez le formulaire et cliquez de nouveau sur la ligne.';
           return;
         }
+        // Jamais d'ecriture dans l'objet de ligne lui-meme : Visual Builder
+        // compare l'ancienne et la nouvelle valeur de la variable, et un objet
+        // modifie sur place est "egal" a lui-meme, donc rien ne se redessine.
+        // On construit une nouvelle ligne, et un nouveau tableau de lignes.
+        const changes = {};
         let changed = 0;
         const inputs = form.querySelectorAll('[data-column]');
         for (let i = 0; i < inputs.length; i += 1) {
@@ -39,20 +44,23 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
             ? inputs[i].rawValue : inputs[i].value;
           if (!column || typed === undefined || (sheet.columns || []).indexOf(column) === -1) { continue; }
           const next = typed === null ? '' : String(typed);
-          if (next !== String(row[column] === undefined || row[column] === null ? '' : row[column])) {
-            row[column] = next;
+          const before = String(row[column] === undefined || row[column] === null ? '' : row[column]);
+          if (next !== before) {
+            changes[column] = next;
             changed += 1;
           }
         }
         if (changed) {
-          row.statusLabel = 'a controler';
-          row.etat = 'A controler';
-          row.statusDetail = '';
-          row.matchLabel = '';
-          row.loaded = false;
-          // Un nouveau tableau de lignes : la grille recoit un nouveau
-          // fournisseur de donnees et se redessine.
-          sheets[index] = Object.assign({}, sheet, { rows: (sheet.rows || []).slice() });
+          const nextRow = Object.assign({}, row, changes, {
+            statusLabel: 'a controler',
+            etat: 'A controler',
+            statusDetail: '',
+            matchLabel: '',
+            loaded: false
+          });
+          sheets[index] = Object.assign({}, sheet, {
+            rows: (sheet.rows || []).map((r) => (r === row ? nextRow : r))
+          });
           $variables.sheets = sheets;
           $variables.armedAction = '';
           if ($variables.step === 'submit') { $variables.step = 'review'; }

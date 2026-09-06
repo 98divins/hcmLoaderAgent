@@ -244,7 +244,10 @@ async function main() {
   global.document.getElementById = () => ({ querySelectorAll: () => [
     { getAttribute: () => 'LocationCode', rawValue: 'LYO01', value: 'PAR01' },
     { getAttribute: () => 'Name', rawValue: 'Ventes France', value: 'Ventes France' }] });
+  const before = v.sheets[0].rows[0];
   await new SaveRow().run(ctx(v, page.variables), {});
+  check('Enregistrer : nouvelle ligne, nouveau tableau (Visual Builder voit le changement)',
+    v.sheets[0].rows[0] !== before && before.LocationCode === 'PAR01');
   check('Enregistrer : valeur saisie ecrite, ligne a controler, retour au controle, formulaire ferme',
     v.sheets[0].rows[0].LocationCode === 'LYO01' && v.sheets[0].rows[0].statusLabel === 'a controler'
     && v.step === 'review' && v.armedAction === '' && page.variables.editKey === null && /1 champ/.test(v.summaryText));
