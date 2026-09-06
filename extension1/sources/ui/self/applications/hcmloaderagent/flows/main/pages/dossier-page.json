@@ -15,15 +15,21 @@
       "type": "boolean",
       "defaultValue": false
     },
-    "editRow": {
-      "type": "object",
-      "defaultValue": {
-        "rowKey": null
-      }
+    "editKey": {
+      "type": "string",
+      "defaultValue": null
     },
-    "discardEdit": {
-      "type": "boolean",
-      "defaultValue": false
+    "editLabel": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "editDetail": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "editColumns": {
+      "type": "object[]",
+      "defaultValue": []
     }
   },
   "metadata": {},
@@ -237,16 +243,6 @@
         }
       ]
     },
-    "onRowEditEnd": {
-      "chains": [
-        {
-          "chain": "rowEditChain",
-          "parameters": {
-            "event": "[[ $event ]]"
-          }
-        }
-      ]
-    },
     "onArmLoad": {
       "chains": [
         {
@@ -339,19 +335,29 @@
         }
       ]
     },
-    "onCommitRow": {
+    "onRowSelected": {
       "chains": [
         {
-          "chain": "commitRowChain"
+          "chain": "selectRowChain",
+          "parameters": {
+            "event": "[[ $event ]]"
+          }
         }
       ]
     },
-    "onCancelRow": {
+    "onSaveRow": {
       "chains": [
         {
-          "chain": "commitRowChain",
+          "chain": "saveRowChain"
+        }
+      ]
+    },
+    "onCloseRow": {
+      "chains": [
+        {
+          "chain": "saveRowChain",
           "parameters": {
-            "discard": true
+            "close": true
           }
         }
       ]
@@ -391,6 +397,9 @@
       },
       "oj-input-text": {
         "path": "ojs/ojinputtext"
+      },
+      "oj-form-layout": {
+        "path": "ojs/ojformlayout"
       }
     }
   },

@@ -202,3 +202,13 @@ Demande : chaque page sur un Page Template Redwood, comme le recommande Oracle.
 - [ ] Assistant : « Vous ne semblez pas autorisé à utiliser cet assistant » dans
       l'enregistrement. Côté tenant : équipe d'agents `AIAGENTHDL` active et rôle
       de l'utilisateur. À vérifier avant de juger les réponses de l'agent.
+
+## Itération 12 — correction d'une ligne (builds 26 à 29)
+
+- [x] Édition en cellule de la grille : trois tentatives (champ moderne, champ
+      classique, validation explicite) sans résultat observable sur le pod, et
+      une erreur Knockout sur la liaison à clé calculée. Abandonnée.
+- [x] Remplacée par un formulaire Redwood « Corriger la ligne » : un clic sur la
+      ligne l'ouvre au-dessus de la grille, un champ par colonne, prérempli,
+      l'anomalie rappelée ; Enregistrer écrit dans la ligne, qui repasse
+      « À contrôler ». Tout est sous le contrôle de la page.

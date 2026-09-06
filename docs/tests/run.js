@@ -87,7 +87,6 @@ const Import = load('importFileChain.js');
 const Status = load('checkLoadStatusChain.js');
 const Submit = load('submitLoadChain.js');
 const Apply = load('applyProposalChain.js');
-const RowEdit = load('rowEditChain.js');
 const GoTo = load('goToStepChain.js');
 const Enter = load('enterChain.js');
 const StepNav = load('stepNavigateChain.js');
@@ -233,28 +232,22 @@ async function main() {
     v.sheets[0].rows[0].ClassificationCode === 'DEPARTMENT' && v.sheets[0].rows[1].ClassificationCode === 'DEPARTMENT'
     && v.sheets[0].rows[2].LocationCode === 'PAR01' && /2/.test(v.appliedNote), v.appliedNote);
 
-  // 5d. Edition dans la grille : la ligne repasse "a controler", le dossier revient au controle.
+  // 5d. Correction d'une ligne par le formulaire : selection, saisie, enregistrement.
+  const SelectRow = load('selectRowChain.js');
+  const SaveRow = load('saveRowChain.js');
   v.step = 'submit'; v.armedAction = 'load';
-  const inputs = [{ getAttribute: () => 'LocationCode', value: 'LYO01' }];
-  await new RowEdit().run(ctx(v), { event: {
-    detail: { rowContext: { item: { metadata: { key: 'L1' } } } },
-    target: { querySelectorAll: () => inputs } } });
-  check('ligne editee : valeur relue, statut a controler, retour au controle',
-    v.sheets[0].rows[0].LocationCode === 'LYO01' && v.sheets[0].rows[0].statusLabel === 'a controler'
-    && v.step === 'review' && v.armedAction === '');
-
-  // 5e. Validation explicite d'une ligne : les champs de la grille sont relus.
-  const Commit = load('commitRowChain.js');
+  const page = { variables: { editKey: null, editLabel: '', editDetail: '', editColumns: [] } };
+  await new SelectRow().run(ctx(v, page.variables), { event: { detail: { value: { key: 'L1' } } } });
+  check('clic sur une ligne : formulaire ouvert, un champ par colonne, prerempli',
+    page.variables.editKey === 'L1' && page.variables.editLabel === 'Ventes France / Department'
+    && page.variables.editColumns.some((c) => c.name === 'LocationCode' && c.value === 'PAR01'));
   global.document.getElementById = () => ({ querySelectorAll: () => [
-    { getAttribute: () => 'LocationCode', rawValue: 'NCE01', value: 'LYO01' }] });
-  const page = { variables: { editRow: { rowKey: 'L1' }, discardEdit: false } };
-  await new Commit().run(ctx(v, page.variables), {});
-  check('Valider la ligne : valeur en cours de frappe ecrite, grille sortie de l\'edition',
-    v.sheets[0].rows[0].LocationCode === 'NCE01' && page.variables.editRow.rowKey === null
-    && v.sheets[0].rows[0].statusLabel === 'a controler');
-  await new RowEdit().run(ctx(v, page.variables), { event: { detail: { rowContext: { status: { rowKey: 'L1' } } },
-    target: { querySelectorAll: () => [{ getAttribute: () => 'LocationCode', value: 'XXX' }] } } });
-  check('la fin d\'edition qui suit n\'ecrit rien', v.sheets[0].rows[0].LocationCode === 'NCE01' && page.variables.discardEdit === false);
+    { getAttribute: () => 'LocationCode', rawValue: 'LYO01', value: 'PAR01' },
+    { getAttribute: () => 'Name', rawValue: 'Ventes France', value: 'Ventes France' }] });
+  await new SaveRow().run(ctx(v, page.variables), {});
+  check('Enregistrer : valeur saisie ecrite, ligne a controler, retour au controle, formulaire ferme',
+    v.sheets[0].rows[0].LocationCode === 'LYO01' && v.sheets[0].rows[0].statusLabel === 'a controler'
+    && v.step === 'review' && v.armedAction === '' && page.variables.editKey === null && /1 champ/.test(v.summaryText));
 
   // 6. Import : l'objet de chaque fichier est reconnu a ses colonnes.
   v = vars('Location', 'MERGE', []);
@@ -374,7 +367,7 @@ async function main() {
     const fns = (html.match(/\$flow\.functions\.(\w+)/g) || []).map((m) => m.replace('$flow.functions.', ''));
     check(`${name} : fonctions $flow.functions definies`, fns.every((f) => flowDefs.indexOf(f) !== -1),
       fns.filter((f) => flowDefs.indexOf(f) === -1).join(','));
-    const tags = (html.match(/<(oj-(?:c|sp)-[\w-]+|oj-table|oj-input-text)/g) || []).map((m) => m.slice(1));
+    const tags = (html.match(/<(oj-(?:c|sp)-[\w-]+|oj-table|oj-input-text|oj-form-layout)/g) || []).map((m) => m.slice(1));
     check(`${name} : composants importes`, tags.every((c) => json.imports.components[c]),
       tags.filter((c) => !json.imports.components[c]).join(','));
   });

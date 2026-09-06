@@ -110,24 +110,14 @@
 
           <div class="hdl-toolbar">
             <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-flex-1"><oj-bind-text
-              value="[[ $flow.variables.summaryText || 'Double-clic sur une ligne pour la corriger, puis Valider la ligne.' ]]"></oj-bind-text></span>
+              value="[[ $flow.variables.summaryText || 'Cliquez sur une ligne pour la corriger.' ]]"></oj-bind-text></span>
             <oj-bind-if test="[[ $flow.variables.isChecking ]]">
               <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
               <span class="oj-typography-body-sm oj-text-color-secondary">Controle en cours...</span>
             </oj-bind-if>
-            <!-- Pendant l'edition d'une ligne : la validation est explicite, elle
-                 ne depend pas de ce que la grille fait de la touche Entree. -->
-            <oj-bind-if test="[[ $page.variables.editRow && $page.variables.editRow.rowKey !== null && $page.variables.editRow.rowKey !== undefined ]]">
-              <oj-c-button label="Annuler la modification" button-type="button" chroming="borderless"
-                           on-oj-action="[[ $listeners.onCancelRow ]]"></oj-c-button>
-              <oj-c-button label="Valider la ligne" button-type="button" chroming="callToAction"
-                           on-oj-action="[[ $listeners.onCommitRow ]]"></oj-c-button>
-            </oj-bind-if>
-            <oj-bind-if test="[[ !$page.variables.editRow || $page.variables.editRow.rowKey === null || $page.variables.editRow.rowKey === undefined ]]">
-              <oj-c-button label="Recontroler" button-type="button" chroming="outlined"
-                           disabled="[[ $flow.variables.isChecking || $flow.variables.isThinking ]]"
-                           on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
-            </oj-bind-if>
+            <oj-c-button label="Recontroler" button-type="button" chroming="outlined"
+                         disabled="[[ $flow.variables.isChecking || $flow.variables.isThinking ]]"
+                         on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
           </div>
 
           <div class="hdl-tabs" on-click="[[ $listeners.onSelectSheet ]]">
@@ -142,40 +132,50 @@
             </oj-bind-for-each>
           </div>
 
-          <!-- La correction se fait dans la grille : double-clic sur une ligne,
-               chaque cellule devient un champ, Entree valide. La cellule ecrit
-               dans la ligne du dossier ; la fin d'edition relit par securite. -->
+          <!-- Corriger une ligne : un clic sur la ligne ouvre ce formulaire, un
+               champ par colonne, Enregistrer ecrit dans la ligne du dossier.
+               La grille elle-meme reste en lecture : tout est sous le controle
+               de la page, rien ne depend d'un mode d'edition de composant. -->
+          <oj-bind-if test="[[ $page.variables.editKey !== null && $page.variables.editKey !== undefined ]]">
+            <div id="hdl-row-form" class="hdl-row-form">
+              <div class="oj-flex oj-sm-align-items-center oj-sm-margin-3x-bottom">
+                <span class="oj-typography-heading-xs oj-text-color-primary oj-sm-flex-1"><oj-bind-text
+                  value="[[ 'Corriger la ligne ' + $page.variables.editLabel ]]"></oj-bind-text></span>
+                <oj-c-button label="Fermer" chroming="borderless" size="sm" button-type="button"
+                             on-oj-action="[[ $listeners.onCloseRow ]]"></oj-c-button>
+                <oj-c-button label="Enregistrer" chroming="callToAction" size="sm" button-type="button"
+                             class="oj-sm-margin-2x-start"
+                             on-oj-action="[[ $listeners.onSaveRow ]]"></oj-c-button>
+              </div>
+              <oj-bind-if test="[[ $page.variables.editDetail ]]">
+                <div class="oj-typography-body-sm oj-sm-margin-3x-bottom hdl-row-form-detail"><oj-bind-text value="[[ $page.variables.editDetail ]]"></oj-bind-text></div>
+              </oj-bind-if>
+              <oj-form-layout max-columns="3" direction="row" label-edge="top">
+                <oj-bind-for-each data="[[ $page.variables.editColumns ]]">
+                  <template>
+                    <oj-input-text :label-hint="[[ $current.data.name ]]"
+                                   value="[[ $current.data.value ]]"
+                                   :data-column="[[ $current.data.name ]]"></oj-input-text>
+                  </template>
+                </oj-bind-for-each>
+              </oj-form-layout>
+            </div>
+          </oj-bind-if>
+
           <oj-table id="hdl-grid" class="hdl-table"
                     data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
                     columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'review') ]]"
                     layout="fixed"
-                    edit-mode="rowEdit"
-                    edit-row="{{ $page.variables.editRow }}"
+                    selection-mode.row="single"
                     vertical-grid-visible="enabled"
                     horizontal-grid-visible="enabled"
-                    on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">
+                    on-first-selected-row-changed="[[ $listeners.onRowSelected ]]">
             <template slot="detailCell">
               <span class="hdl-wrap"><oj-bind-text value="[[ $current.data ]]"></oj-bind-text></span>
             </template>
             <template slot="etatCell">
               <span :class="[[ 'hdl-etat hdl-etat-' + String($current.row.statusLabel || '').replace(/ /g, '-') ]]"><oj-bind-text
                 value="[[ $flow.functions.etatLabel($current.row.statusLabel) ]]"></oj-bind-text></span>
-            </template>
-            <template slot="dataCell">
-              <oj-bind-if test="[[ $current.mode !== 'edit' ]]">
-                <oj-bind-text value="[[ $current.data ]]"></oj-bind-text>
-              </oj-bind-if>
-              <oj-bind-if test="[[ $current.mode === 'edit' ]]">
-                <!-- Champ classique : c'est lui que la grille classique ecoute
-                     (Entree valide la ligne, Echap annule). Liaison simple :
-                     une liaison bidirectionnelle sur une cle calculee est
-                     refusee par Knockout. C'est la fin d'edition qui relit le
-                     champ (data-column) et ecrit dans la ligne du dossier. -->
-                <oj-input-text value="[[ $current.data ]]"
-                               label-edge="none" class="hdl-cell-input"
-                               :data-column="[[ $current.componentElement.columns[$current.columnIndex].field ]]"
-                               :data-row="[[ $current.key ]]"></oj-input-text>
-              </oj-bind-if>
             </template>
           </oj-table>
         </div>
@@ -716,9 +716,17 @@
     border-top: 1px solid var(--oj-core-divider-color);
   }
 
-  .hdl-cell-input {
-    inline-size: 100%;
-    max-inline-size: 100%;
+  .hdl-row-form {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--oj-core-text-color-primary);
+    border-radius: var(--oj-core-border-radius-lg);
+    background-color: var(--oj-core-bg-color-content);
+    box-shadow: var(--oj-core-box-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  .hdl-row-form-detail {
+    color: #9e2a1d;
   }
 
   .hdl-wrap {
