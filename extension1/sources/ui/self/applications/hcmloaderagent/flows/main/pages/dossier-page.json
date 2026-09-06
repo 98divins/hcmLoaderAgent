@@ -361,6 +361,9 @@
       },
       "oj-c-drawer-popup": {
         "path": "oj-c/drawer-popup"
+      },
+      "oj-input-text": {
+        "path": "ojs/ojinputtext"
       }
     }
   },

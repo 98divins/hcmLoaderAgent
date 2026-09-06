@@ -361,7 +361,7 @@ async function main() {
     const fns = (html.match(/\$flow\.functions\.(\w+)/g) || []).map((m) => m.replace('$flow.functions.', ''));
     check(`${name} : fonctions $flow.functions definies`, fns.every((f) => flowDefs.indexOf(f) !== -1),
       fns.filter((f) => flowDefs.indexOf(f) === -1).join(','));
-    const tags = (html.match(/<(oj-(?:c|sp)-[\w-]+|oj-table)/g) || []).map((m) => m.slice(1));
+    const tags = (html.match(/<(oj-(?:c|sp)-[\w-]+|oj-table|oj-input-text)/g) || []).map((m) => m.slice(1));
     check(`${name} : composants importes`, tags.every((c) => json.imports.components[c]),
       tags.filter((c) => !json.imports.components[c]).join(','));
   });

@@ -47,8 +47,12 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
         const inputs = target.querySelectorAll('[data-column]');
         for (let i = 0; i < inputs.length; i += 1) {
           const column = inputs[i].getAttribute('data-column');
-          if (column && inputs[i].value !== undefined && (sheet.columns || []).indexOf(column) !== -1) {
-            row[column] = inputs[i].value === null ? '' : String(inputs[i].value);
+          // rawValue suit la frappe ; value n'est ecrit qu'a la validation du
+          // champ, qui peut arriver apres cet evenement : on prend le plus frais.
+          const typed = (inputs[i].rawValue !== undefined && inputs[i].rawValue !== null)
+            ? inputs[i].rawValue : inputs[i].value;
+          if (column && typed !== undefined && (sheet.columns || []).indexOf(column) !== -1) {
+            row[column] = typed === null ? '' : String(typed);
           }
         }
       }

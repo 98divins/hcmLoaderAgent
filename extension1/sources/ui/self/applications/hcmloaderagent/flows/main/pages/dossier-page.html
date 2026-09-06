@@ -155,10 +155,12 @@
                 <oj-bind-text value="[[ $current.data ]]"></oj-bind-text>
               </oj-bind-if>
               <oj-bind-if test="[[ $current.mode === 'edit' ]]">
-                <oj-c-input-text value="{{ $current.row[$current.componentElement.columns[$current.columnIndex].field] }}"
-                                 label-hint="[[ $current.componentElement.columns[$current.columnIndex].field ]]" label-edge="none"
-                                 :data-column="[[ $current.componentElement.columns[$current.columnIndex].field ]]"
-                                 :data-row="[[ $current.key ]]"></oj-c-input-text>
+                <!-- Champ classique : c'est lui que la grille classique ecoute
+                     (Entree valide la ligne, Echap annule). -->
+                <oj-input-text value="{{ $current.row[$current.componentElement.columns[$current.columnIndex].field] }}"
+                               label-edge="none" class="hdl-cell-input"
+                               :data-column="[[ $current.componentElement.columns[$current.columnIndex].field ]]"
+                               :data-row="[[ $current.key ]]"></oj-input-text>
               </oj-bind-if>
             </template>
           </oj-table>
@@ -698,6 +700,11 @@
     flex: none;
     padding: 0.75rem 1.5rem 1.25rem;
     border-top: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-cell-input {
+    inline-size: 100%;
+    max-inline-size: 100%;
   }
 
   .hdl-wrap {
