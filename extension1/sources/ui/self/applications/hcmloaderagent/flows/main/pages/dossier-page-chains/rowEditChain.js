@@ -20,8 +20,14 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     async run(context, { event } = {}) {
       // L'etat du dossier vit dans le flux : la page n'en montre qu'une etape.
       const $variables = context.$flow.variables;
+      const { $page } = context;
       const detail = (event && event.detail) || {};
       if (detail.cancelEdit) { return; }
+      // "Annuler la modification" : la grille sort de l'edition, rien n'est ecrit.
+      if ($page && $page.variables && $page.variables.discardEdit) {
+        $page.variables.discardEdit = false;
+        return;
+      }
 
       // oj-table designe la ligne par rowContext.status.rowKey ; oj-c-table par
       // item.metadata.key ; a defaut, le champ edite porte la cle (data-row).
@@ -63,6 +69,9 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       row.matchLabel = '';
       row.loaded = false;
 
+      // Un nouveau tableau de lignes : la grille recoit un nouveau fournisseur
+      // de donnees et se redessine avec la valeur saisie et le nouvel etat.
+      sheets[index] = Object.assign({}, sheet, { rows: (sheet.rows || []).slice() });
       $variables.sheets = sheets;
       $variables.armedAction = '';
       if ($variables.step === 'submit') { $variables.step = 'review'; }

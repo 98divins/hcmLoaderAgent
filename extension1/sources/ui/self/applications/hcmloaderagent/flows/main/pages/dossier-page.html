@@ -110,14 +110,24 @@
 
           <div class="hdl-toolbar">
             <span class="oj-typography-body-xs oj-text-color-secondary oj-sm-flex-1"><oj-bind-text
-              value="[[ $flow.variables.summaryText || 'Double-clic sur une ligne pour la corriger, Entree pour valider.' ]]"></oj-bind-text></span>
+              value="[[ $flow.variables.summaryText || 'Double-clic sur une ligne pour la corriger, puis Valider la ligne.' ]]"></oj-bind-text></span>
             <oj-bind-if test="[[ $flow.variables.isChecking ]]">
               <oj-c-progress-circle value="-1" size="sm"></oj-c-progress-circle>
               <span class="oj-typography-body-sm oj-text-color-secondary">Controle en cours...</span>
             </oj-bind-if>
-            <oj-c-button label="Recontroler" button-type="button" chroming="outlined"
-                         disabled="[[ $flow.variables.isChecking || $flow.variables.isThinking ]]"
-                         on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
+            <!-- Pendant l'edition d'une ligne : la validation est explicite, elle
+                 ne depend pas de ce que la grille fait de la touche Entree. -->
+            <oj-bind-if test="[[ $page.variables.editRow && $page.variables.editRow.rowKey !== null && $page.variables.editRow.rowKey !== undefined ]]">
+              <oj-c-button label="Annuler la modification" button-type="button" chroming="borderless"
+                           on-oj-action="[[ $listeners.onCancelRow ]]"></oj-c-button>
+              <oj-c-button label="Valider la ligne" button-type="button" chroming="callToAction"
+                           on-oj-action="[[ $listeners.onCommitRow ]]"></oj-c-button>
+            </oj-bind-if>
+            <oj-bind-if test="[[ !$page.variables.editRow || $page.variables.editRow.rowKey === null || $page.variables.editRow.rowKey === undefined ]]">
+              <oj-c-button label="Recontroler" button-type="button" chroming="outlined"
+                           disabled="[[ $flow.variables.isChecking || $flow.variables.isThinking ]]"
+                           on-oj-action="[[ $listeners.onCheck ]]"></oj-c-button>
+            </oj-bind-if>
           </div>
 
           <div class="hdl-tabs" on-click="[[ $listeners.onSelectSheet ]]">
@@ -135,11 +145,12 @@
           <!-- La correction se fait dans la grille : double-clic sur une ligne,
                chaque cellule devient un champ, Entree valide. La cellule ecrit
                dans la ligne du dossier ; la fin d'edition relit par securite. -->
-          <oj-table class="hdl-table"
+          <oj-table id="hdl-grid" class="hdl-table"
                     data="[[ $flow.functions.getRowsDP($flow.variables.sheets, $flow.variables.activeSheet) ]]"
                     columns="[[ $flow.functions.getTableColumns($flow.variables.sheets, $flow.variables.activeSheet, 'review') ]]"
                     layout="fixed"
                     edit-mode="rowEdit"
+                    edit-row="{{ $page.variables.editRow }}"
                     vertical-grid-visible="enabled"
                     horizontal-grid-visible="enabled"
                     on-oj-before-row-edit-end="[[ $listeners.onRowEditEnd ]]">

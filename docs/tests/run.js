@@ -243,6 +243,19 @@ async function main() {
     v.sheets[0].rows[0].LocationCode === 'LYO01' && v.sheets[0].rows[0].statusLabel === 'a controler'
     && v.step === 'review' && v.armedAction === '');
 
+  // 5e. Validation explicite d'une ligne : les champs de la grille sont relus.
+  const Commit = load('commitRowChain.js');
+  global.document.getElementById = () => ({ querySelectorAll: () => [
+    { getAttribute: () => 'LocationCode', rawValue: 'NCE01', value: 'LYO01' }] });
+  const page = { variables: { editRow: { rowKey: 'L1' }, discardEdit: false } };
+  await new Commit().run(ctx(v, page.variables), {});
+  check('Valider la ligne : valeur en cours de frappe ecrite, grille sortie de l\'edition',
+    v.sheets[0].rows[0].LocationCode === 'NCE01' && page.variables.editRow.rowKey === null
+    && v.sheets[0].rows[0].statusLabel === 'a controler');
+  await new RowEdit().run(ctx(v, page.variables), { event: { detail: { rowContext: { status: { rowKey: 'L1' } } },
+    target: { querySelectorAll: () => [{ getAttribute: () => 'LocationCode', value: 'XXX' }] } } });
+  check('la fin d\'edition qui suit n\'ecrit rien', v.sheets[0].rows[0].LocationCode === 'NCE01' && page.variables.discardEdit === false);
+
   // 6. Import : l'objet de chaque fichier est reconnu a ses colonnes.
   v = vars('Location', 'MERGE', []);
   await new Start().run(ctx(v));
