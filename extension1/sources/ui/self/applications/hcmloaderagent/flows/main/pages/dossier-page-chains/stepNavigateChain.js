@@ -26,6 +26,20 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       const next = String(detail.nextStep || '');
       const current = String($page.variables.currentStep || 'data');
       const order = ['data', 'review', 'submit', 'result'];
+
+      // Derniere etape : le bouton de fin du template (Submit) ne designe
+      // aucune etape suivante. Le dossier se termine, si le job est fini.
+      if (current === 'result' && (!next || order.indexOf(next) === -1)) {
+        const summary = $variables.loadSummary || {};
+        if (!summary.finished) {
+          $variables.errorText = 'Le chargement est encore en cours : attendez sa fin pour terminer le dossier.';
+          return;
+        }
+        await Actions.callChain(context, { chain: 'finishChain' });
+        await Actions.callChain(context, { chain: 'resetChain' });
+        await Actions.callChain(context, { chain: 'goToStepChain', params: { step: 'start' } });
+        return;
+      }
       if (order.indexOf(next) === -1 || next === current) { return; }
 
       if ($variables.isChecking || $variables.isLoading) {

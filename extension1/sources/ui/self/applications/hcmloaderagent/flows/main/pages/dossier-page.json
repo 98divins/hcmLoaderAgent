@@ -131,20 +131,28 @@
     "onCheck": {
       "chains": [
         {
-          "chain": "checkPlanChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "ask": true
+            "steps": [
+              {
+                "chain": "checkPlanChain",
+                "params": {
+                  "ask": true
+                }
+              },
+              {
+                "chain": "goToStepChain",
+                "params": {
+                  "step": "review",
+                  "when": "sheets"
+                }
+              },
+              {
+                "chain": "askAgentChain",
+                "params": {}
+              }
+            ]
           }
-        },
-        {
-          "chain": "goToStepChain",
-          "parameters": {
-            "step": "review",
-            "when": "sheets"
-          }
-        },
-        {
-          "chain": "askAgentChain"
         }
       ]
     },
@@ -172,15 +180,22 @@
     "onApplyProposal": {
       "chains": [
         {
-          "chain": "applyProposalChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "source": "agent"
-          }
-        },
-        {
-          "chain": "checkPlanChain",
-          "parameters": {
-            "ask": false
+            "steps": [
+              {
+                "chain": "applyProposalChain",
+                "params": {
+                  "source": "agent"
+                }
+              },
+              {
+                "chain": "checkPlanChain",
+                "params": {
+                  "ask": false
+                }
+              }
+            ]
           }
         }
       ]
@@ -195,15 +210,22 @@
     "onApplyAutoFix": {
       "chains": [
         {
-          "chain": "applyProposalChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "source": "auto"
-          }
-        },
-        {
-          "chain": "checkPlanChain",
-          "parameters": {
-            "ask": false
+            "steps": [
+              {
+                "chain": "applyProposalChain",
+                "params": {
+                  "source": "auto"
+                }
+              },
+              {
+                "chain": "checkPlanChain",
+                "params": {
+                  "ask": false
+                }
+              }
+            ]
           }
         }
       ]
@@ -221,24 +243,32 @@
     "onApplyDiagnosis": {
       "chains": [
         {
-          "chain": "applyProposalChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "source": "agent"
-          }
-        },
-        {
-          "chain": "backToPlanChain"
-        },
-        {
-          "chain": "goToStepChain",
-          "parameters": {
-            "step": "review"
-          }
-        },
-        {
-          "chain": "checkPlanChain",
-          "parameters": {
-            "ask": false
+            "steps": [
+              {
+                "chain": "applyProposalChain",
+                "params": {
+                  "source": "agent"
+                }
+              },
+              {
+                "chain": "backToPlanChain",
+                "params": {}
+              },
+              {
+                "chain": "goToStepChain",
+                "params": {
+                  "step": "review"
+                }
+              },
+              {
+                "chain": "checkPlanChain",
+                "params": {
+                  "ask": false
+                }
+              }
+            ]
           }
         }
       ]
@@ -273,48 +303,73 @@
     "onSubmitLoad": {
       "chains": [
         {
-          "chain": "submitLoadChain"
-        },
-        {
-          "chain": "goToStepChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "step": "result",
-            "when": "requestId"
+            "steps": [
+              {
+                "chain": "submitLoadChain",
+                "params": {}
+              },
+              {
+                "chain": "goToStepChain",
+                "params": {
+                  "step": "result",
+                  "when": "requestId"
+                }
+              },
+              {
+                "chain": "checkLoadStatusChain",
+                "params": {
+                  "auto": true
+                }
+              },
+              {
+                "chain": "askAgentChain",
+                "params": {}
+              }
+            ]
           }
-        },
-        {
-          "chain": "checkLoadStatusChain",
-          "parameters": {
-            "auto": true
-          }
-        },
-        {
-          "chain": "askAgentChain"
         }
       ]
     },
     "onCheckLoad": {
       "chains": [
         {
-          "chain": "checkLoadStatusChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "auto": false
+            "steps": [
+              {
+                "chain": "checkLoadStatusChain",
+                "params": {
+                  "auto": false
+                }
+              },
+              {
+                "chain": "askAgentChain",
+                "params": {}
+              }
+            ]
           }
-        },
-        {
-          "chain": "askAgentChain"
         }
       ]
     },
     "onBackToPlan": {
       "chains": [
         {
-          "chain": "backToPlanChain"
-        },
-        {
-          "chain": "goToStepChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "step": "review"
+            "steps": [
+              {
+                "chain": "backToPlanChain",
+                "params": {}
+              },
+              {
+                "chain": "goToStepChain",
+                "params": {
+                  "step": "review"
+                }
+              }
+            ]
           }
         }
       ]
@@ -322,15 +377,24 @@
     "onFinish": {
       "chains": [
         {
-          "chain": "finishChain"
-        },
-        {
-          "chain": "resetChain"
-        },
-        {
-          "chain": "goToStepChain",
+          "chain": "sequenceChain",
           "parameters": {
-            "step": "start"
+            "steps": [
+              {
+                "chain": "finishChain",
+                "params": {}
+              },
+              {
+                "chain": "resetChain",
+                "params": {}
+              },
+              {
+                "chain": "goToStepChain",
+                "params": {
+                  "step": "start"
+                }
+              }
+            ]
           }
         }
       ]
@@ -358,6 +422,16 @@
           "chain": "saveRowChain",
           "parameters": {
             "close": true
+          }
+        }
+      ]
+    },
+    "onSpSubmit": {
+      "chains": [
+        {
+          "chain": "stepNavigateChain",
+          "parameters": {
+            "event": "{{ $event }}"
           }
         }
       ]

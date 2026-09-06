@@ -45,8 +45,15 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
      * Les etapes pour le template Redwood "Guided Process" : il dessine le
      * train et les boutons Precedent / Suivant, la page decide si on avance.
      */
-    getGuidedSteps() {
-      return STEPS.map((s) => ({ id: s.id, title: s.label, description: s.title, optional: false }));
+    getGuidedSteps(current) {
+      const index = STEPS.map((s) => s.id).indexOf(current);
+      return STEPS.map((s, i) => ({
+        id: s.id,
+        title: s.label,
+        description: s.title,
+        optional: false,
+        status: i < index ? 'completed' : (i === index ? 'current' : 'notStarted')
+      }));
     }
 
     /**
@@ -150,10 +157,19 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
           + 'HDL fait ce choix lui-meme, ligne par ligne.'
       }];
       if (this.allowsDelete(catalog, hierarchy)) {
+        const tree = ((catalog || {}).hierarchies || {})[hierarchy];
+        const all = [tree.top].concat(tree.children || []);
+        const spec = (name) => ((catalog || {}).objects || {})[name] || {};
+        const can = all.filter((n) => (spec(n).validOperations || []).indexOf('DELETE') !== -1);
+        const cannot = all.filter((n) => can.indexOf(n) === -1);
         list.push({
           id: 'DELETE',
           label: 'Supprimer',
-          description: 'Les lignes designees sont supprimees d\'Oracle. Irreversible.'
+          description: `Les lignes designees sont supprimees d'Oracle. Irreversible. Possible pour : `
+            + `${can.map((n) => spec(n).uiName || n).join(', ')}.`
+            + (cannot.length
+              ? ` ${cannot.map((n) => spec(n).uiName || n).join(', ')} : creation et mise a jour seulement, d'apres les metadonnees du pod.`
+              : '')
         });
       }
       return list.map((op) => Object.assign(op, {
@@ -269,6 +285,29 @@ define(['ojs/ojarraydataprovider'], (ArrayDataProvider) => {
         .filter((entry) => entry.spec
           && (entry.spec.validOperations || []).indexOf(operation) !== -1)
         .map((entry) => ({ name: entry.name, label: entry.spec.uiName || entry.name }));
+    }
+
+    /**
+     * Les fichiers attendus, avec leurs colonnes minimales : la cle de
+     * l'objet et la date d'effet. Affiche sous la zone de depot, pour que
+     * personne n'ait a deviner le format.
+     */
+    getExpectedFiles(catalog, hierarchy, operation, sheets) {
+      return this.getAddableObjects(catalog, hierarchy, operation, sheets).map((entry) => {
+        const spec = ((catalog || {}).objects || {})[entry.name] || {};
+        const columns = (spec.userKey || []).slice();
+        const dated = (spec.attributes || []).some((a) => a.name === 'EffectiveStartDate' && a.required === 'always');
+        if (dated && columns.indexOf('EffectiveStartDate') === -1) {
+          columns.push('EffectiveStartDate');
+        }
+        return {
+          label: entry.label,
+          columns: columns.join(' ; '),
+          note: operation === 'DELETE'
+            ? 'ces colonnes suffisent : elles designent la ligne a supprimer'
+            : 'plus les colonnes a renseigner'
+        };
+      });
     }
 
     addableText(catalog, hierarchy, operation, sheets) {

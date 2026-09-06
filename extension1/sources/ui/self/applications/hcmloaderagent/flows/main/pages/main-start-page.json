@@ -49,10 +49,19 @@
     "onStart": {
       "chains": [
         {
-          "chain": "startDossierChain"
-        },
-        {
-          "chain": "openDossierChain"
+          "chain": "sequenceChain",
+          "parameters": {
+            "steps": [
+              {
+                "chain": "startDossierChain",
+                "params": {}
+              },
+              {
+                "chain": "openDossierChain",
+                "params": {}
+              }
+            ]
+          }
         }
       ]
     }

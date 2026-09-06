@@ -265,6 +265,18 @@ async function main() {
   await new Import().run(ctx(v), { files: [fakeFile('Location.csv')] });
   check('redeposer un fichier remplace la feuille de son objet', v.sheets.length === 2);
 
+  // 6b. Suppression : un fichier Location refuse pour la bonne raison, avec le format attendu.
+  v = vars('Location', 'DELETE', []);
+  await new Start().run(ctx(v));
+  await new Import().run(ctx(v), { files: [fakeFile('Location.csv')] });
+  check('DELETE : le fichier Location est reconnu, et refuse parce que Location n\'accepte pas Supprimer',
+    v.sheets.length === 0 && /celles de Location, et Location n'accepte pas l'operation Supprimer/.test(v.errorText)
+    && /Format attendu/.test(v.errorText) && /Location Other Address : AddressUsageType ; LocationCode ; LocationSetCode ; EffectiveStartDate/.test(v.errorText),
+    v.errorText);
+  check('formats attendus pour l\'ecran d\'import (DELETE)',
+    flowFunctions.getExpectedFiles(catalog, 'Location', 'DELETE', []).length === 3
+    && flowFunctions.getOperations(catalog, 'Location', 'DELETE')[1].description.indexOf('Location : creation et mise a jour seulement') !== -1);
+
   // 7. Suppression : pas d'exigence de creation.
   v = vars('Location', 'DELETE', []);
   await new Start().run(ctx(v));
@@ -350,6 +362,28 @@ async function main() {
   await new GoTo().run(ctx(v), { step: 'start' });
   check('dossier propre : Charger ouvert ; Suivre seulement avec un RequestId ; Terminer ramene a l\'accueil',
     navigations.join(',') === 'main-start,dossier:review,dossier:submit,dossier:review,dossier:result,main-start');
+
+  // 10b. Enchainement : chaque etape attend la precedente (les listes d'un ecouteur partent en parallele).
+  const Sequence = load('sequenceChain.js');
+  v = vars('Organization', 'MERGE', [sheet('Organization', 'Organization.csv')]);
+  v.opened = true; v.lookupValues = { X: { ok: true } };
+  v.sheets[0].rows.forEach((r) => { r.EffectiveStartDate = '2026/01/01'; });
+  restStub = async () => ({ body: { items: [] } });
+  navigations.length = 0;
+  await new Sequence().run(ctx(v), { steps: [
+    { chain: 'checkPlanChain', params: { ask: false } },
+    { chain: 'goToStepChain', params: { step: 'review', when: 'sheets' } }] });
+  check('sequence : le controle est fini quand la navigation part', navigations.join(',') === 'dossier:review' && v.checkSummary.rows === 4);
+  check('sequenceChain identique sur les deux pages',
+    fs.readFileSync(path.join(PAGE, 'dossier-page-chains/sequenceChain.js'), 'utf8')
+      === fs.readFileSync(path.join(PAGE, 'main-start-page-chains/sequenceChain.js'), 'utf8'));
+  v.requestId = '42'; v.loadSummary = { finished: true, submitted: 4, accepted: 4, rejected: 0 };
+  navigations.length = 0;
+  await new StepNav().run(ctx(v, { currentStep: 'result' }), { event: { detail: {} } });
+  check('Submit du template au suivi, job termine : le dossier se termine, retour a l\'accueil',
+    navigations.join(',') === 'main-start' && v.opened === false && /termine/.test(v.lastDossier));
+  check('etapes du template : statut courant / faites / a venir',
+    flowFunctions.getGuidedSteps('submit').map((s) => s.status).join(',') === 'completed,completed,current,notStarted');
 
   // 11. Cablage des deux pages : chaque chaine referencee existe dans le dossier de
   // chaines de sa page, chaque fonction $flow.functions existe, chaque composant est importe.

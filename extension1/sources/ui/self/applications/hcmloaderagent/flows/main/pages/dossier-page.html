@@ -4,11 +4,12 @@
      compte a ce moment-la. L'etat du dossier vit dans le flux. -->
 <oj-sp-guided-process id="hdl-dossier"
   process-title="[[ $flow.functions.dossierOverline($flow.variables.hierarchy, $flow.variables.operation) ]]"
-  steps="[[ $flow.functions.getGuidedSteps() ]]"
+  steps="[[ $flow.functions.getGuidedSteps($page.variables.currentStep) ]]"
   current-step="{{ $page.variables.currentStep }}"
   display-options.responsive-padding="on"
   on-sp-before-step-navigate="[[ $listeners.onSpBeforeStepNavigate ]]"
-  on-sp-cancel="[[ $listeners.onSpCancel ]]">
+  on-sp-cancel="[[ $listeners.onSpCancel ]]"
+  on-sp-submit="[[ $listeners.onSpSubmit ]]">
 
   <div class="hdl-step">
 
@@ -20,9 +21,12 @@
           <oj-c-button label="Telecharger le .dat envoye" chroming="borderless" size="sm" button-type="button"
                        on-oj-action="[[ $listeners.onDownloadDat ]]"></oj-c-button>
         </oj-bind-if>
-        <oj-c-button label="[[ $flow.variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
-                     chroming="outlined" size="sm" button-type="button"
-                     on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
+        <!-- Au suivi, l'assistant n'a de raison d'etre que s'il y a des rejets. -->
+        <oj-bind-if test="[[ $page.variables.currentStep === 'review' || $flow.functions.getRejects($flow.variables.rejects).length > 0 ]]">
+          <oj-c-button label="[[ $flow.variables.assistOpen ? 'Masquer l\'assistant' : 'Assistant' ]]"
+                       chroming="outlined" size="sm" button-type="button"
+                       on-oj-action="[[ $listeners.onToggleAssist ]]"></oj-c-button>
+        </oj-bind-if>
       </div>
     </oj-bind-if>
 
@@ -47,7 +51,20 @@
           </div>
           <p class="oj-typography-body-sm oj-text-color-secondary oj-sm-margin-3x-top hdl-subtitle">Un fichier
             par objet, ensemble ou l'un apres l'autre. Separateur point-virgule, premiere ligne :
-            les noms de colonnes HDL. Puis Suivant, pour controler.</p>
+            les noms de colonnes HDL. Puis Continuer, pour controler.</p>
+          <div class="hdl-formats">
+            <div class="oj-typography-body-xs oj-typography-semi-bold oj-text-color-secondary oj-sm-margin-1x-bottom">Fichiers attendus, colonnes minimales</div>
+            <oj-bind-for-each data="[[ $flow.functions.getExpectedFiles($flow.variables.objectCatalog, $flow.variables.hierarchy, $flow.variables.operation, $flow.variables.sheets) ]]">
+              <template>
+                <div class="hdl-format oj-typography-body-sm">
+                  <span class="oj-typography-semi-bold oj-text-color-primary"><oj-bind-text value="[[ $current.data.label ]]"></oj-bind-text></span>
+                  <span class="oj-text-color-secondary"> : </span>
+                  <code><oj-bind-text value="[[ $current.data.columns ]]"></oj-bind-text></code>
+                  <span class="oj-typography-body-xs oj-text-color-secondary"><oj-bind-text value="[[ ' (' + $current.data.note + ')' ]]"></oj-bind-text></span>
+                </div>
+              </template>
+            </oj-bind-for-each>
+          </div>
         </div>
       </oj-bind-if>
 
@@ -430,7 +447,7 @@
         </div>
 
         <oj-c-drawer-popup class="hdl-assist-popup" edge="end" modality="modeless" auto-dismiss="none"
-                           opened="{{ $flow.variables.assistOpen }}">
+                           opened="[[ $flow.variables.assistOpen && $flow.functions.getRejects($flow.variables.rejects).length > 0 ]]">
         <div class="hdl-assist">
           <div class="hdl-assist-head">
             <span class="oj-typography-heading-xs oj-text-color-primary oj-sm-flex-1">Assistant</span>
@@ -571,6 +588,21 @@
   .hdl-drop {
     inline-size: 100%;
     max-inline-size: 40rem;
+  }
+
+  .hdl-formats {
+    margin-top: 1.25rem;
+    text-align: start;
+    max-inline-size: 44rem;
+  }
+
+  .hdl-format {
+    padding-block: 0.25rem;
+    border-top: 1px solid var(--oj-core-divider-color);
+  }
+
+  .hdl-format code {
+    font-size: 0.8125rem;
   }
 
   .hdl-drop-compact {

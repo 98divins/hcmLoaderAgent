@@ -90,10 +90,24 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
   function detectObject(catalog, hierarchy, operation, headers) {
     const tree = (catalog.hierarchies || {})[hierarchy];
     if (!tree) { return { object: null, candidates: [] }; }
+    // Un objet que l'operation du dossier n'autorise pas est note quand meme :
+    // s'il reconnait le fichier, le refus dira pourquoi, au lieu de laisser
+    // croire que les colonnes sont fausses.
+    const excluded = [];
     const candidates = [tree.top].concat(tree.children || [])
       .map((name) => {
         const spec = (catalog.objects || {})[name];
-        if (!spec || (spec.validOperations || []).indexOf(operation) === -1) { return null; }
+        if (!spec) { return null; }
+        if ((spec.validOperations || []).indexOf(operation) === -1) {
+          const knownX = {};
+          (spec.attributes || []).forEach((attribute) => { knownX[attribute.name] = true; });
+          const hitsX = headers.filter((h) => knownX[h] || isFlexColumn(spec, h)).length;
+          const keyHitsX = (spec.userKey || []).filter((k) => headers.indexOf(k) !== -1).length;
+          if (keyHitsX > 0 && headers.length && hitsX / headers.length >= 0.6) {
+            excluded.push({ name, label: spec.uiName || name });
+          }
+          return null;
+        }
         const known = {};
         (spec.attributes || []).forEach((attribute) => { known[attribute.name] = true; });
         const hits = headers.filter((h) => known[h] || isFlexColumn(spec, h)).length;
@@ -109,7 +123,7 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
     // reconnaitre la nette majorite des colonnes du fichier.
     const ratio = best && headers.length ? best.hits / headers.length : 0;
     if (!best || best.keyHits === 0 || best.hits < 2 || ratio < 0.6) {
-      return { object: null, candidates };
+      return { object: null, candidates, notAllowed: excluded[0] || null };
     }
     // Deux objets a egalite parfaite : on ne tranche pas a leur place.
     const second = candidates[1];
@@ -117,6 +131,22 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
       return { object: null, candidates, ambiguous: [best.label, second.label] };
     }
     return { object: best.name, label: best.label, candidates };
+  }
+
+  /** Le format attendu, objet par objet : les colonnes de cle, et la date d'effet. */
+  function expectedFormats(catalog, hierarchy, operation) {
+    const tree = (catalog.hierarchies || {})[hierarchy] || {};
+    return [tree.top].concat(tree.children || [])
+      .map((name) => (catalog.objects || {})[name] ? Object.assign({ name }, catalog.objects[name]) : null)
+      .filter((spec) => spec && (spec.validOperations || []).indexOf(operation) !== -1)
+      .map((spec) => {
+        const columns = (spec.userKey || []).slice();
+        const dated = (spec.attributes || []).some((a) => a.name === 'EffectiveStartDate' && a.required === 'always');
+        if (dated && columns.indexOf('EffectiveStartDate') === -1) {
+          columns.push('EffectiveStartDate');
+        }
+        return `${spec.uiName || spec.name} : ${columns.join(' ; ')}`;
+      });
   }
 
   function parseCsv(text) {
@@ -198,9 +228,17 @@ define(['vb/action/actionChain', 'vb/action/actions'], (ActionChain, Actions) =>
           problems.push(detected.ambiguous
             ? `${file.name} : les colonnes correspondent autant a ${detected.ambiguous.join(' qu\'a ')}. `
               + 'Ajoutez une colonne propre a l\'objet vise.'
-            : `${file.name} : aucun objet de ${hierarchy} ne reconnait ces colonnes `
-              + `(${parsed.headers.slice(0, 6).join(', ')}${parsed.headers.length > 6 ? ', ...' : ''}). `
-              + `Objets possibles : ${names}. Il faut au moins les colonnes de cle de l'objet.`);
+            : (detected.notAllowed
+              ? `${file.name} : ces colonnes sont celles de ${detected.notAllowed.label}, `
+                + `et ${detected.notAllowed.label} n'accepte pas l'operation `
+                + `${operation === 'DELETE' ? 'Supprimer' : 'Creer et mettre a jour'} `
+                + 'd\'apres les metadonnees du pod. '
+                + `Objets possibles dans ce dossier : ${names || 'aucun'}. `
+                + `Format attendu, premiere ligne du fichier : ${expectedFormats(catalog, hierarchy, operation).join(' | ') || 'aucun objet'}.`
+              : `${file.name} : aucun objet de ${hierarchy} ne reconnait ces colonnes `
+                + `(${parsed.headers.slice(0, 6).join(', ')}${parsed.headers.length > 6 ? ', ...' : ''}). `
+                + `Objets possibles : ${names}. Format attendu, premiere ligne du fichier : `
+                + `${expectedFormats(catalog, hierarchy, operation).join(' | ')}.`));
           // eslint-disable-next-line no-continue
           continue;
         }

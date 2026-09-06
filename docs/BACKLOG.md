@@ -212,3 +212,25 @@ Demande : chaque page sur un Page Template Redwood, comme le recommande Oracle.
       ligne l'ouvre au-dessus de la grille, un champ par colonne, prérempli,
       l'anomalie rappelée ; Enregistrer écrit dans la ligne, qui repasse
       « À contrôler ». Tout est sous le contrôle de la page.
+
+## Itération 13 — retours du chargement réel (build 32)
+
+- [x] Passage automatique à Suivre après « Oui, charger » : dans Visual Builder,
+      les chaînes listées sur un écouteur partent en parallèle ; la navigation
+      attendait un RequestId pas encore rendu. Toutes les suites passent par
+      `sequenceChain`, qui attend chaque étape.
+- [x] Barre de phase qui défile tant que la phase est en cours sans avancement chiffré.
+- [x] Étapes du rail du template avec un statut (`completed` / `current` /
+      `notStarted`) ; valeurs à confirmer sur le pod.
+- [x] Étape Suivre : Submit et Cancel du template terminent le dossier une fois
+      le job fini ; avant, un message explique d'attendre.
+- [x] Étape Suivre : l'assistant n'est proposé que s'il y a des rejets.
+- [x] Dossier Supprimer sur Location : refus explicite (« ces colonnes sont
+      celles de Location, et Location n'accepte pas Supprimer d'après les
+      métadonnées »), formats attendus listés sous la zone de dépôt et dans le
+      message, option Supprimer qui dit pour quels objets elle vaut.
+- [ ] Location lui-même en suppression : le catalogue le déclare « MERGE »
+      seul, mais aucun audit report du composant Location n'est dans les
+      sources (`docs/metadata/sources`). À vérifier avec l'audit report
+      `AuditReport_Location_Location` du pod : si VALID_OPERATIONS vaut
+      MERGE_DELETE, la suppression de sites sera ouverte.
